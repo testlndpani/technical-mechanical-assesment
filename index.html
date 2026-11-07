@@ -105,11 +105,15 @@
     img, svg, canvas, video { max-width: 100%; }
     main { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
     .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
     @media (max-width: 639px) {
       input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px !important; } /* cegah auto-zoom iOS */
       main { padding-top: 1rem !important; padding-bottom: 5.5rem !important; }
     }
-    @media (pointer: coarse) { button, [role=button], select { min-height: 36px; } }
+    @media (pointer: coarse) { button, [role=button], select { min-height: 38px; } }
     #outbox-chip { position: fixed; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 60; }
 
     /* Print Styles for Official 2-Page Certification Transcript */
@@ -154,58 +158,72 @@
         </div>
       </div>
 
-      <!-- Desktop Navigation Tabs (Single Line, No Wrap) -->
-      <nav class="hidden xl:flex items-center gap-1 bg-surface-container-low p-1 rounded-xl border border-surface-container-high" id="desktop-nav">
-        <button type="button" onclick="switchView('portal')" id="nav-btn-portal" class="nav-tab portal-nav-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
-          <span class="material-symbols-outlined text-[15px]">login</span>
-          <span>Onboarding</span>
+      <!-- Desktop Navigation Tabs (Clean & Responsive) -->
+      <nav class="hidden md:flex items-center gap-1 bg-surface-container-low p-1 rounded-xl border border-surface-container-high" id="desktop-nav">
+        <!-- 1. Menu Khusus Peserta (Absen, Log Book, Laporan) -->
+        <button type="button" onclick="openPesertaAbsen()" id="nav-btn-peserta-absen" class="nav-tab peserta-nav px-3 py-1.5 rounded-lg text-xs font-semibold text-primary bg-surface-container-lowest shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+          <span>Absen</span>
         </button>
-        <button type="button" onclick="switchView('kode-absensi')" id="nav-btn-kode-absensi" class="nav-tab trainer-only-nav px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
+        <button type="button" onclick="switchView('logbook')" id="nav-btn-peserta-logbook" class="nav-tab peserta-nav px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span class="material-symbols-outlined text-[16px]">menu_book</span>
+          <span>Log Book</span>
+        </button>
+        <button type="button" onclick="openPesertaLaporan()" id="nav-btn-peserta-laporan" class="nav-tab peserta-nav px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span class="material-symbols-outlined text-[16px]">description</span>
+          <span>Laporan</span>
+        </button>
+
+        <!-- 2. Menu Khusus Trainer (Aktif setelah Trainer Login) -->
+        <button type="button" onclick="switchView('kode-absensi')" id="nav-btn-kode-absensi" class="nav-tab trainer-only-nav hidden px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
           <span class="material-symbols-outlined text-[15px]">qr_code_2</span>
-          <span>Kode & Barcode</span>
+          <span>Kode Absensi</span>
         </button>
-        <button type="button" onclick="switchView('daftar-hadir')" id="nav-btn-daftar-hadir" class="nav-tab trainer-only-nav px-2.5 py-1.5 rounded-lg text-xs font-semibold text-primary bg-surface-container-lowest shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap">
+        <button type="button" onclick="switchView('daftar-hadir')" id="nav-btn-daftar-hadir" class="nav-tab trainer-only-nav hidden px-2.5 py-1.5 rounded-lg text-xs font-semibold text-primary bg-surface-container-lowest shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap">
           <span class="material-symbols-outlined text-[15px]">how_to_reg</span>
           <span>Daftar Hadir</span>
           <span class="px-1.5 py-0.2 rounded-full bg-secondary-fixed text-primary text-[10px] font-mono font-bold" id="nav-badge-peserta">0</span>
         </button>
-        <button type="button" onclick="switchView('penilaian')" id="nav-btn-penilaian" class="nav-tab trainer-only-nav px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
+        <button type="button" onclick="switchView('penilaian')" id="nav-btn-penilaian" class="nav-tab trainer-only-nav hidden px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
           <span class="material-symbols-outlined text-[15px]">rate_review</span>
           <span>Penilaian</span>
         </button>
-        <button type="button" onclick="switchView('dashboard')" id="nav-btn-dashboard" class="nav-tab trainer-only-nav px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
+        <button type="button" onclick="switchView('dashboard')" id="nav-btn-dashboard" class="nav-tab trainer-only-nav hidden px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
           <span class="material-symbols-outlined text-[15px]">analytics</span>
           <span>Dashboard</span>
         </button>
-        <button type="button" onclick="switchView('transkrip')" id="nav-btn-transkrip" class="nav-tab trainer-only-nav px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
+        <button type="button" onclick="switchView('transkrip')" id="nav-btn-transkrip" class="nav-tab trainer-only-nav hidden px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
           <span class="material-symbols-outlined text-[15px]">description</span>
           <span>Transkrip</span>
+        </button>
+        <button type="button" onclick="switchView('logbook')" id="nav-btn-logbook" class="nav-tab trainer-only-nav hidden px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span class="material-symbols-outlined text-[15px]">menu_book</span>
+          <span>Log Book</span>
         </button>
       </nav>
 
       <!-- Right Utility Actions -->
       <div class="flex items-center gap-2 shrink-0">
         
-        
+        <!-- Peserta Mode: Quick Switch to Trainer Login -->
+        <button type="button" onclick="setLoginRole('asesor'); switchView('portal');" id="btn-top-switch-trainer" class="peserta-nav flex items-center gap-1.5 text-xs font-bold text-primary bg-surface-container-low hover:bg-surface-container px-3 py-1.5 rounded-xl border border-surface-container-high transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">badge</span>
+          <span>Login Trainer</span>
+        </button>
 
-        <!-- Role Toggle / Persona Indicator -->
-        <div class="flex items-center gap-1.5 pl-1 border-l border-surface-container-high">
-          <button type="button" onclick="toggleRole()" class="flex items-center gap-1 text-xs font-medium bg-surface-container-low hover:bg-surface-container px-2 py-1 rounded-lg transition-colors border border-surface-container-high whitespace-nowrap" title="Klik untuk berganti peran Instructor/Peserta">
-            <span class="material-symbols-outlined text-[15px] text-primary" id="role-icon">badge</span>
-            <span class="hidden sm:inline font-semibold text-primary text-[11px]" id="role-label">Instructor</span>
-          </button>
-
-          <!-- Current Active Profile Avatar -->
+        <!-- Trainer Mode: Active Instructor Profile Avatar -->
+        <div class="trainer-only-nav hidden flex items-center gap-1.5 pl-1 border-l border-surface-container-high">
           <div class="relative group">
-            <button type="button" onclick="handleUserAvatarClick()" class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-bold text-xs flex items-center justify-center shrink-0 border border-secondary/30 shadow-xs cursor-pointer hover:ring-2 hover:ring-secondary/50 transition-all" id="user-avatar-btn">
-              TR
+            <button type="button" onclick="handleUserAvatarClick()" class="h-8 px-2.5 rounded-full bg-primary-container text-on-primary font-bold text-xs flex items-center gap-1.5 shrink-0 border border-secondary/30 shadow-xs cursor-pointer hover:ring-2 hover:ring-secondary/50 transition-all" id="user-avatar-btn">
+              <span class="material-symbols-outlined text-[16px]">badge</span>
+              <span id="role-label" class="font-semibold text-[11px]">Instructor</span>
             </button>
             <div class="absolute right-0 mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-lg border border-surface-container-high p-2 hidden group-hover:block transition-all z-50">
               <div class="px-3 py-2 border-b border-surface-container-high">
                 <p class="text-xs font-bold text-primary truncate" id="user-display-name">Instructor</p>
                 <p class="text-[10px] text-outline font-mono" id="user-display-id">Mode Instructor</p>
               </div>
-              <button type="button" onclick="logoutTrainer()" class="w-full text-left px-3 py-1.5 mt-1 rounded-lg text-xs text-error hover:bg-error-container/40 flex items-center gap-2 font-medium">
+              <button type="button" onclick="logoutTrainer()" class="w-full text-left px-3 py-1.5 mt-1 rounded-lg text-xs text-error hover:bg-error-container/40 flex items-center gap-2 font-medium cursor-pointer">
                 <span class="material-symbols-outlined text-[16px]">logout</span>
                 <span>Ganti Akun / Keluar</span>
               </button>
@@ -214,7 +232,7 @@
         </div>
 
         <!-- Mobile Menu Toggle Button -->
-        <button type="button" onclick="toggleMobileMenu()" class="xl:hidden p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
+        <button type="button" onclick="toggleMobileMenu()" class="md:hidden p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
           <span class="material-symbols-outlined text-[24px]">menu</span>
         </button>
 
@@ -223,34 +241,65 @@
   </div>
 
   <!-- Mobile Dropdown Navigation -->
-  <div id="mobile-nav" class="hidden xl:hidden border-t border-surface-container-high bg-surface-container-lowest px-4 py-3 shadow-md space-y-1">
-    <button onclick="switchView('portal'); toggleMobileMenu();" id="mobile-nav-portal" class="portal-nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
-      <span class="material-symbols-outlined text-[18px]">login</span>
-      <span>Onboarding (Login Trainer & Peserta)</span>
-    </button>
-    <button onclick="switchView('kode-absensi'); toggleMobileMenu();" class="trainer-only-nav w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
-      <span class="material-symbols-outlined text-[18px]">qr_code_2</span>
-      <span>Kode & Barcode Absensi Trainer</span>
-    </button>
-    <button onclick="switchView('daftar-hadir'); toggleMobileMenu();" class="trainer-only-nav w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-primary bg-surface-container-low">
-      <span class="flex items-center gap-2.5">
-        <span class="material-symbols-outlined text-[18px]">how_to_reg</span>
-        <span>Daftar Hadir Peserta</span>
-      </span>
-      <span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-primary font-mono text-[10px]" id="mobile-badge-peserta">0</span>
-    </button>
-    <button onclick="switchView('penilaian'); toggleMobileMenu();" class="trainer-only-nav w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
-      <span class="material-symbols-outlined text-[18px]">rate_review</span>
-      <span>Lembar Penilaian Kompetensi</span>
-    </button>
-    <button onclick="switchView('dashboard'); toggleMobileMenu();" class="trainer-only-nav w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
-      <span class="material-symbols-outlined text-[18px]">analytics</span>
-      <span>Dashboard & Grafik Nilai</span>
-    </button>
-    <button onclick="switchView('transkrip'); toggleMobileMenu();" class="trainer-only-nav w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
-      <span class="material-symbols-outlined text-[18px]">description</span>
-      <span>Transkrip Rapor 2 Halaman</span>
-    </button>
+  <div id="mobile-nav" class="hidden md:hidden border-t border-surface-container-high bg-surface-container-lowest px-4 py-3 shadow-md space-y-1">
+    <!-- Menu Peserta di Mobile -->
+    <div class="peserta-nav space-y-1">
+      <button onclick="openPesertaAbsen(); toggleMobileMenu();" id="mobile-nav-peserta-absen" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-primary bg-surface-container-low">
+        <span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+        <span>Halaman Absen</span>
+      </button>
+      <button onclick="switchView('logbook'); toggleMobileMenu();" id="mobile-nav-peserta-logbook" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[18px]">menu_book</span>
+        <span>Halaman Log Book Harian</span>
+      </button>
+      <button onclick="openPesertaLaporan(); toggleMobileMenu();" id="mobile-nav-peserta-laporan" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[18px]">description</span>
+        <span>Halaman Laporan Nilai</span>
+      </button>
+      <div class="pt-2 border-t border-surface-container-high mt-2">
+        <button onclick="setLoginRole('asesor'); switchView('portal'); toggleMobileMenu();" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-primary bg-surface-container hover:bg-surface-container-high">
+          <span class="material-symbols-outlined text-[18px]">badge</span>
+          <span>Beralih ke Login Trainer</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu Trainer di Mobile -->
+    <div class="trainer-only-nav hidden space-y-1">
+      <button onclick="switchView('kode-absensi'); toggleMobileMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[18px]">qr_code_2</span>
+        <span>Kode & Barcode Absensi Trainer</span>
+      </button>
+      <button onclick="switchView('daftar-hadir'); toggleMobileMenu();" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-primary bg-surface-container-low">
+        <span class="flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-[18px]">how_to_reg</span>
+          <span>Daftar Hadir Peserta</span>
+        </span>
+        <span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-primary font-mono text-[10px]" id="mobile-badge-peserta">0</span>
+      </button>
+      <button onclick="switchView('penilaian'); toggleMobileMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[18px]">rate_review</span>
+        <span>Lembar Penilaian Kompetensi</span>
+      </button>
+      <button onclick="switchView('dashboard'); toggleMobileMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[18px]">analytics</span>
+        <span>Dashboard & Grafik Nilai</span>
+      </button>
+      <button onclick="switchView('transkrip'); toggleMobileMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[18px]">description</span>
+        <span>Transkrip Rapor 2 Halaman</span>
+      </button>
+      <button onclick="switchView('logbook'); toggleMobileMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[18px]">menu_book</span>
+        <span>Log Book Harian Praktik</span>
+      </button>
+      <div class="pt-2 border-t border-surface-container-high mt-2">
+        <button onclick="logoutTrainer(); toggleMobileMenu();" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-error bg-error-container/30">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          <span>Keluar Sesi Instructor</span>
+        </button>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -276,23 +325,19 @@
           <p class="text-xs text-on-surface-variant mt-1">Pilih akses sebagai <strong>Instructor (Trainer)</strong> atau <strong>Peserta Absensi Training</strong></p>
         </div>
 
-        <!-- Role Tab Switcher -->
-        <div class="grid grid-cols-3 p-1 bg-surface-container-high rounded-xl gap-1 mb-6">
-          <button type="button" id="tab-login-asesor" onclick="setLoginRole('asesor')" class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold bg-primary-container text-on-primary shadow-xs transition-all cursor-pointer">
-            <span class="material-symbols-outlined text-[16px]">badge</span>
-            <span>Trainer</span>
+        <!-- Role Tab Switcher: Hanya 2 Pilihan Utama (Login Trainer & Login Peserta) -->
+        <div class="grid grid-cols-2 p-1 bg-surface-container-high rounded-xl gap-1.5 mb-6">
+          <button type="button" id="tab-login-asesor" onclick="setLoginRole('asesor')" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold bg-primary-container text-on-primary shadow-xs transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">badge</span>
+            <span>Login Trainer</span>
           </button>
-          <button type="button" id="tab-login-peserta" onclick="setLoginRole('peserta')" class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer">
-            <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
-            <span>Absensi</span>
-          </button>
-          <button type="button" id="tab-login-laporan" onclick="setLoginRole('laporan')" class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer">
-            <span class="material-symbols-outlined text-[16px]">description</span>
-            <span>Laporan</span>
+          <button type="button" id="tab-login-peserta" onclick="setLoginRole('peserta')" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">person</span>
+            <span>Login Peserta</span>
           </button>
         </div>
 
-        <!-- TAB 1: TRAINER / INSTRUCTOR LOGIN FORM -->
+        <!-- 1. LOGIN TRAINER / INSTRUCTOR -->
         <form id="form-login-asesor" onsubmit="handleTrainerLogin(event)" class="space-y-4">
           <div class="p-3 bg-surface-container-low rounded-xl border border-surface-container-high flex items-center justify-between gap-2 text-xs">
             <div class="flex items-center gap-2 text-on-surface-variant">
@@ -329,7 +374,6 @@
               <span class="text-outline">Akun Cepat:</span>
               <button type="button" onclick="selectDemoTrainer('TRN-01')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-primary font-mono font-semibold border border-surface-container-high cursor-pointer">TRN-01</button>
             </div>
-            
           </div>
 
           <button type="submit" id="btn-submit-trainer-login" class="w-full mt-2 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
@@ -338,85 +382,79 @@
           </button>
         </form>
 
-        <!-- TAB 3: LAPORAN PESERTA (login ID_Peserta / ID_Karyawan) -->
-        <form id="form-login-laporan" onsubmit="handleReportLogin(event)" class="hidden space-y-4">
-          <div class="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-start gap-2.5">
-            <span class="material-symbols-outlined text-emerald-700 text-[20px] shrink-0 mt-0.5">description</span>
-            <div class="text-xs text-on-surface">
-              <span class="font-bold text-primary block">Laporan Hasil Asesmen Saya</span>
-              <span class="text-on-surface-variant leading-relaxed">Masuk dengan <strong>ID Peserta</strong> (contoh: PSR-0001) atau <strong>ID Karyawan / NIP</strong> untuk melihat skor, status, dan catatan asesor.</span>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <label for="laporan-id-input" class="block text-xs font-semibold text-on-surface">ID Peserta atau ID Karyawan <span class="text-error">*</span></label>
-            <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">badge</span>
-              <input type="text" id="laporan-id-input" required autocomplete="off" autocapitalize="characters" placeholder="PSR-0001 atau NIP Anda" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-sm font-mono text-on-surface placeholder:text-outline placeholder:font-sans border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
-            </div>
-            <p id="laporan-login-error" class="hidden text-[11px] font-semibold text-error pt-1"></p>
-          </div>
-          <button type="submit" id="btn-laporan-login" class="w-full bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
-            <span>Lihat Laporan Saya</span>
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-          </button>
-        </form>
-
-        <!-- TAB 2: PESERTA ABSENSI TRAINING (KHUSUS INPUT KODE / SCAN BARCODE TRAINER) -->
+        <!-- 2. LOGIN PESERTA (HALAMAN ABSEN, LOG BOOK, & LAPORAN - SEDERHANA) -->
         <div id="form-login-peserta" class="hidden space-y-4">
-          <div class="p-3.5 bg-secondary-fixed/40 rounded-xl border border-secondary/20 flex items-start gap-2.5">
-            <span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">qr_code_scanner</span>
-            <div class="text-xs text-on-surface">
-              <span class="font-bold text-primary block">Khusus Absensi Training & Asesmen Peserta</span>
-              <span class="text-on-surface-variant leading-relaxed">Masukkan <strong>Kode Absensi Harian</strong> yang ditampilkan oleh Trainer di kelas, atau <strong>Scan Barcode / QR Code</strong> dari layar Trainer untuk mengisi daftar hadir.</span>
-            </div>
+          
+          <!-- Sub-Nav 3 Pilihan Sederhana Peserta -->
+          <div class="grid grid-cols-3 p-1 bg-surface-container rounded-xl gap-1">
+            <button type="button" onclick="setPesertaSection('absen')" id="btn-peserta-sec-absen" class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-bold bg-primary text-on-primary shadow-xs transition-all cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+              <span>1. Absen</span>
+            </button>
+            <button type="button" onclick="setPesertaSection('logbook')" id="btn-peserta-sec-logbook" class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">menu_book</span>
+              <span>2. Log Book</span>
+            </button>
+            <button type="button" onclick="setPesertaSection('laporan')" id="btn-peserta-sec-laporan" class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">description</span>
+              <span>3. Laporan</span>
+            </button>
           </div>
 
-          <!-- Input Kode Absensi Harian -->
-          <div class="space-y-1.5">
-            <label for="peserta-kode-input" class="block text-xs font-bold text-primary">Kode Absensi Harian Trainer <span class="text-error">*</span></label>
-            <div class="flex items-center gap-2">
-              <div class="relative flex-1 flex items-center">
-                <span class="material-symbols-outlined absolute left-3 text-secondary text-[18px]">key</span>
-                <input type="text" id="peserta-kode-input" maxlength="10" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: K7X-9M4" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-xl text-sm font-mono font-bold tracking-widest uppercase text-primary placeholder:text-outline/60 placeholder:font-sans placeholder:tracking-normal placeholder:font-normal border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
+          <!-- SUB 1: HALAMAN ABSEN PESERTA -->
+          <div id="peserta-sub-absen" class="space-y-4">
+            <div class="p-3 bg-secondary-fixed/30 rounded-xl border border-secondary/20 flex items-start gap-2.5">
+              <span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">how_to_reg</span>
+              <div class="text-xs text-on-surface">
+                <span class="font-bold text-primary block">Presensi Training Mekanik</span>
+                <span class="text-on-surface-variant leading-relaxed">Masukkan <strong>Kode Absensi Harian</strong> dari Trainer atau <strong>Scan Barcode / QR</strong> di kelas untuk mengisi kehadiran.</span>
               </div>
-              <button type="button" onclick="handleVerifyAttendanceCode()" class="bg-primary hover:bg-primary-container text-on-primary font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0 cursor-pointer active:scale-95">
-                <span class="material-symbols-outlined text-[17px]">check_circle</span>
-                <span>Verifikasi Kode</span>
-              </button>
             </div>
-            <p class="text-[11px] text-outline">Kode bersifat unik & berubah otomatis setiap hari untuk masing-masing Trainer.</p>
-          </div>
 
-          <!-- Divider ATAU -->
-          <div class="relative flex py-1 items-center">
-            <div class="flex-grow border-t border-surface-container-high"></div>
-            <span class="flex-shrink mx-3 text-[10px] font-bold uppercase tracking-wider text-outline">Atau Scan Barcode / QR</span>
-            <div class="flex-grow border-t border-surface-container-high"></div>
-          </div>
+            <!-- Input Kode Absensi Harian -->
+            <div class="space-y-1.5">
+              <label for="peserta-kode-input" class="block text-xs font-bold text-primary">Kode Absensi dari Trainer <span class="text-error">*</span></label>
+              <div class="flex items-center gap-2">
+                <div class="relative flex-1 flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-secondary text-[18px]">key</span>
+                  <input type="text" id="peserta-kode-input" maxlength="10" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: K7X-9M4" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-xl text-sm font-mono font-bold tracking-widest uppercase text-primary placeholder:text-outline/60 placeholder:font-sans placeholder:tracking-normal placeholder:font-normal border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
+                </div>
+                <button type="button" onclick="handleVerifyAttendanceCode()" class="bg-primary hover:bg-primary-container text-on-primary font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0 cursor-pointer active:scale-95">
+                  <span class="material-symbols-outlined text-[17px]">check_circle</span>
+                  <span>Verifikasi</span>
+                </button>
+              </div>
+              <p class="text-[11px] text-outline">Kode unik harian yang dibuat oleh Trainer yang mengajar.</p>
+            </div>
 
-          <!-- Tombol Scan Barcode / Kamera -->
-          <div class="space-y-3">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <button type="button" onclick="toggleParticipantScanner()" id="btn-toggle-scanner" class="p-3 bg-surface-container-low hover:bg-surface-container text-primary rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-surface-container-high transition-all cursor-pointer shadow-2xs">
-                <span class="material-symbols-outlined text-[20px] text-secondary">photo_camera</span>
-                <span>Scan Kamera Barcode/QR</span>
+            <!-- Divider -->
+            <div class="relative flex py-0.5 items-center">
+              <div class="flex-grow border-t border-surface-container-high"></div>
+              <span class="flex-shrink mx-3 text-[10px] font-bold uppercase tracking-wider text-outline">Atau Scan Kamera</span>
+              <div class="flex-grow border-t border-surface-container-high"></div>
+            </div>
+
+            <!-- Tombol Scan Barcode / Kamera -->
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="toggleParticipantScanner()" id="btn-toggle-scanner" class="p-2.5 bg-surface-container-low hover:bg-surface-container text-primary rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border border-surface-container-high transition-all cursor-pointer">
+                <span class="material-symbols-outlined text-[18px] text-secondary">photo_camera</span>
+                <span>Scan Barcode</span>
               </button>
-
-              <label class="p-3 bg-surface-container-low hover:bg-surface-container text-primary rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-surface-container-high transition-all cursor-pointer shadow-2xs">
-                <span class="material-symbols-outlined text-[20px] text-secondary">image_search</span>
-                <span>Upload Gambar Barcode</span>
+              <label class="p-2.5 bg-surface-container-low hover:bg-surface-container text-primary rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border border-surface-container-high transition-all cursor-pointer">
+                <span class="material-symbols-outlined text-[18px] text-secondary">image_search</span>
+                <span>Upload Barcode</span>
                 <input type="file" accept="image/*" class="hidden" onchange="handleBarcodeImageUpload(event)">
               </label>
             </div>
 
-            <!-- Live Camera Scanner Box (Hidden by default) -->
+            <!-- Live Camera Scanner Box -->
             <div id="participant-scanner-box" class="hidden p-3 rounded-xl bg-on-background text-white space-y-2.5 relative overflow-hidden">
               <div class="flex items-center justify-between text-xs">
                 <span class="font-semibold flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                   <span>Arahkan Kamera ke Barcode / QR Trainer</span>
                 </span>
-                <button type="button" onclick="stopParticipantScanner()" class="text-white/70 hover:text-white text-[11px] px-2 py-0.5 rounded bg-white/10">Tutup Kamera</button>
+                <button type="button" onclick="stopParticipantScanner()" class="text-white/70 hover:text-white text-[11px] px-2 py-0.5 rounded bg-white/10">Tutup</button>
               </div>
               <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/20">
                 <video id="scanner-video" class="w-full h-full object-cover" playsinline muted></video>
@@ -425,13 +463,75 @@
                 </div>
               </div>
               <div class="flex items-center justify-between gap-2 text-[11px] text-white/80">
-                <span>Pastikan kode barcode terlihat jelas di dalam kotak.</span>
+                <span>Pastikan barcode terlihat jelas di dalam kotak.</span>
                 <button type="button" onclick="simulateScanActiveTrainerCode()" class="px-2.5 py-1 rounded bg-secondary text-white font-semibold text-[11px] shrink-0 cursor-pointer">
-                  Simulasi Scan Sesi Aktif
+                  Simulasi Scan
                 </button>
               </div>
             </div>
           </div>
+
+          <!-- SUB 2: HALAMAN LOG BOOK PESERTA -->
+          <div id="peserta-sub-logbook" class="hidden space-y-4">
+            <div class="p-3 bg-primary-container/20 rounded-xl border border-primary/20 flex items-start gap-2.5">
+              <span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">menu_book</span>
+              <div class="text-xs text-on-surface">
+                <span class="font-bold text-primary block">Log Book Harian Praktik Mekanik</span>
+                <span class="text-on-surface-variant leading-relaxed">Catat pengerjaan unit alat berat (Excavator, Dozer, Hauler), Hour Meter (HM), materi kompetensi, dan uraian teknis perbaikan per unit.</span>
+              </div>
+            </div>
+
+            <div class="p-4 bg-surface-container-low rounded-xl border border-surface-container-high text-xs space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-outline font-medium">Sheet Terhubung:</span>
+                <span class="font-mono font-bold text-primary">Log_Book</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-outline font-medium">Format Pengisian:</span>
+                <span class="font-semibold text-secondary">Multi-Unit per Hari (HM & Uraian Mandiri)</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-outline font-medium">Validasi:</span>
+                <span class="font-semibold text-on-surface">Mentor / Trainer Workshop</span>
+              </div>
+            </div>
+
+            <button type="button" onclick="switchView('logbook')" class="w-full bg-primary hover:bg-primary-container text-on-primary font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+              <span class="material-symbols-outlined text-[18px]">edit_calendar</span>
+              <span>Buka Formulir & Riwayat Log Book</span>
+            </button>
+          </div>
+
+          <!-- SUB 3: HALAMAN LAPORAN PESERTA -->
+          <div id="peserta-sub-laporan" class="hidden space-y-4">
+            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-start gap-2.5">
+              <span class="material-symbols-outlined text-emerald-700 text-[20px] shrink-0 mt-0.5">description</span>
+              <div class="text-xs text-on-surface">
+                <span class="font-bold text-emerald-800 block">Laporan Hasil Asesmen Peserta</span>
+                <span class="text-on-surface-variant leading-relaxed">Cek skor kelulusan, grafik radar kompetensi, dan transkrip resmi 2 halaman dengan memasukkan NIP / ID Peserta Anda.</span>
+              </div>
+            </div>
+
+            <form onsubmit="handleReportLogin(event)" class="space-y-3">
+              <div class="space-y-1">
+                <label for="laporan-id-input" class="block text-xs font-bold text-on-surface">NIP atau ID Peserta <span class="text-error">*</span></label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">badge</span>
+                  <input type="text" id="laporan-id-input" list="list-portal-peserta-nips" required autocomplete="off" placeholder="Contoh: 199307182019011005 atau PSR-0001" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-xl text-xs font-mono font-medium text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
+                </div>
+                <datalist id="list-portal-peserta-nips">
+                  <!-- Populated from appState.peserta -->
+                </datalist>
+                <p id="laporan-login-error" class="hidden text-[11px] font-semibold text-error pt-1"></p>
+              </div>
+
+              <button type="submit" id="btn-laporan-login" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                <span>Lihat Laporan & Rapor Nilai</span>
+              </button>
+            </form>
+          </div>
+
         </div>
 
         <!-- Footer Notice -->
@@ -627,82 +727,95 @@
       </div>
     </div>
 
-    <!-- Metric Bento Grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-      
-      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-outline tracking-wider">Total Terdaftar</span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-primary" id="kpi-total-peserta">0</span>
-          <span class="text-xs text-outline">Kandidat</span>
-        </div>
-        <span class="text-[10px] text-on-surface-variant">Sesi Batch Hari 2</span>
-      </div>
-
-      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-emerald-800 tracking-wider flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-          <span>Sudah Hadir</span>
+    <!-- Metric Bento Grid (Collapsible on Mobile) -->
+    <div class="mb-4 sm:mb-6">
+      <div class="flex items-center justify-between mb-2 md:hidden">
+        <span class="text-xs font-bold text-primary flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-secondary">analytics</span>
+          <span>Ringkasan Statistik Kehadiran</span>
         </span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-emerald-700" id="kpi-hadir-peserta">0</span>
-          <span class="text-xs text-outline">Peserta</span>
-        </div>
-        <span class="text-[10px] text-emerald-700 font-semibold" id="kpi-persen-hadir">0% Kehadiran</span>
+        <button type="button" onclick="togglePesertaBentoMobile()" id="btn-toggle-peserta-bento" class="text-[11px] font-semibold text-secondary hover:text-primary flex items-center gap-0.5 px-2.5 py-1 rounded-lg bg-surface-container-low border border-surface-container-high transition-colors">
+          <span id="lbl-toggle-peserta-bento">Sembunyikan</span>
+          <span class="material-symbols-outlined text-[15px] transition-transform duration-200" id="icon-toggle-peserta-bento">expand_less</span>
+        </button>
       </div>
 
-      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-secondary tracking-wider flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-          <span>Siap Diuji</span>
-        </span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-secondary" id="kpi-siap-peserta">0</span>
-          <span class="text-xs text-outline">Kandidat</span>
+      <div id="peserta-bento-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 transition-all duration-300">
+        
+        <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-outline tracking-wider">Total Terdaftar</span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-primary" id="kpi-total-peserta">0</span>
+            <span class="text-[11px] text-outline">Kandidat</span>
+          </div>
+          <span class="text-[10px] text-on-surface-variant">Sesi Batch Hari 2</span>
         </div>
-        <span class="text-[10px] text-on-surface-variant">Menunggu Asesor</span>
-      </div>
 
-      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-primary-container tracking-wider flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
-          <span>Sedang Diases</span>
-        </span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-primary-container" id="kpi-proses-peserta">0</span>
-          <span class="text-xs text-outline">Aktif</span>
+        <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-emerald-800 tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span>Sudah Hadir</span>
+          </span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-emerald-700" id="kpi-hadir-peserta">0</span>
+            <span class="text-[11px] text-outline">Peserta</span>
+          </div>
+          <span class="text-[10px] text-emerald-700 font-semibold" id="kpi-persen-hadir">0% Kehadiran</span>
         </div>
-        <span class="text-[10px] text-on-surface-variant">Di Workshop Bay</span>
-      </div>
 
-      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-primary tracking-wider flex items-center gap-1">
-          <span class="material-symbols-outlined text-[12px] text-primary">check_circle</span>
-          <span>Selesai Uji</span>
-        </span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-primary" id="kpi-selesai-peserta">0</span>
-          <span class="text-xs text-outline">Nilai Masuk</span>
+        <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-secondary tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            <span>Siap Diuji</span>
+          </span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-secondary" id="kpi-siap-peserta">0</span>
+            <span class="text-[11px] text-outline">Kandidat</span>
+          </div>
+          <span class="text-[10px] text-on-surface-variant">Menunggu Asesor</span>
         </div>
-        <span class="text-[10px] text-secondary font-semibold">Tercatat di Hasil</span>
-      </div>
 
-      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-outline tracking-wider flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
-          <span>Belum Hadir</span>
-        </span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-outline" id="kpi-belum-peserta">0</span>
-          <span class="text-xs text-outline">Kandidat</span>
+        <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-primary-container tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+            <span>Sedang Diases</span>
+          </span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-primary-container" id="kpi-proses-peserta">0</span>
+            <span class="text-[11px] text-outline">Aktif</span>
+          </div>
+          <span class="text-[10px] text-on-surface-variant">Di Workshop Bay</span>
         </div>
-        <span class="text-[10px] text-outline">Konfirmasi Panitia</span>
-      </div>
 
+        <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-primary tracking-wider flex items-center gap-1">
+            <span class="material-symbols-outlined text-[12px] text-primary">check_circle</span>
+            <span>Selesai Uji</span>
+          </span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-primary" id="kpi-selesai-peserta">0</span>
+            <span class="text-[11px] text-outline">Nilai Masuk</span>
+          </div>
+          <span class="text-[10px] text-secondary font-semibold">Tercatat di Hasil</span>
+        </div>
+
+        <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-outline tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+            <span>Belum Hadir</span>
+          </span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-outline" id="kpi-belum-peserta">0</span>
+            <span class="text-[11px] text-outline">Kandidat</span>
+          </div>
+          <span class="text-[10px] text-outline">Konfirmasi Panitia</span>
+        </div>
+
+      </div>
     </div>
 
     <!-- Search & Filter Controls -->
-    <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs mb-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+    <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs mb-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
       
       <!-- Search Input -->
       <div class="relative flex-1 max-w-md">
@@ -710,8 +823,8 @@
         <input type="text" id="search-peserta" oninput="filterPesertaList()" placeholder="Cari Nama Mekanik, NIP, atau Posisi..." class="w-full bg-surface-container-low pl-9 pr-3 py-2 rounded-lg text-xs text-on-surface placeholder:text-outline border border-surface-container-high focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all">
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+      <!-- Filter Tabs & Table Columns Toggle -->
+      <div class="flex items-center justify-between md:justify-end gap-2 overflow-x-auto pb-1 md:pb-0">
         <div class="flex items-center bg-surface-container-low p-1 rounded-lg gap-1 border border-surface-container-high shrink-0">
           <button type="button" onclick="setPesertaFilter('all')" class="filter-tab-peserta px-2.5 py-1 rounded text-xs font-semibold bg-surface-container-lowest text-primary shadow-2xs">Semua</button>
           <button type="button" onclick="setPesertaFilter('Siap Uji')" class="filter-tab-peserta px-2.5 py-1 rounded text-xs font-medium text-on-surface-variant hover:text-primary">Siap Uji</button>
@@ -719,19 +832,25 @@
           <button type="button" onclick="setPesertaFilter('Selesai')" class="filter-tab-peserta px-2.5 py-1 rounded text-xs font-medium text-on-surface-variant hover:text-primary">Selesai</button>
           <button type="button" onclick="setPesertaFilter('Belum Hadir')" class="filter-tab-peserta px-2.5 py-1 rounded text-xs font-medium text-on-surface-variant hover:text-primary">Belum Hadir</button>
         </div>
+
+        <!-- Desktop Toggle: Ringkas / Kolom Lengkap -->
+        <button type="button" onclick="togglePesertaTableCompact()" id="btn-toggle-peserta-compact" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-container-low hover:bg-surface-container text-on-surface-variant border border-surface-container-high transition-all shrink-0 cursor-pointer" title="Sembunyikan / Tampilkan kolom sekunder">
+          <span class="material-symbols-outlined text-[16px] text-secondary">view_column</span>
+          <span id="lbl-toggle-peserta-compact">Ringkas Tabel</span>
+        </button>
       </div>
 
     </div>
 
-    <!-- Candidate Queue Table -->
-    <div class="bg-surface-container-lowest rounded-xl border border-surface-container-high shadow-xs overflow-hidden">
+    <!-- Candidate Queue Table (Desktop & Tablet) -->
+    <div class="hidden md:block bg-surface-container-lowest rounded-xl border border-surface-container-high shadow-xs overflow-hidden">
       <div class="table-scroll">
-        <table class="w-full min-w-[720px] text-left border-collapse text-xs">
+        <table class="w-full min-w-[720px] text-left border-collapse text-xs" id="peserta-table">
           <thead>
             <tr class="bg-surface-container-low border-b border-surface-container-high text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
               <th class="py-3 px-4">Mekanik / Kandidat</th>
-              <th class="py-3 px-4">Posisi & Departemen</th>
-              <th class="py-3 px-4">Waktu & Tempat Asesmen</th>
+              <th class="py-3 px-4 col-peserta-secondary">Posisi & Departemen</th>
+              <th class="py-3 px-4 col-peserta-secondary">Waktu & Tempat Asesmen</th>
               <th class="py-3 px-4 text-center">Status Uji</th>
               <th class="py-3 px-4 text-center">Skor / Capaian</th>
               <th class="py-3 px-4 text-right">Tindakan Asesor</th>
@@ -742,6 +861,11 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Candidate Queue Cards (Smartphone Responsive Layout) -->
+    <div id="peserta-cards-mobile" class="md:hidden space-y-3">
+      <!-- Rendered dynamically by JavaScript -->
     </div>
 
   </section>
@@ -903,14 +1027,22 @@
             </div>
           </div>
 
-          <!-- Actions (Khusus Peserta hanya kembali ke portal absensi) -->
+          <!-- Actions -->
           <div class="space-y-2">
-            <button type="button" id="btn-ticket-open-eval" onclick="startAssessmentForCandidate(lastSubmittedPesertaId)" class="trainer-only-nav hidden w-full py-2.5 px-4 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <button type="button" onclick="openLogBookForActiveCandidate()" class="w-full py-2.5 px-4 bg-primary hover:bg-primary-container text-on-primary font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+              <span class="material-symbols-outlined text-[18px]">menu_book</span>
+              <span>Lanjut Isi Log Book Harian Unit</span>
+            </button>
+            <button type="button" onclick="handleReportLogin(null, document.getElementById('ticket-nip').textContent)" class="w-full py-2.5 px-4 bg-surface-container hover:bg-surface-container-high text-primary font-bold text-xs rounded-xl border border-surface-container-high transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">description</span>
+              <span>Cek Rapor / Laporan Hasil Asesmen</span>
+            </button>
+            <button type="button" id="btn-ticket-open-eval" onclick="startAssessmentForCandidate(lastSubmittedPesertaId)" class="trainer-only-nav hidden w-full py-2.5 px-4 bg-secondary hover:bg-primary text-white font-semibold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
               <span class="material-symbols-outlined text-[18px]">rate_review</span>
               <span>Buka Lembar Penilaian (Khusus Instructor)</span>
             </button>
-            <button type="button" onclick="resetAndReturnToParticipantPortal()" class="w-full py-2.5 px-4 bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-xs rounded-xl transition-all cursor-pointer">
-              Selesai & Kembali ke Halaman Absensi
+            <button type="button" onclick="resetAndReturnToParticipantPortal()" class="w-full py-2 px-4 text-outline hover:text-on-surface font-medium text-xs rounded-xl transition-all cursor-pointer">
+              Selesai & Kembali ke Menu Absen
             </button>
           </div>
 
@@ -925,8 +1057,10 @@
   <!-- VIEW 4: LEMBAR PENILAIAN SKALA KOMPETENSI PESERTA (1–4)                  -->
   <!-- ========================================================================= -->
   <section id="view-penilaian" class="view-container hidden">
-    <button type="button" onclick="saveAssessmentDirect()" aria-label="Simpan penilaian" class="md:hidden fixed right-4 z-30 flex items-center gap-2 bg-primary text-on-primary pl-3.5 pr-4 py-3 rounded-full shadow-xl active:scale-95 no-print" style="bottom:calc(1rem + env(safe-area-inset-bottom))">
-      <span class="material-symbols-outlined text-[18px]">save</span><span class="text-xs font-bold font-mono" id="fab-progress">0%</span>
+    <button type="button" onclick="saveAssessmentDirect()" aria-label="Simpan penilaian" class="md:hidden fixed right-4 z-30 flex items-center gap-2 bg-primary hover:bg-primary-container text-on-primary px-4 py-3 rounded-full shadow-xl active:scale-95 no-print border border-white/20 transition-all cursor-pointer" style="bottom:calc(1rem + env(safe-area-inset-bottom))">
+      <span class="material-symbols-outlined text-[20px]">save</span>
+      <span class="text-xs font-bold tracking-wide">Simpan</span>
+      <span class="text-[11px] font-mono font-bold bg-white/20 px-2 py-0.5 rounded-full" id="fab-progress">0%</span>
     </button>
     
     <!-- Satu Header Bar Terpadu yang Bersih & Rapi -->
@@ -1050,57 +1184,70 @@
       </div>
     </div>
 
-    <!-- Executive KPI Bento -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
-      
-      <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-outline tracking-wider">Total Dinilai</span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-primary" id="dash-total-assessed">0</span>
-          <span class="text-xs text-outline">Kandidat</span>
-        </div>
-        <p class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">verified</span>
-          <span>Tervalidasi Asesor</span>
-        </p>
+    <!-- Executive KPI Bento (Collapsible on Mobile) -->
+    <div class="mb-4 sm:mb-6">
+      <div class="flex items-center justify-between mb-2 md:hidden">
+        <span class="text-xs font-bold text-primary flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-secondary">analytics</span>
+          <span>Ringkasan Metrik Eksekutif</span>
+        </span>
+        <button type="button" onclick="toggleDashBentoMobile()" id="btn-toggle-dash-bento" class="text-[11px] font-semibold text-secondary hover:text-primary flex items-center gap-0.5 px-2.5 py-1 rounded-lg bg-surface-container-low border border-surface-container-high transition-colors">
+          <span id="lbl-toggle-dash-bento">Sembunyikan</span>
+          <span class="material-symbols-outlined text-[15px] transition-transform duration-200" id="icon-toggle-dash-bento">expand_less</span>
+        </button>
       </div>
 
-      <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-secondary tracking-wider">Rata-rata Skor Batch</span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-secondary" id="dash-avg-score">0.0</span>
-          <span class="text-xs text-outline">/ 100</span>
+      <div id="dash-bento-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 transition-all duration-300">
+        
+        <div class="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-outline tracking-wider">Total Dinilai</span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-primary" id="dash-total-assessed">0</span>
+            <span class="text-[11px] text-outline">Kandidat</span>
+          </div>
+          <p class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">verified</span>
+            <span>Tervalidasi Asesor</span>
+          </p>
         </div>
-        <p class="text-[10px] text-secondary font-semibold">Di atas batas lulus (≥ 75.00)</p>
-      </div>
 
-      <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-emerald-800 tracking-wider">Tingkat Kelulusan</span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-emerald-700" id="dash-pass-rate">0%</span>
-          <span class="text-xs text-outline">Lulus Uji</span>
+        <div class="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-secondary tracking-wider">Rata-rata Skor Batch</span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-secondary" id="dash-avg-score">0.0</span>
+            <span class="text-[11px] text-outline">/ 100</span>
+          </div>
+          <p class="text-[10px] text-secondary font-semibold">Di atas batas lulus (≥ 75.00)</p>
         </div>
-        <p class="text-[10px] text-emerald-800 font-medium">Memenuhi standar industri</p>
-      </div>
 
-      <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-primary-container tracking-wider">Top Performer</span>
-        <div class="my-1">
-          <span class="font-bold text-sm text-primary truncate block" id="dash-top-candidate">-</span>
-          <span class="font-mono text-xs font-semibold text-secondary">Skor: 91.25</span>
+        <div class="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-emerald-800 tracking-wider">Tingkat Kelulusan</span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-emerald-700" id="dash-pass-rate">0%</span>
+            <span class="text-[11px] text-outline">Lulus Uji</span>
+          </div>
+          <p class="text-[10px] text-emerald-800 font-medium">Memenuhi standar industri</p>
         </div>
-        <p class="text-[10px] text-outline">Sangat Kompeten</p>
-      </div>
 
-      <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
-        <span class="text-[10px] uppercase font-bold text-amber-800 tracking-wider">Perlu Pembinaan</span>
-        <div class="flex items-baseline gap-1 my-1">
-          <span class="font-mono text-2xl font-bold text-amber-600" id="dash-remedial-count">0</span>
-          <span class="text-xs text-outline">Kandidat</span>
+        <div class="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-primary-container tracking-wider">Top Performer</span>
+          <div class="my-1">
+            <span class="font-bold text-sm text-primary truncate block" id="dash-top-candidate">-</span>
+            <span class="font-mono text-xs font-semibold text-secondary">Skor: 91.25</span>
+          </div>
+          <p class="text-[10px] text-outline">Sangat Kompeten</p>
         </div>
-        <p class="text-[10px] text-outline">Skor &lt; 75.00</p>
-      </div>
 
+        <div class="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+          <span class="text-[10px] uppercase font-bold text-amber-800 tracking-wider">Perlu Pembinaan</span>
+          <div class="flex items-baseline gap-1 my-1">
+            <span class="font-mono text-xl sm:text-2xl font-bold text-amber-600" id="dash-remedial-count">0</span>
+            <span class="text-[11px] text-outline">Kandidat</span>
+          </div>
+          <p class="text-[10px] text-outline">Skor &lt; 75.00</p>
+        </div>
+
+      </div>
     </div>
 
     <!-- Charts Section -->
@@ -1143,27 +1290,33 @@
 
     <!-- Assessment Results Data Table -->
     <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-xs overflow-hidden">
-      <div class="p-4 border-b border-surface-container-high flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="p-3.5 sm:p-4 border-b border-surface-container-high flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <span class="font-display font-bold text-sm text-primary">Rekapitulasi Data Hasil Asesmen</span>
           <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[10px] font-mono font-bold" id="results-count-badge">0 Data</span>
         </div>
-        <div class="flex items-center gap-2 text-xs">
-          <button type="button" onclick="syncHasilFromGSheets()" class="px-2.5 py-1 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-semibold flex items-center gap-1 border border-surface-container-high">
+        <div class="flex items-center gap-2 text-xs flex-wrap">
+          <!-- Desktop Toggle: Ringkas / Kolom Lengkap -->
+          <button type="button" onclick="toggleResultsTableCompact()" id="btn-toggle-results-compact" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-semibold border border-surface-container-high transition-all text-xs cursor-pointer" title="Sembunyikan / Tampilkan kolom sekunder">
+            <span class="material-symbols-outlined text-[15px] text-secondary">view_column</span>
+            <span id="lbl-toggle-results-compact">Ringkas Tabel</span>
+          </button>
+          <button type="button" onclick="syncHasilFromGSheets()" class="px-2.5 py-1 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-semibold flex items-center gap-1 border border-surface-container-high cursor-pointer">
             <span class="material-symbols-outlined text-[14px]">refresh</span>
             <span>Sinkronkan Hasil GSheets</span>
           </button>
         </div>
       </div>
 
-      <div class="table-scroll">
-        <table class="w-full min-w-[720px] text-left border-collapse text-xs">
+      <!-- Desktop & Tablet Results Table -->
+      <div class="hidden md:block table-scroll">
+        <table class="w-full min-w-[720px] text-left border-collapse text-xs" id="results-table">
           <thead>
             <tr class="bg-surface-container-low border-b border-surface-container-high text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
               <th class="py-3 px-4">ID & Tanggal</th>
               <th class="py-3 px-4">Nama Peserta & NIP</th>
-              <th class="py-3 px-4">Posisi & Unit Kerja</th>
-              <th class="py-3 px-4">Trainer Penguji</th>
+              <th class="py-3 px-4 col-results-secondary">Posisi & Unit Kerja</th>
+              <th class="py-3 px-4 col-results-secondary">Trainer Penguji</th>
               <th class="py-3 px-4 text-center">Skor Akhir</th>
               <th class="py-3 px-4 text-center">Status Kelulusan</th>
               <th class="py-3 px-4 text-right">Aksi</th>
@@ -1173,6 +1326,11 @@
             <!-- Rendered by JavaScript dynamically -->
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Smartphone Results Cards Container -->
+      <div id="results-cards-mobile" class="md:hidden space-y-3 p-3">
+        <!-- Rendered dynamically by JavaScript -->
       </div>
     </div>
 
@@ -1215,6 +1373,235 @@
 
     <!-- Official 2-Page A4 Document Container -->
     <div class="max-w-4xl mx-auto space-y-8 print:space-y-0" id="transcript-document-wrapper">
+    </div>
+
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 7: LOG BOOK HARIAN PRAKTIK MEKANIK (PER UNIT, HM & URAIAN)          -->
+  <!-- ========================================================================= -->
+  <section id="view-logbook" class="view-container hidden">
+    
+    <!-- Top Header Banner -->
+    <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-xs border border-surface-container-high mb-6">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-sm shrink-0">
+            <span class="material-symbols-outlined text-[26px]">menu_book</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 class="font-display font-bold text-lg text-primary tracking-tight">Log Book Harian Praktik Mekanik</h1>
+              <span class="px-2 py-0.5 rounded bg-primary-container text-on-primary text-[10px] font-mono font-bold">Sheet: Log_Book</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5">
+              Pencatatan aktivitas perbaikan unit alat berat, HM, materi kompetensi, dan verifikasi mentor harian.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap shrink-0">
+          <button type="button" onclick="toggleLogbookForm()" id="btn-toggle-logbook-form" class="bg-primary hover:bg-primary-container text-on-primary text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
+            <span class="material-symbols-outlined text-[16px]" id="icon-toggle-logbook-form">add</span>
+            <span id="lbl-toggle-logbook-form">Tulis Log Book Baru</span>
+          </button>
+          <button type="button" onclick="syncLogBookFromGSheets()" class="bg-surface-container hover:bg-surface-container-high text-primary text-xs font-semibold px-3.5 py-2 rounded-xl border border-surface-container-high transition-all flex items-center gap-1.5 cursor-pointer" id="btn-refresh-logbook">
+            <span class="material-symbols-outlined text-[16px] text-secondary" id="icon-sync-logbook">sync</span>
+            <span>Refresh GSheets</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Quick Bento Grid Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+        <span class="text-[10px] uppercase font-bold text-outline tracking-wider">Total Entri Log Book</span>
+        <div class="flex items-baseline gap-1 my-1">
+          <span class="font-mono text-2xl font-bold text-primary" id="kpi-logbook-total">0</span>
+          <span class="text-xs text-outline">Aktivitas</span>
+        </div>
+        <span class="text-[10px] text-on-surface-variant">Tercatat di Sheet Log_Book</span>
+      </div>
+
+      <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+        <span class="text-[10px] uppercase font-bold text-secondary tracking-wider">Total Unit Dikerjakan</span>
+        <div class="flex items-baseline gap-1 my-1">
+          <span class="font-mono text-2xl font-bold text-secondary" id="kpi-logbook-units">0</span>
+          <span class="text-xs text-outline">Fleet Unit</span>
+        </div>
+        <span class="text-[10px] text-secondary font-semibold">Excavator, Dozer, Dump Truck</span>
+      </div>
+
+      <div class="col-span-2 sm:col-span-1 bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
+        <span class="text-[10px] uppercase font-bold text-emerald-800 tracking-wider">Mekanik Berpraktik</span>
+        <div class="flex items-baseline gap-1 my-1">
+          <span class="font-mono text-2xl font-bold text-emerald-700" id="kpi-logbook-peserta">0</span>
+          <span class="text-xs text-outline">Orang</span>
+        </div>
+        <span class="text-[10px] text-emerald-700 font-semibold">Tervalidasi Mentor</span>
+      </div>
+    </div>
+
+    <!-- Collapsible Log Book Input Form -->
+    <div id="logbook-form-wrapper" class="bg-surface-container-lowest rounded-2xl p-5 sm:p-6 shadow-xs border border-surface-container-high mb-6 transition-all">
+      <div class="flex items-center justify-between pb-3 border-b border-surface-container-high mb-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary text-[20px]">edit_calendar</span>
+          <h2 class="font-display font-bold text-sm text-primary">Formulir Pengisian Log Book Harian</h2>
+        </div>
+        <span class="text-[11px] text-outline font-mono hidden sm:inline">*Setiap unit, HM & model unit memiliki uraian pekerjaan masing-masing</span>
+      </div>
+
+      <form id="form-logbook" onsubmit="handleLogBookSubmit(event)" class="space-y-4">
+        
+        <!-- Bagian 1: Data Umum Sesi & Peserta -->
+        <div class="p-4 rounded-xl bg-surface-container-low/40 border border-surface-container-high/60 space-y-3">
+          <span class="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
+            <span class="material-symbols-outlined text-[15px] text-secondary">person</span>
+            <span>Identitas Mekanik & Lokasi Sesi</span>
+          </span>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div>
+              <label for="logbook-peserta-select" class="block text-[11px] font-bold text-on-surface mb-1">Pilih Mekanik / NIP <span class="text-error">*</span></label>
+              <select id="logbook-peserta-select" onchange="autoFillLogbookPeserta(this.value)" class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary font-medium cursor-pointer">
+                <!-- Dynamically populated from appState.peserta -->
+              </select>
+            </div>
+            <div>
+              <label for="logbook-date" class="block text-[11px] font-bold text-on-surface mb-1">Tanggal Pengerjaan (Date) <span class="text-error">*</span></label>
+              <input type="date" id="logbook-date" required class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary font-mono">
+            </div>
+            <div>
+              <label for="logbook-lokasi" class="block text-[11px] font-bold text-on-surface mb-1">Lokasi Pengerjaan <span class="text-error">*</span></label>
+              <input type="text" id="logbook-lokasi" required list="list-logbook-lokasi" value="Workshop Bay A" class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+              <datalist id="list-logbook-lokasi">
+                <option value="Workshop Bay A">
+                <option value="Workshop Bay B">
+                <option value="Component Rebuild Center (CRC)">
+                <option value="Pit Stop Heavy Fleet">
+                <option value="Field Support Hauling Area">
+              </datalist>
+            </div>
+            <div>
+              <label for="logbook-mentor-nama" class="block text-[11px] font-bold text-on-surface mb-1">Nama Mentor / Trainer <span class="text-error">*</span></label>
+              <input type="text" id="logbook-mentor-nama" required list="list-logbook-trainers" placeholder="Nama Mentor Pendamping" class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+              <datalist id="list-logbook-trainers">
+                <!-- Populated dynamically -->
+              </datalist>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+            <div>
+              <label for="logbook-mentor-no" class="block text-[11px] font-bold text-on-surface mb-1">Nomor Kontak / WA Mentor</label>
+              <input type="text" id="logbook-mentor-no" placeholder="Contoh: 0812-8899-7711" class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary font-mono">
+            </div>
+            <div class="flex items-end">
+              <span class="text-[11px] text-outline italic">Mentor memvalidasi pekerjaan unit dan kepatuhan K3LH mekanik di workshop.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bagian 2: Dynamic Multi-Unit Cards Container -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px] text-secondary">precision_manufacturing</span>
+              <span>Daftar Unit, HM, dan Uraian Logbook</span>
+            </span>
+            <button type="button" onclick="addLogbookUnitItem()" class="px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-secondary hover:text-primary text-xs font-bold flex items-center gap-1.5 border border-surface-container-high cursor-pointer transition-colors active:scale-95">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              <span>+ Tambah Unit Lain</span>
+            </button>
+          </div>
+
+          <div id="logbook-units-container" class="space-y-3">
+            <!-- Unit item cards injected by JS -->
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-surface-container-high">
+          <button type="button" onclick="toggleLogbookForm(false)" class="px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs cursor-pointer transition-all">
+            Tutup
+          </button>
+          <button type="submit" id="btn-submit-logbook" class="h-11 px-5 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">save</span>
+            <span>Simpan Log Book ke Spreadsheet</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Datalist for Unit Models -->
+    <datalist id="list-logbook-models">
+      <option value="Komatsu PC200-8 (Hydraulic Excavator)">
+      <option value="Komatsu PC300-8 (Hydraulic Excavator)">
+      <option value="Komatsu PC400-8 (Hydraulic Excavator)">
+      <option value="Komatsu D85ESS-2 (Crawler Dozer)">
+      <option value="Komatsu D155A-6 (Crawler Dozer)">
+      <option value="Komatsu HD785-7 (Dump Truck)">
+      <option value="CAT 320D (Hydraulic Excavator)">
+      <option value="CAT 336D (Hydraulic Excavator)">
+      <option value="CAT D6R (Track-Type Tractor)">
+      <option value="CAT 777D (Off-Highway Truck)">
+      <option value="Hitachi ZX200-5G (Excavator)">
+      <option value="Volvo FMX 440 (Tipping Truck)">
+    </datalist>
+
+    <!-- Riwayat Log Book Tersimpan -->
+    <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-xs overflow-hidden">
+      
+      <!-- Toolbar -->
+      <div class="p-3.5 sm:p-4 border-b border-surface-container-high flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="font-display font-bold text-sm text-primary">Riwayat Log Book Harian Tersimpan</span>
+          <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[10px] font-mono font-bold" id="logbook-count-badge">0 Data</span>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="relative flex-1 sm:w-64">
+            <span class="material-symbols-outlined absolute left-2.5 top-2 text-outline text-[16px]">search</span>
+            <input type="text" id="search-logbook" oninput="filterLogBookList()" placeholder="Cari NIP, Unit, atau Materi..." class="w-full bg-surface-container-low pl-8 pr-3 py-1.5 rounded-lg text-xs text-on-surface placeholder:text-outline border border-surface-container-high focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary">
+          </div>
+          <!-- Desktop Compact Toggle -->
+          <button type="button" onclick="toggleLogbookTableCompact()" id="btn-toggle-logbook-compact" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-semibold border border-surface-container-high transition-all text-xs cursor-pointer">
+            <span class="material-symbols-outlined text-[15px] text-secondary">view_column</span>
+            <span id="lbl-toggle-logbook-compact">Ringkas Tabel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Desktop Table -->
+      <div class="hidden md:block table-scroll">
+        <table class="w-full min-w-[760px] text-left border-collapse text-xs" id="logbook-table">
+          <thead>
+            <tr class="bg-surface-container-low border-b border-surface-container-high text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
+              <th class="py-3 px-4">Tanggal & ID</th>
+              <th class="py-3 px-4">Mekanik / Peserta</th>
+              <th class="py-3 px-4">Model & No. Unit</th>
+              <th class="py-3 px-4">HM Unit</th>
+              <th class="py-3 px-4 col-logbook-secondary">Materi Kompetensi</th>
+              <th class="py-3 px-4">Uraian Logbook</th>
+              <th class="py-3 px-4 col-logbook-secondary">Keterangan & Mentor</th>
+            </tr>
+          </thead>
+          <tbody id="logbook-table-body" class="divide-y divide-surface-container-high font-num text-on-surface">
+            <!-- Rendered by JS dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Responsive Cards -->
+      <div id="logbook-cards-mobile" class="md:hidden p-3 space-y-3">
+        <!-- Rendered by JS dynamically -->
+      </div>
+
     </div>
 
   </section>
@@ -1272,6 +1659,84 @@
         Tutup
       </button>
     </div>
+  </div>
+</div>
+
+<!-- 2. MODAL EDIT DATA PESERTA OLEH TRAINER (NAMA, NIP, POSISI, DEPARTEMEN) -->
+<div id="modal-edit-peserta" class="fixed inset-0 z-50 bg-on-surface/50 backdrop-blur-xs flex items-center justify-center p-4 hidden no-print">
+  <div class="bg-surface-container-lowest rounded-2xl max-w-md w-full max-h-[92dvh] overflow-y-auto p-5 sm:p-6 shadow-2xl border border-surface-container-high relative">
+    
+    <div class="flex items-center justify-between pb-3 border-b border-surface-container-high mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">edit_note</span>
+        </div>
+        <div>
+          <h3 class="font-display font-bold text-sm text-primary">Ubah Data Peserta & Penugasan</h3>
+          <p class="text-[10px] text-outline">Trainer dapat memperbarui nama, NIP, posisi, dan departemen</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeEditPesertaModal()" class="text-outline hover:text-on-surface p-1 rounded-lg cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+
+    <form id="form-edit-peserta" onsubmit="handleSaveEditPeserta(event)" class="space-y-3.5 text-xs">
+      <input type="hidden" id="edit-peserta-original-id" value="">
+      <input type="hidden" id="edit-peserta-original-nip" value="">
+
+      <div>
+        <label for="edit-peserta-nama" class="block text-[11px] font-bold text-on-surface mb-1">Nama Lengkap Peserta:</label>
+        <input type="text" id="edit-peserta-nama" required class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary font-medium">
+      </div>
+
+      <div>
+        <label for="edit-peserta-nip" class="block text-[11px] font-bold text-on-surface mb-1">NIP / ID Peserta:</label>
+        <input type="text" id="edit-peserta-nip" required class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary font-mono font-bold">
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label for="edit-peserta-posisi" class="block text-[11px] font-bold text-on-surface mb-1">Posisi / Jabatan:</label>
+          <input type="text" id="edit-peserta-posisi" required list="list-posisi-options" class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+          <datalist id="list-posisi-options">
+            <option value="Mekanik I - Engine Specialist">
+            <option value="Mekanik II - Hydraulic System">
+            <option value="Mekanik III - Powertrain">
+            <option value="Senior Technician Heavy Equipment">
+            <option value="Field Mechanic">
+            <option value="Diagnostic Technician">
+          </datalist>
+        </div>
+
+        <div>
+          <label for="edit-peserta-dept" class="block text-[11px] font-bold text-on-surface mb-1">Departemen / Unit:</label>
+          <input type="text" id="edit-peserta-dept" required list="list-dept-options" class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+          <datalist id="list-dept-options">
+            <option value="Heavy Equipment Overhaul & Repair">
+            <option value="Engine & Hydraulic Service Center">
+            <option value="Plant Maintenance Division">
+            <option value="Field Support & Heavy Mining Operation">
+          </datalist>
+        </div>
+      </div>
+
+      <div>
+        <label for="edit-peserta-tempat" class="block text-[11px] font-bold text-on-surface mb-1">Tempat Asesmen:</label>
+        <input type="text" id="edit-peserta-tempat" class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-surface-container-high">
+        <button type="button" onclick="closeEditPesertaModal()" class="px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs cursor-pointer transition-all">
+          Batal
+        </button>
+        <button type="submit" id="btn-save-edit-peserta" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-xs shadow-xs cursor-pointer transition-all flex items-center gap-1.5 active:scale-95">
+          <span class="material-symbols-outlined text-[16px]">save</span>
+          <span>Simpan Perubahan</span>
+        </button>
+      </div>
+    </form>
+
   </div>
 </div>
 
@@ -2885,6 +3350,42 @@ const INITIAL_PESERTA = [];
 
 // 4. HASIL ASESMEN (tab Hasil) - TANPA MOCK DATA
 const INITIAL_HASIL = [];
+
+// 5. LOG BOOK HARIAN PRAKTIK (tab Log_Book)
+const INITIAL_LOGBOOK = [
+  {
+    idLogbook: 'LB-20261107-1011',
+    idPeserta: '199307182019011005',
+    namaPeserta: 'Budi Santoso',
+    lokasi: 'Workshop Bay A',
+    date: '2026-11-07',
+    modelUnit: 'Komatsu PC200-8 (Hydraulic Excavator)',
+    nomerUnit: 'EX-201',
+    hmUnit: '12450.5',
+    uraianLogbook: 'Melakukan periodic service 500 jam, penggantian oli engine SAE 15W-40, filter oli, fuel pre-filter, dan filter udara. Pengecekan kebocoran hose hidrolik main pump dan pengencangan track tensioner sesuai spesifikasi shop manual.',
+    materKompetensi: 'Periodic Service & Maintenance System Engine & Hydraulic',
+    keterangan: 'Pekerjaan selesai, unit siap operasi (RFU)',
+    namaMentor: 'Dr. Hendra Asesor, M.T.',
+    nomerMentor: '0812-8899-7711',
+    timestamp: '2026-11-07T08:30:00.000Z'
+  },
+  {
+    idLogbook: 'LB-20261107-1012',
+    idPeserta: '199307182019011005',
+    namaPeserta: 'Budi Santoso',
+    lokasi: 'Workshop Bay A',
+    date: '2026-11-07',
+    modelUnit: 'Komatsu D85ESS-2 (Crawler Dozer)',
+    nomerUnit: 'DZ-085',
+    hmUnit: '9820.2',
+    uraianLogbook: 'Pemeriksaan keausan bushing dan link undercarriage, penyetelan kelonggaran track shoe sag (50 mm). Penggantian o-ring joint manifold silinder blade lift yang mengalami rembesan oli hidrolik.',
+    materKompetensi: 'Undercarriage Inspection & Hydraulic Cylinder Reseal',
+    keterangan: 'Selesai uji coba fungsi blade normal',
+    namaMentor: 'Dr. Hendra Asesor, M.T.',
+    nomerMentor: '0812-8899-7711',
+    timestamp: '2026-11-07T11:15:00.000Z'
+  }
+];
 // =========================================================================
 // APPLICATION STATE
 // =========================================================================
@@ -2936,6 +3437,14 @@ const appState = {
     } catch (e) {}
     return INITIAL_HASIL;
   })(),
+  logbook: (function() {
+    try {
+      const stored = localStorage.getItem('sim_logbook');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+    return INITIAL_LOGBOOK;
+  })(),
+  logbookTableCompact: false,
   
   currentPesertaId: null,
   evalScores: {},
@@ -2955,6 +3464,10 @@ const appState = {
   activeCategory: 'ALL',
   statusFilter: 'all',
   pesertaFilter: 'all',
+  pesertaTableCompact: false,
+  resultsTableCompact: false,
+  pesertaBentoCollapsed: false,
+  dashBentoCollapsed: false,
   
   radarChart: null,
   barChart: null
@@ -3263,6 +3776,45 @@ async function syncAllSheets(showNotification = true) {
 
     await restoreDrafts(await fetchSheetViaGviz('Draft_Asesmen'));
 
+    // 5. Fetch Log_Book if populated
+    try {
+      const logBookTable = await fetchSheetViaGviz("Log_Book");
+      if (logBookTable && logBookTable.rows && logBookTable.rows.length > 0) {
+        const liveLogs = [];
+        logBookTable.rows.forEach(row => {
+          const c = row.c;
+          if (c && c[0]) {
+            const idLog = String(c[0].v || '').trim();
+            if (idLog && idLog.toLowerCase() !== 'id_logbook') {
+              liveLogs.push({
+                idLogbook: idLog,
+                idPeserta: c[1] ? String(c[1].v || '').trim() : '',
+                namaPeserta: c[2] ? String(c[2].v || '').trim() : '',
+                lokasi: c[3] ? String(c[3].v || '').trim() : '',
+                date: c[4] ? String(c[4].v || '').slice(0, 10) : '',
+                modelUnit: c[5] ? String(c[5].v || '').trim() : '',
+                nomerUnit: c[6] ? String(c[6].v || '').trim() : '',
+                hmUnit: c[7] ? String(c[7].v || '').trim() : '',
+                uraianLogbook: c[8] ? String(c[8].v || '').trim() : '',
+                materKompetensi: c[9] ? String(c[9].v || '').trim() : '',
+                keterangan: c[10] ? String(c[10].v || '').trim() : '',
+                namaMentor: c[11] ? String(c[11].v || '').trim() : '',
+                nomerMentor: c[12] ? String(c[12].v || '').trim() : '',
+                timestamp: c[13] ? String(c[13].v || '').trim() : ''
+              });
+            }
+          }
+        });
+        if (liveLogs.length > 0) {
+          appState.logbook = liveLogs.reverse();
+          localStorage.setItem('sim_logbook', JSON.stringify(appState.logbook));
+          updated = true;
+        }
+      }
+    } catch (exLog) {
+      console.warn('Sync Log_Book via Gviz warning:', exLog);
+    }
+
     if (showNotification) {
       if (appState._bulk || updated) showToast('Sinkronisasi Sukses', 'Data berhasil diperbarui dari Google Spreadsheet.');
       else showToast('Sinkronisasi Gagal', 'Spreadsheet tidak terjangkau. Data lokal tetap dipakai dan perubahan dikirim saat koneksi pulih.', true);
@@ -3286,6 +3838,7 @@ async function syncAllSheets(showNotification = true) {
     calculateAssessmentSummary();
     renderDashboardMetrics();
     renderResultsTable();
+    if (typeof renderLogBookList === 'function') renderLogBookList();
   }
 }
 
@@ -3525,7 +4078,7 @@ function logoutReport() {
   const wasPeserta = appState.reportMode === 'peserta';
   appState.report = null;
   sessionStorage.removeItem('sim_report_id');
-  if (wasPeserta) { switchView('portal'); setLoginRole('laporan'); }
+  if (wasPeserta) { setLoginRole('peserta'); setPesertaSection('laporan'); switchView('portal'); }
   else switchView(appState.reportBack && appState.reportBack !== 'laporan' ? appState.reportBack : 'daftar-hadir');
 }
 
@@ -3586,10 +4139,51 @@ function reportSummary(R) {
   return { br, totalR, totalT, pct: totalT ? Math.round(totalR / totalT * 100) : 0, overall, hmap, allDone, headScore, lastHasil: hList[hList.length - 1] || null };
 }
 
+function handleLaporanSearch(e) {
+  if (e) e.preventDefault();
+  const input = document.getElementById('laporan-direct-search-nip');
+  const nip = input ? input.value.trim() : '';
+  if (!nip) return;
+  handleReportLogin(null, nip);
+}
+
 function renderLaporan() {
   const root = document.getElementById('laporan-root');
+  if (!root) return;
   const R = appState.report;
-  if (!root || !R) return;
+  if (!R) {
+    root.innerHTML = `
+      <div class="max-w-md mx-auto bg-surface-container-lowest rounded-2xl p-6 sm:p-8 shadow-xs border border-surface-container-high text-center space-y-4 my-8">
+        <div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center mx-auto shadow-sm">
+          <span class="material-symbols-outlined text-[26px]">description</span>
+        </div>
+        <div>
+          <h2 class="font-display font-bold text-base text-primary">Halaman Laporan Asesmen Peserta</h2>
+          <p class="text-xs text-on-surface-variant mt-1">Masukkan NIP atau ID Peserta untuk melihat rapor nilai kelulusan & transkrip kompetensi mekanik.</p>
+        </div>
+
+        <form onsubmit="handleLaporanSearch(event)" class="space-y-3 pt-2 text-left">
+          <div>
+            <label class="block text-xs font-bold text-on-surface mb-1">NIP atau ID Peserta <span class="text-error">*</span></label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">badge</span>
+              <input type="text" id="laporan-direct-search-nip" list="list-laporan-direct-peserta" required placeholder="Contoh: 199307182019011005" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-xl text-xs font-mono font-medium text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
+            </div>
+            <datalist id="list-laporan-direct-peserta">
+              ${(appState.peserta || []).map(p => `<option value="${p.nip}">${p.nama} (${p.nip})</option>`).join('')}
+            </datalist>
+            <p id="laporan-direct-search-error" class="hidden text-[11px] font-semibold text-error pt-1"></p>
+          </div>
+
+          <button type="submit" id="btn-laporan-direct-search" class="w-full bg-primary hover:bg-primary-container text-on-primary font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">search</span>
+            <span>Buka Laporan Hasil Asesmen</span>
+          </button>
+        </form>
+      </div>
+    `;
+    return;
+  }
   const p = R.peserta, S = reportSummary(R);
   const lv = levelOf(S.headScore);
   const statusText = S.allDone ? `Selesai • ${lv.t}` : (S.totalR ? `Sedang Diases (${S.pct}%)` : (p.status || 'Siap Uji'));
@@ -3642,11 +4236,17 @@ function renderLaporan() {
 
   root.innerHTML = `
   <div class="no-print flex flex-wrap items-center justify-between gap-2 mb-4">
-    <button type="button" onclick="logoutReport()" class="flex items-center gap-1 text-xs font-semibold text-primary hover:text-secondary">
-      <span class="material-symbols-outlined text-[18px]">${isPeserta ? 'logout' : 'arrow_back'}</span><span>${isPeserta ? 'Keluar' : 'Kembali'}</span></button>
     <div class="flex items-center gap-2">
-      <button type="button" onclick="refreshReport()" class="px-3 py-2 rounded-xl bg-surface-container-high text-primary text-xs font-semibold flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">refresh</span><span>Muat Ulang</span></button>
-      <button type="button" onclick="printLaporan()" class="px-3 py-2 rounded-xl bg-primary text-on-primary text-xs font-semibold flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">print</span><span>Cetak / PDF</span></button>
+      <button type="button" onclick="logoutReport()" class="flex items-center gap-1 text-xs font-semibold text-primary hover:text-secondary cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">${isPeserta ? 'logout' : 'arrow_back'}</span><span>${isPeserta ? 'Keluar' : 'Kembali'}</span>
+      </button>
+      <button type="button" onclick="appState.report = null; renderLaporan();" class="flex items-center gap-1 text-xs font-semibold text-on-surface-variant hover:text-primary px-2.5 py-1.5 rounded-lg border border-surface-container-high bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+        <span class="material-symbols-outlined text-[15px]">search</span><span>Cari Peserta Lain</span>
+      </button>
+    </div>
+    <div class="flex items-center gap-2">
+      <button type="button" onclick="refreshReport()" class="px-3 py-2 rounded-xl bg-surface-container-high text-primary text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><span class="material-symbols-outlined text-[16px]">refresh</span><span>Muat Ulang</span></button>
+      <button type="button" onclick="printLaporan()" class="px-3 py-2 rounded-xl bg-primary text-on-primary text-xs font-semibold flex items-center gap-1.5 cursor-pointer active:scale-95"><span class="material-symbols-outlined text-[16px]">print</span><span>Cetak / PDF</span></button>
     </div>
   </div>
 
@@ -3698,10 +4298,9 @@ function scheduleAutoSave() {
 // =========================================================================
 
 function switchView(viewName) {
-  if (viewName === 'laporan' && !appState.report) viewName = 'portal';
   const trainerOnlyViews = ['kode-absensi', 'daftar-hadir', 'penilaian', 'dashboard', 'transkrip'];
 
-  // Jika mode peserta aktif (atau belum login sebagai Trainer), batasi hanya boleh ke portal atau presensi-form
+  // Jika mode peserta aktif (atau belum login sebagai Trainer), batasi hanya boleh ke portal atau presensi-form atau logbook atau laporan
   if ((appState.currentRole === 'peserta' || !appState.isTrainerLoggedIn) && trainerOnlyViews.includes(viewName)) {
     viewName = 'portal';
   }
@@ -3709,6 +4308,7 @@ function switchView(viewName) {
   // Jika peserta mencoba membuka presensi-form tanpa kode trainer yang terverifikasi
   if (viewName === 'presensi-form' && appState.currentRole === 'peserta' && !appState.verifiedAttendanceCode) {
     setLoginRole('peserta');
+    setPesertaSection('absen');
     showToast('Kode Absensi Diperlukan', 'Silakan masukkan Kode Absensi Harian atau Scan Barcode dari Trainer terlebih dahulu.', true);
     viewName = 'portal';
   }
@@ -3732,21 +4332,45 @@ function switchView(viewName) {
   const isTrainerActive = (appState.currentRole === 'asesor' && appState.isTrainerLoggedIn);
   document.querySelectorAll('.nav-tab').forEach(btn => {
     const isTrainerNav = btn.classList.contains('trainer-only-nav');
-    const isPortalNav = btn.id === 'nav-btn-portal' || btn.classList.contains('portal-nav-btn');
+    const isPesertaNav = btn.classList.contains('peserta-nav');
     let hiddenClass = '';
     if (isTrainerNav && !isTrainerActive) hiddenClass = ' hidden';
-    if (isPortalNav && isTrainerActive) hiddenClass = ' hidden';
-    btn.className = `nav-tab ${isTrainerNav ? 'trainer-only-nav ' : ''}${isPortalNav ? 'portal-nav-btn ' : ''}px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap${hiddenClass}`;
+    if (isPesertaNav && isTrainerActive) hiddenClass = ' hidden';
+    btn.className = `nav-tab ${isTrainerNav ? 'trainer-only-nav ' : ''}${isPesertaNav ? 'peserta-nav ' : ''}px-2.5 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-1.5 whitespace-nowrap${hiddenClass}`;
   });
 
-  const activeBtn = document.getElementById(`nav-btn-${viewName}`);
+  let activeBtnId = `nav-btn-${viewName}`;
+  if (!isTrainerActive) {
+    if (viewName === 'portal' || viewName === 'presensi-form') activeBtnId = 'nav-btn-peserta-absen';
+    else if (viewName === 'logbook') activeBtnId = 'nav-btn-peserta-logbook';
+    else if (viewName === 'laporan') activeBtnId = 'nav-btn-peserta-laporan';
+  }
+
+  const activeBtn = document.getElementById(activeBtnId);
   if (activeBtn) {
     const isTrainerNav = activeBtn.classList.contains('trainer-only-nav');
-    const isPortalNav = activeBtn.id === 'nav-btn-portal' || activeBtn.classList.contains('portal-nav-btn');
+    const isPesertaNav = activeBtn.classList.contains('peserta-nav');
     let hiddenClass = '';
     if (isTrainerNav && !isTrainerActive) hiddenClass = ' hidden';
-    if (isPortalNav && isTrainerActive) hiddenClass = ' hidden';
-    activeBtn.className = `nav-tab ${isTrainerNav ? 'trainer-only-nav ' : ''}${isPortalNav ? 'portal-nav-btn ' : ''}px-2.5 py-1.5 rounded-lg text-xs font-semibold text-primary bg-surface-container-lowest shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap${hiddenClass}`;
+    if (isPesertaNav && isTrainerActive) hiddenClass = ' hidden';
+    activeBtn.className = `nav-tab ${isTrainerNav ? 'trainer-only-nav ' : ''}${isPesertaNav ? 'peserta-nav ' : ''}px-2.5 py-1.5 rounded-lg text-xs font-semibold text-primary bg-surface-container-lowest shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap${hiddenClass}`;
+  }
+
+  // Mobile nav highlighting
+  document.querySelectorAll('#mobile-nav button').forEach(b => {
+    b.classList.remove('bg-surface-container-low', 'text-primary');
+    b.classList.add('text-on-surface-variant');
+  });
+  let activeMobId = `mobile-nav-${viewName}`;
+  if (!isTrainerActive) {
+    if (viewName === 'portal' || viewName === 'presensi-form') activeMobId = 'mobile-nav-peserta-absen';
+    else if (viewName === 'logbook') activeMobId = 'mobile-nav-peserta-logbook';
+    else if (viewName === 'laporan') activeMobId = 'mobile-nav-peserta-laporan';
+  }
+  const activeMobBtn = document.getElementById(activeMobId);
+  if (activeMobBtn) {
+    activeMobBtn.classList.add('bg-surface-container-low', 'text-primary');
+    activeMobBtn.classList.remove('text-on-surface-variant');
   }
 
   // View specific setups
@@ -3767,6 +4391,8 @@ function switchView(viewName) {
     renderPesertaTable();
   } else if (viewName === 'presensi-form') {
     preparePresensiFormView();
+  } else if (viewName === 'logbook') {
+    renderLogBookView();
   }
 }
 
@@ -3792,33 +4418,18 @@ function toggleRole() {
 
 function updateRoleDisplay() {
   const label = document.getElementById('role-label');
-  const icon = document.getElementById('role-icon');
   const isTrainerActive = (appState.currentRole === 'asesor' && appState.isTrainerLoggedIn);
 
-  if (isTrainerActive) {
-    if (label) label.textContent = 'Instructor';
-    if (icon) icon.textContent = 'badge';
-  } else {
-    if (label) label.textContent = 'Peserta';
-    if (icon) icon.textContent = 'person';
-  }
+  if (label) label.textContent = isTrainerActive ? 'Instructor' : 'Peserta';
 
-  // Tampilkan atau sembunyikan seluruh navigasi khusus Trainer
   document.querySelectorAll('.trainer-only-nav').forEach(el => {
-    if (isTrainerActive) {
-      el.classList.remove('hidden');
-    } else {
-      el.classList.add('hidden');
-    }
+    if (isTrainerActive) el.classList.remove('hidden');
+    else el.classList.add('hidden');
   });
 
-  // Sembunyikan menu Onboarding jika Trainer SUDAH login
-  document.querySelectorAll('.portal-nav-btn, #nav-btn-portal, #mobile-nav-portal').forEach(el => {
-    if (isTrainerActive) {
-      el.classList.add('hidden');
-    } else {
-      el.classList.remove('hidden');
-    }
+  document.querySelectorAll('.peserta-nav').forEach(el => {
+    if (isTrainerActive) el.classList.add('hidden');
+    else el.classList.remove('hidden');
   });
 }
 
@@ -4161,6 +4772,7 @@ function resetAndReturnToParticipantPortal() {
     switchView('daftar-hadir');
   } else {
     setLoginRole('peserta');
+    setPesertaSection('absen');
     switchView('portal');
   }
 }
@@ -4261,45 +4873,85 @@ function renderPortalTrainerQuickPills() {
 // TRAINER AUTHENTICATION & PORTAL LOGIC
 // =========================================================================
 
-function setLoginRoleBase(role) {
+function setLoginRole(role) {
   const tabAsesor = document.getElementById('tab-login-asesor');
   const tabPeserta = document.getElementById('tab-login-peserta');
   const formAsesor = document.getElementById('form-login-asesor');
   const formPeserta = document.getElementById('form-login-peserta');
 
+  const activeBtnClass = 'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold bg-primary-container text-on-primary shadow-xs transition-all cursor-pointer';
+  const inactiveBtnClass = 'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer';
+
   if (role === 'asesor') {
     stopParticipantScanner();
-    if (tabAsesor) tabAsesor.className = 'flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold bg-primary-container text-on-primary shadow-xs transition-all cursor-pointer';
-    if (tabPeserta) tabPeserta.className = 'flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer';
+    if (tabAsesor) tabAsesor.className = activeBtnClass;
+    if (tabPeserta) tabPeserta.className = inactiveBtnClass;
     if (formAsesor) formAsesor.classList.remove('hidden');
     if (formPeserta) formPeserta.classList.add('hidden');
   } else {
     appState.currentRole = 'peserta';
     localStorage.setItem('sim_current_role', 'peserta');
     updateRoleDisplay();
-    if (tabPeserta) tabPeserta.className = 'flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold bg-secondary text-on-secondary shadow-xs transition-all cursor-pointer';
-    if (tabAsesor) tabAsesor.className = 'flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer';
+    if (tabPeserta) tabPeserta.className = activeBtnClass;
+    if (tabAsesor) tabAsesor.className = inactiveBtnClass;
     if (formPeserta) formPeserta.classList.remove('hidden');
     if (formAsesor) formAsesor.classList.add('hidden');
   }
 }
 
-function setLoginRole(role) {
-  const tabL = document.getElementById('tab-login-laporan');
-  const formL = document.getElementById('form-login-laporan');
-  const base = 'flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer';
-  if (role === 'laporan') {
-    setLoginRoleBase('peserta');
-    const fp = document.getElementById('form-login-peserta'); if (fp) fp.classList.add('hidden');
-    const tp = document.getElementById('tab-login-peserta');
-    if (tp) tp.className = base + ' text-on-surface-variant hover:text-on-surface';
-    if (tabL) tabL.className = base + ' bg-emerald-700 text-white shadow-xs';
-    if (formL) formL.classList.remove('hidden');
-  } else {
-    setLoginRoleBase(role);
-    if (tabL) tabL.className = base + ' text-on-surface-variant hover:text-on-surface';
-    if (formL) formL.classList.add('hidden');
+function setPesertaSection(sectionName) {
+  const subAbsen = document.getElementById('peserta-sub-absen');
+  const subLogbook = document.getElementById('peserta-sub-logbook');
+  const subLaporan = document.getElementById('peserta-sub-laporan');
+
+  const btnAbsen = document.getElementById('btn-peserta-sec-absen');
+  const btnLogbook = document.getElementById('btn-peserta-sec-logbook');
+  const btnLaporan = document.getElementById('btn-peserta-sec-laporan');
+
+  const activePill = 'flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-bold bg-primary text-on-primary shadow-xs transition-all cursor-pointer';
+  const inactivePill = 'flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer';
+
+  if (sectionName === 'absen') {
+    if (subAbsen) subAbsen.classList.remove('hidden');
+    if (subLogbook) subLogbook.classList.add('hidden');
+    if (subLaporan) subLaporan.classList.add('hidden');
+    if (btnAbsen) btnAbsen.className = activePill;
+    if (btnLogbook) btnLogbook.className = inactivePill;
+    if (btnLaporan) btnLaporan.className = inactivePill;
+  } else if (sectionName === 'logbook') {
+    if (subAbsen) subAbsen.classList.add('hidden');
+    if (subLogbook) subLogbook.classList.remove('hidden');
+    if (subLaporan) subLaporan.classList.add('hidden');
+    if (btnAbsen) btnAbsen.className = inactivePill;
+    if (btnLogbook) btnLogbook.className = activePill;
+    if (btnLaporan) btnLaporan.className = inactivePill;
+  } else if (sectionName === 'laporan') {
+    if (subAbsen) subAbsen.classList.add('hidden');
+    if (subLogbook) subLogbook.classList.add('hidden');
+    if (subLaporan) subLaporan.classList.remove('hidden');
+    if (btnAbsen) btnAbsen.className = inactivePill;
+    if (btnLogbook) btnLogbook.className = inactivePill;
+    if (btnLaporan) btnLaporan.className = activePill;
+    
+    const dl = document.getElementById('list-portal-peserta-nips');
+    if (dl && appState.peserta) {
+      dl.innerHTML = appState.peserta.map(p => `<option value="${p.nip}">${p.nama} (${p.nip})</option>`).join('');
+    }
   }
+}
+
+function openPesertaAbsen() {
+  if (appState.verifiedAttendanceCode) {
+    switchView('presensi-form');
+  } else {
+    setLoginRole('peserta');
+    setPesertaSection('absen');
+    switchView('portal');
+  }
+}
+
+function openPesertaLaporan() {
+  switchView('laporan');
 }
 
 function togglePasswordVisibility(fieldId, btn) {
@@ -4460,7 +5112,11 @@ function handlePesertaPortalAction() {
 
 function renderPesertaTable() {
   const tbody = document.getElementById('peserta-table-body');
-  if (!tbody) return;
+  const cardsMobile = document.getElementById('peserta-cards-mobile');
+  if (!tbody && !cardsMobile) return;
+
+  // Toggle secondary columns in desktop table
+  document.querySelectorAll('.col-peserta-secondary').forEach(el => el.classList.toggle('hidden', !!appState.pesertaTableCompact));
 
   const searchKeyword = (document.getElementById('search-peserta')?.value || '').toLowerCase().trim();
   const filter = appState.pesertaFilter;
@@ -4472,7 +5128,7 @@ function renderPesertaTable() {
                         p.posisi.toLowerCase().includes(searchKeyword);
     
     // Determine participant status classification
-    const hasResult = false;
+    const hasResult = appState.hasil.some(h => String(h.nip) === String(p.nip));
     const savedScoresStr = localStorage.getItem(`sim_eval_scores_${p.nip}`) || localStorage.getItem(`sim_eval_scores_${p.id}`);
     const savedScores = savedScoresStr ? JSON.parse(savedScoresStr) : {};
     const ratedCount = Object.keys(savedScores).length;
@@ -4491,23 +5147,34 @@ function renderPesertaTable() {
   });
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6" class="py-12 text-center text-outline">
-          <div class="flex flex-col items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-4xl text-outline/40">person_off</span>
-            <span class="text-sm font-medium">Belum ada data peserta presensi yang cocok</span>
-            <span class="text-xs text-outline/60">Peserta dapat mengisi presensi via form mobile atau klik "Refresh GSheets".</span>
-          </div>
-        </td>
-      </tr>
-    `;
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="py-12 text-center text-outline">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-4xl text-outline/40">person_off</span>
+              <span class="text-sm font-medium">Belum ada data peserta presensi yang cocok</span>
+              <span class="text-xs text-outline/60">Peserta dapat mengisi presensi via form mobile atau klik "Refresh GSheets".</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    if (cardsMobile) {
+      cardsMobile.innerHTML = `
+        <div class="p-6 text-center bg-surface-container-lowest rounded-xl border border-surface-container-high text-outline">
+          <span class="material-symbols-outlined text-4xl text-outline/40">person_off</span>
+          <p class="text-sm font-semibold text-on-surface mt-2">Belum ada peserta yang cocok</p>
+          <p class="text-xs text-outline mt-1">Coba sesuaikan kata kunci pencarian atau ubah tab filter di atas.</p>
+        </div>
+      `;
+    }
     updatePesertaBadges();
     return;
   }
 
-  tbody.innerHTML = filtered.map(p => {
-    // Determine progress & 3-tier status (Hasil per NIP)
+  // Generate data per candidate
+  const candidateDataList = filtered.map(p => {
     const hasResult = appState.hasil.find(h => String(h.nip) === String(p.nip));
     const savedScoresStr = localStorage.getItem(`sim_eval_scores_${p.nip}`) || localStorage.getItem(`sim_eval_scores_${p.id}`);
     const savedScores = savedScoresStr ? JSON.parse(savedScoresStr) : {};
@@ -4519,27 +5186,35 @@ function renderPesertaTable() {
     const isBelumHadir = !isCompleted && !isDraft && p.status === 'Belum Hadir';
 
     let rowClass = 'hover:bg-surface-container-low transition-all';
+    let cardBorderClass = 'border-l-4 border-l-blue-500';
     let statusBadgeHtml = '';
     let actionBtnHtml = '';
+    let mobileActionBtnHtml = '';
 
     if (isCompleted) {
-      // 1. SUDAH SELESAI: Abu-abu agak transparan (Dimmed / Semi-transparent gray)
       rowClass = 'opacity-60 bg-surface-container-low/40 grayscale-[20%] text-outline hover:opacity-100 transition-opacity';
+      cardBorderClass = 'border-l-4 border-l-slate-400 bg-surface-container-low/30';
       statusBadgeHtml = `
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-surface-container-high text-outline border border-surface-container-high shadow-2xs">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container-high text-outline border border-surface-container-high shadow-2xs">
           <span class="material-symbols-outlined text-[13px] text-emerald-600">check_circle</span>
-          <span>Selesai (100%)</span>
+          <span>Selesai</span>
         </span>
       `;
       actionBtnHtml = `
-        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container text-on-surface text-[11px] font-medium transition-all shadow-2xs flex items-center gap-1" title="Tinjau hasil asesmen">
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container text-on-surface text-[11px] font-medium transition-all shadow-2xs flex items-center gap-1 cursor-pointer" title="Tinjau hasil asesmen">
           <span class="material-symbols-outlined text-[14px]">visibility</span>
           <span>Tinjau</span>
         </button>
       `;
+      mobileActionBtnHtml = `
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="h-10 px-3 rounded-xl bg-surface-container-high hover:bg-surface-container text-on-surface text-xs font-semibold transition-all shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-[16px]">visibility</span>
+          <span>Tinjau Hasil</span>
+        </button>
+      `;
     } else if (isDraft) {
-      // 2. BELUM 100% (SEDANG DIASES / DRAF SEBAGIAN): Warna Kontras Berbeda (Amber/Orange Warning + Progress Bar)
       rowClass = 'bg-amber-500/[0.04] hover:bg-amber-500/[0.09] transition-colors border-l-4 border-l-amber-500';
+      cardBorderClass = 'border-l-4 border-l-amber-500 bg-amber-500/[0.02]';
       const displayPct = localPct > 0 ? localPct : (p.progressPct || 0);
       statusBadgeHtml = `
         <div class="flex flex-col items-center gap-1">
@@ -4554,14 +5229,20 @@ function renderPesertaTable() {
         </div>
       `;
       actionBtnHtml = `
-        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold transition-all shadow-xs flex items-center gap-1" title="Lanjutkan pengisian draf asesmen">
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Lanjutkan pengisian draf asesmen">
           <span class="material-symbols-outlined text-[14px]">edit_note</span>
           <span>Lanjutkan</span>
         </button>
       `;
+      mobileActionBtnHtml = `
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="h-10 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-[16px]">edit_note</span>
+          <span>Lanjutkan (${displayPct}%)</span>
+        </button>
+      `;
     } else if (isBelumHadir) {
-      // 3. BELUM HADIR
       rowClass = 'hover:bg-surface-container-low transition-colors';
+      cardBorderClass = 'border-l-4 border-l-red-400 bg-red-500/[0.02]';
       statusBadgeHtml = `
         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] bg-error-container text-error font-medium">
           <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
@@ -4569,29 +5250,41 @@ function renderPesertaTable() {
         </span>
       `;
       actionBtnHtml = `
-        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-surface-container text-outline hover:text-primary text-[11px] font-medium transition-all shadow-2xs flex items-center gap-1">
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-surface-container text-outline hover:text-primary text-[11px] font-medium transition-all shadow-2xs flex items-center gap-1 cursor-pointer">
           <span class="material-symbols-outlined text-[14px]">play_arrow</span>
           <span>Mulai</span>
         </button>
       `;
+      mobileActionBtnHtml = `
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="h-10 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold transition-all shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+          <span>Mulai Nilai</span>
+        </button>
+      `;
     } else {
-      // 4. BARU DAFTAR (SIAP UJI 0%): Warna Kontras Berbeda (Biru Segar)
       rowClass = 'bg-blue-500/[0.02] hover:bg-blue-500/[0.06] transition-colors border-l-4 border-l-blue-500';
+      cardBorderClass = 'border-l-4 border-l-blue-600 bg-blue-500/[0.02]';
       statusBadgeHtml = `
         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-2xs">
           <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
-          <span>Siap Uji (0%)</span>
+          <span>Siap Uji</span>
         </span>
       `;
       actionBtnHtml = `
-        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-[11px] font-semibold transition-all shadow-2xs flex items-center gap-1" title="Mulai penilaian perdana untuk kandidat ini">
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-[11px] font-semibold transition-all shadow-2xs flex items-center gap-1 cursor-pointer" title="Mulai penilaian perdana untuk kandidat ini">
           <span class="material-symbols-outlined text-[14px]">play_circle</span>
+          <span>Mulai Nilai</span>
+        </button>
+      `;
+      mobileActionBtnHtml = `
+        <button type="button" onclick="startAssessmentForCandidate('${p.id}')" class="h-10 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-[16px]">play_circle</span>
           <span>Mulai Nilai</span>
         </button>
       `;
     }
 
-    // Score Calculation / Presentation
+    // Score Calculation
     const scoreVal = hasResult ? ((hasResult.skorAkhir <= 4 && hasResult.skorAkhir > 0) ? hasResult.skorAkhir * 25 : hasResult.skorAkhir) : (isDraft && ratedCount > 0 ? (function() {
       let sum = 0;
       Object.keys(savedScores).forEach(k => {
@@ -4602,11 +5295,19 @@ function renderPesertaTable() {
     })() : null);
 
     let scoreDisplay = '<span class="text-outline italic text-[11px]">-</span>';
+    let mobileScoreDisplay = '<span class="text-outline italic text-xs">Belum ada skor</span>';
+
     if (isCompleted && scoreVal !== null) {
       scoreDisplay = `
         <div class="flex flex-col items-center">
           <div><span class="font-mono font-bold text-primary text-sm">${scoreVal.toFixed(1)}</span> <span class="text-[10px] text-outline">/ 100</span></div>
           <span class="text-[9px] font-bold ${scoreVal >= 75.0 ? 'text-emerald-700 bg-emerald-50' : 'text-amber-800 bg-amber-50'} px-1.5 py-0.2 rounded">${scoreVal >= 75.0 ? 'KOMPETEN' : 'PEMBINAAN'}</span>
+        </div>
+      `;
+      mobileScoreDisplay = `
+        <div class="flex items-center gap-2">
+          <span class="font-mono font-bold text-primary text-sm">${scoreVal.toFixed(1)}/100</span>
+          <span class="text-[10px] font-bold ${scoreVal >= 75.0 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-amber-800 bg-amber-100 border-amber-300'} px-2 py-0.5 rounded-full border">${scoreVal >= 75.0 ? 'KOMPETEN' : 'PEMBINAAN'}</span>
         </div>
       `;
     } else if (isDraft && scoreVal !== null) {
@@ -4616,26 +5317,50 @@ function renderPesertaTable() {
           <span class="text-[9px] font-medium text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded">Rata-rata Draf</span>
         </div>
       `;
+      mobileScoreDisplay = `
+        <div class="flex items-center gap-2">
+          <span class="font-mono font-bold text-amber-800 text-sm">${scoreVal.toFixed(1)}/100</span>
+          <span class="text-[10px] font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">Draf (${ratedCount}/${totalCompetencies})</span>
+        </div>
+      `;
     }
 
-    return `
+    const secHidden = appState.pesertaTableCompact ? 'hidden' : '';
+
+    return {
+      p,
+      rowClass,
+      cardBorderClass,
+      statusBadgeHtml,
+      actionBtnHtml,
+      mobileActionBtnHtml,
+      scoreDisplay,
+      mobileScoreDisplay,
+      secHidden
+    };
+  });
+
+  // Render desktop rows
+  if (tbody) {
+    tbody.innerHTML = candidateDataList.map(({ p, rowClass, statusBadgeHtml, actionBtnHtml, scoreDisplay, secHidden }) => `
       <tr class="${rowClass}">
         <td class="py-3 px-4">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-surface-container-high text-primary font-display font-bold flex items-center justify-center shrink-0 border border-secondary/20 shadow-2xs">
               ${p.nama.split(' ').map(n=>n[0]).slice(0,2).join('')}
             </div>
-            <div>
+            <div class="min-w-0">
               <div class="font-bold text-on-surface text-xs">${p.nama}</div>
               <div class="font-mono text-[10px] text-outline">NIP. ${p.nip}</div>
+              ${appState.pesertaTableCompact ? `<div class="text-[10px] text-on-surface-variant truncate font-medium mt-0.5">${p.posisi} • ${p.departemen}</div>` : ''}
             </div>
           </div>
         </td>
-        <td class="py-3 px-4">
+        <td class="py-3 px-4 col-peserta-secondary ${secHidden}">
           <div class="font-medium text-on-surface text-xs">${p.posisi}</div>
           <div class="text-[10px] text-on-surface-variant truncate max-w-[200px]">${p.departemen}</div>
         </td>
-        <td class="py-3 px-4">
+        <td class="py-3 px-4 col-peserta-secondary ${secHidden}">
           <div class="font-mono text-on-surface text-xs font-semibold">${p.waktu}</div>
           <div class="text-[10px] text-outline">${p.tempatAssesment || p.ruang || 'Workshop Bay A'}</div>
         </td>
@@ -4648,6 +5373,10 @@ function renderPesertaTable() {
         <td class="py-3 px-4 text-right">
           <div class="flex items-center justify-end gap-1.5">
             ${actionBtnHtml}
+            <button type="button" onclick="openEditPesertaModal('${p.id}')" class="px-2 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary text-[11px] font-semibold transition-all shadow-2xs flex items-center gap-1 border border-surface-container-high cursor-pointer" title="Ubah Nama, NIP, Posisi, atau Departemen">
+              <span class="material-symbols-outlined text-[13px] text-secondary">edit</span>
+              <span>Edit</span>
+            </button>
             <button type="button" onclick="openTranscriptForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1 border border-primary/25 hover:border-primary/50 cursor-pointer" title="Buka Transkrip & Laporan Resmi Kandidat">
               <span class="material-symbols-outlined text-[14px]">description</span>
               <span>Laporan</span>
@@ -4655,10 +5384,153 @@ function renderPesertaTable() {
           </div>
         </td>
       </tr>
-    `;
-  }).join('');
+    `).join('');
+  }
+
+  // Render mobile cards
+  if (cardsMobile) {
+    cardsMobile.innerHTML = candidateDataList.map(({ p, cardBorderClass, statusBadgeHtml, mobileActionBtnHtml, mobileScoreDisplay }) => `
+      <div class="bg-surface-container-lowest rounded-xl border border-surface-container-high shadow-2xs overflow-hidden ${cardBorderClass}">
+        <div class="p-3.5 space-y-3">
+          
+          <!-- Top Row: Avatar, Name, NIP & Status Badge -->
+          <div class="flex items-start justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-surface-container-high text-primary font-display font-bold text-xs flex items-center justify-center shrink-0 border border-secondary/20 shadow-2xs">
+                ${p.nama.split(' ').map(n=>n[0]).slice(0,2).join('')}
+              </div>
+              <div class="min-w-0">
+                <h3 class="font-bold text-on-surface text-sm truncate">${p.nama}</h3>
+                <p class="font-mono text-[11px] text-outline">NIP. ${p.nip}</p>
+              </div>
+            </div>
+            <div class="shrink-0 text-right">
+              ${statusBadgeHtml}
+            </div>
+          </div>
+
+          <!-- Middle Row: Score Pill / Progress -->
+          <div class="flex items-center justify-between bg-surface-container-low/70 px-3 py-2 rounded-lg border border-surface-container-high/60 text-xs">
+            <span class="text-[11px] text-outline font-medium">Capaian:</span>
+            ${mobileScoreDisplay}
+          </div>
+
+          <!-- Collapsible (Hide/Unhide) Candidate Details -->
+          <details class="group bg-surface-container-low/50 rounded-lg p-2 text-xs border border-surface-container-high/50">
+            <summary class="flex items-center justify-between font-semibold text-secondary cursor-pointer list-none select-none text-[11px] px-1 py-0.5">
+              <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[15px]">badge</span>
+                <span>Detail Posisi & Jadwal</span>
+              </span>
+              <span class="material-symbols-outlined text-[16px] text-outline group-open:rotate-180 transition-transform duration-200">expand_more</span>
+            </summary>
+            <div class="pt-2 mt-1.5 border-t border-surface-container-high/60 grid grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <span class="text-outline text-[10px] block">Posisi</span>
+                <span class="font-semibold text-on-surface truncate block">${p.posisi}</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Departemen</span>
+                <span class="font-semibold text-on-surface truncate block">${p.departemen}</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Waktu Presensi</span>
+                <span class="font-mono font-semibold text-on-surface">${p.waktu}</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Tempat Asesmen</span>
+                <span class="font-semibold text-on-surface">${p.tempatAssesment || p.ruang || 'Workshop Bay A'}</span>
+              </div>
+            </div>
+          </details>
+
+          <!-- Bottom Row: Action Buttons (Large Touch Ergonomics >= 40px) -->
+          <div class="grid grid-cols-2 gap-2 pt-0.5">
+            ${mobileActionBtnHtml}
+            <button type="button" onclick="openTranscriptForCandidate('${p.id}')" class="h-10 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5 border border-primary/25 cursor-pointer active:scale-95">
+              <span class="material-symbols-outlined text-[16px]">description</span>
+              <span>Laporan</span>
+            </button>
+          </div>
+          <button type="button" onclick="openEditPesertaModal('${p.id}')" class="w-full h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-primary text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 border border-surface-container-high cursor-pointer active:scale-98">
+            <span class="material-symbols-outlined text-[14px] text-secondary">edit</span>
+            <span>Ubah Data Peserta (Nama, NIP, Posisi, Dept)</span>
+          </button>
+
+        </div>
+      </div>
+    `).join('');
+  }
 
   updatePesertaBadges();
+}
+
+function togglePesertaTableCompact() {
+  appState.pesertaTableCompact = !appState.pesertaTableCompact;
+  const btn = document.getElementById('btn-toggle-peserta-compact');
+  const lbl = document.getElementById('lbl-toggle-peserta-compact');
+  if (btn && lbl) {
+    if (appState.pesertaTableCompact) {
+      lbl.textContent = 'Kolom Lengkap';
+      btn.classList.add('bg-secondary-fixed', 'text-primary');
+    } else {
+      lbl.textContent = 'Ringkas Tabel';
+      btn.classList.remove('bg-secondary-fixed', 'text-primary');
+    }
+  }
+  renderPesertaTable();
+}
+
+function toggleResultsTableCompact() {
+  appState.resultsTableCompact = !appState.resultsTableCompact;
+  const btn = document.getElementById('btn-toggle-results-compact');
+  const lbl = document.getElementById('lbl-toggle-results-compact');
+  if (btn && lbl) {
+    if (appState.resultsTableCompact) {
+      lbl.textContent = 'Kolom Lengkap';
+      btn.classList.add('bg-secondary-fixed', 'text-primary');
+    } else {
+      lbl.textContent = 'Ringkas Tabel';
+      btn.classList.remove('bg-secondary-fixed', 'text-primary');
+    }
+  }
+  renderResultsTable();
+}
+
+function togglePesertaBentoMobile() {
+  appState.pesertaBentoCollapsed = !appState.pesertaBentoCollapsed;
+  const grid = document.getElementById('peserta-bento-grid');
+  const lbl = document.getElementById('lbl-toggle-peserta-bento');
+  const icon = document.getElementById('icon-toggle-peserta-bento');
+  if (grid) {
+    if (appState.pesertaBentoCollapsed) {
+      grid.classList.add('hidden');
+      if (lbl) lbl.textContent = 'Tampilkan';
+      if (icon) icon.textContent = 'expand_more';
+    } else {
+      grid.classList.remove('hidden');
+      if (lbl) lbl.textContent = 'Sembunyikan';
+      if (icon) icon.textContent = 'expand_less';
+    }
+  }
+}
+
+function toggleDashBentoMobile() {
+  appState.dashBentoCollapsed = !appState.dashBentoCollapsed;
+  const grid = document.getElementById('dash-bento-grid');
+  const lbl = document.getElementById('lbl-toggle-dash-bento');
+  const icon = document.getElementById('icon-toggle-dash-bento');
+  if (grid) {
+    if (appState.dashBentoCollapsed) {
+      grid.classList.add('hidden');
+      if (lbl) lbl.textContent = 'Tampilkan';
+      if (icon) icon.textContent = 'expand_more';
+    } else {
+      grid.classList.remove('hidden');
+      if (lbl) lbl.textContent = 'Sembunyikan';
+      if (icon) icon.textContent = 'expand_less';
+    }
+  }
 }
 
 function updatePesertaBadges() {
@@ -4742,11 +5614,24 @@ function handlePresensiSubmit(e) {
     foto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150'
   };
 
-  // Check if NIP already exists, update or insert
-  const existingIdx = appState.peserta.findIndex(p => p.nip === nip);
+  // Anti-duplikasi di tanggal yang sama: Cek apakah NIP atau Nama sudah terdaftar
+  const existingIdx = appState.peserta.findIndex(p => 
+    (p.nip && String(p.nip).trim().toLowerCase() === nip.toLowerCase()) ||
+    (p.nama && String(p.nama).trim().toLowerCase() === nama.toLowerCase())
+  );
+
   if (existingIdx >= 0) {
-    appState.peserta[existingIdx] = { ...appState.peserta[existingIdx], ...newPeserta, id: appState.peserta[existingIdx].id };
-    lastSubmittedPesertaId = appState.peserta[existingIdx].id;
+    const existing = appState.peserta[existingIdx];
+    appState.peserta[existingIdx] = {
+      ...existing,
+      nip: nip,
+      nama: nama,
+      posisi: posisi,
+      departemen: dept,
+      waktu: waktuStr, // waktu presensi hari ini
+      tempatAssesment: tempat
+    };
+    lastSubmittedPesertaId = existing.id;
   } else {
     appState.peserta.push(newPeserta);
     lastSubmittedPesertaId = newId;
@@ -4793,6 +5678,124 @@ function handlePresensiSubmit(e) {
   renderCandidateSelects();
 }
 
+function openEditPesertaModal(pesertaId) {
+  const p = appState.peserta.find(x => x.id === pesertaId);
+  if (!p) return;
+
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  setVal('edit-peserta-original-id', p.id);
+  setVal('edit-peserta-original-nip', p.nip);
+  setVal('edit-peserta-nama', p.nama);
+  setVal('edit-peserta-nip', p.nip);
+  setVal('edit-peserta-posisi', p.posisi);
+  setVal('edit-peserta-dept', p.departemen);
+  setVal('edit-peserta-tempat', p.tempatAssesment || p.ruang || 'Workshop Bay A');
+
+  const modal = document.getElementById('modal-edit-peserta');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeEditPesertaModal() {
+  const modal = document.getElementById('modal-edit-peserta');
+  if (modal) modal.classList.add('hidden');
+}
+
+function handleSaveEditPeserta(e) {
+  e.preventDefault();
+  const originalId = document.getElementById('edit-peserta-original-id').value;
+  const originalNip = document.getElementById('edit-peserta-original-nip').value;
+  const newNama = document.getElementById('edit-peserta-nama').value.trim();
+  const newNip = document.getElementById('edit-peserta-nip').value.trim();
+  const newPosisi = document.getElementById('edit-peserta-posisi').value.trim();
+  const newDept = document.getElementById('edit-peserta-dept').value.trim();
+  const newTempat = document.getElementById('edit-peserta-tempat').value.trim() || 'Workshop Bay A';
+
+  if (!newNama || !newNip || !newPosisi || !newDept) {
+    showToast('Validasi Gagal', 'Semua kolom wajib diisi.', true);
+    return;
+  }
+
+  const pIdx = appState.peserta.findIndex(p => p.id === originalId);
+  if (pIdx < 0) {
+    showToast('Error', 'Peserta tidak ditemukan.', true);
+    return;
+  }
+
+  // Jika NIP berubah, migrasikan draf nilai & catatan di localStorage
+  if (originalNip && originalNip !== newNip) {
+    const oldScores = localStorage.getItem(`sim_eval_scores_${originalNip}`);
+    if (oldScores) {
+      localStorage.setItem(`sim_eval_scores_${newNip}`, oldScores);
+      localStorage.removeItem(`sim_eval_scores_${originalNip}`);
+    }
+    const oldNotes = localStorage.getItem(`sim_eval_notes_${originalNip}`);
+    if (oldNotes) {
+      localStorage.setItem(`sim_eval_notes_${newNip}`, oldNotes);
+      localStorage.removeItem(`sim_eval_notes_${originalNip}`);
+    }
+
+    // Perbarui juga data di appState.hasil jika kandidat ini sudah dinilai
+    appState.hasil.forEach(h => {
+      if (String(h.nip) === String(originalNip)) {
+        h.nip = newNip;
+        h.nama = newNama;
+        h.posisi = newPosisi;
+        h.departemen = newDept;
+      }
+    });
+    localStorage.setItem('sim_hasil', JSON.stringify(appState.hasil));
+  } else {
+    // NIP tetap, perbarui nama/posisi/dept di Hasil jika ada
+    appState.hasil.forEach(h => {
+      if (String(h.nip) === String(newNip)) {
+        h.nama = newNama;
+        h.posisi = newPosisi;
+        h.departemen = newDept;
+      }
+    });
+    localStorage.setItem('sim_hasil', JSON.stringify(appState.hasil));
+  }
+
+  // Perbarui record di appState.peserta
+  appState.peserta[pIdx].nama = newNama;
+  appState.peserta[pIdx].nip = newNip;
+  appState.peserta[pIdx].posisi = newPosisi;
+  appState.peserta[pIdx].departemen = newDept;
+  appState.peserta[pIdx].tempatAssesment = newTempat;
+  localStorage.setItem('sim_peserta', JSON.stringify(appState.peserta));
+
+  // Sinkronkan ke Google Apps Script Web App di latar belakang
+  if (appState.appscriptUrl) {
+    try {
+      fetch(appState.appscriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'updatePeserta',
+          data: {
+            oldNip: originalNip,
+            nip: newNip,
+            nama: newNama,
+            posisi: newPosisi,
+            departemen: newDept,
+            tempatAssesment: newTempat
+          }
+        })
+      }).catch(err => console.warn('Sync updatePeserta warning:', err));
+    } catch (ex) {
+      console.warn('Network sync updatePeserta failed:', ex);
+    }
+  }
+
+  // Refresh UI
+  renderPesertaTable();
+  renderResultsTable();
+  renderCandidateSelects();
+  closeEditPesertaModal();
+
+  showToast('Data Peserta Diperbarui', `Data ${newNama} (NIP: ${newNip}) berhasil diubah.`);
+}
+
 function startAssessmentForCandidate(pesertaId) {
   appState.currentPesertaId = pesertaId;
   
@@ -4830,12 +5833,591 @@ function returnFromTranscript() {
 }
 
 // =========================================================================
+// LOG BOOK HARIAN PRAKTIK MEKANIK (Tab Log_Book)
+// =========================================================================
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+let currentLogbookUnits = [];
+
+function createEmptyLogbookUnitItem() {
+  return {
+    modelUnit: '',
+    nomerUnit: '',
+    hmUnit: '',
+    materKompetensi: '',
+    uraianLogbook: '',
+    keterangan: ''
+  };
+}
+
+function initLogBookUnits() {
+  currentLogbookUnits = [createEmptyLogbookUnitItem()];
+  renderLogbookUnitsList();
+}
+
+function addLogbookUnitItem() {
+  currentLogbookUnits.push(createEmptyLogbookUnitItem());
+  renderLogbookUnitsList();
+}
+
+function removeLogbookUnitItem(index) {
+  if (currentLogbookUnits.length > 1) {
+    currentLogbookUnits.splice(index, 1);
+    renderLogbookUnitsList();
+  } else {
+    currentLogbookUnits[0] = createEmptyLogbookUnitItem();
+    renderLogbookUnitsList();
+    showToast('Info', 'Form unit dikosongkan.');
+  }
+}
+
+function updateLogbookUnitField(index, field, value) {
+  if (currentLogbookUnits[index]) {
+    currentLogbookUnits[index][field] = value;
+  }
+}
+
+function renderLogbookUnitsList() {
+  const container = document.getElementById('logbook-units-container');
+  if (!container) return;
+
+  if (currentLogbookUnits.length === 0) {
+    currentLogbookUnits = [createEmptyLogbookUnitItem()];
+  }
+
+  container.innerHTML = currentLogbookUnits.map((item, idx) => {
+    return `
+      <div class="p-3.5 sm:p-4 rounded-xl bg-surface-container-low border border-surface-container-high/80 space-y-3 relative transition-all" id="unit-card-${idx}">
+        <div class="flex items-center justify-between pb-2 border-b border-surface-container-high/60">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-xs">${idx + 1}</span>
+            <span class="font-display font-bold text-xs text-primary">Unit Alat Berat #${idx + 1}</span>
+            <span class="text-[10px] text-outline font-mono hidden sm:inline">(Model, No Lambung, HM & Uraian Kerja)</span>
+          </div>
+          ${currentLogbookUnits.length > 1 ? `
+          <button type="button" onclick="removeLogbookUnitItem(${idx})" class="text-error hover:text-error/80 text-[11px] font-semibold flex items-center gap-1 cursor-pointer transition-colors">
+            <span class="material-symbols-outlined text-[15px]">delete</span>
+            <span>Hapus Unit</span>
+          </button>
+          ` : ''}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+          <div>
+            <label class="block text-[11px] font-bold text-on-surface mb-1">Model Unit <span class="text-error">*</span></label>
+            <input type="text" list="list-logbook-models" value="${escapeHtml(item.modelUnit || '')}" oninput="updateLogbookUnitField(${idx}, 'modelUnit', this.value)" placeholder="Pilih/Ketik Model Unit" required class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-on-surface mb-1">Nomor Lambung / Unit <span class="text-error">*</span></label>
+            <input type="text" value="${escapeHtml(item.nomerUnit || '')}" oninput="updateLogbookUnitField(${idx}, 'nomerUnit', this.value)" placeholder="Contoh: EX-201 / DZ-085" required class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary font-mono uppercase">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-on-surface mb-1">HM (Hour Meter) <span class="text-error">*</span></label>
+            <input type="number" step="0.1" value="${escapeHtml(item.hmUnit || '')}" oninput="updateLogbookUnitField(${idx}, 'hmUnit', this.value)" placeholder="Contoh: 12450.5" required class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+          <div>
+            <label class="block text-[11px] font-bold text-on-surface mb-1">Materi Kompetensi Terkait</label>
+            <input type="text" list="list-logbook-materi" value="${escapeHtml(item.materKompetensi || '')}" oninput="updateLogbookUnitField(${idx}, 'materKompetensi', this.value)" placeholder="Pilih/ketik materi kompetensi..." class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-on-surface mb-1">Keterangan / Status Pengerjaan</label>
+            <input type="text" value="${escapeHtml(item.keterangan || '')}" oninput="updateLogbookUnitField(${idx}, 'keterangan', this.value)" placeholder="Contoh: Selesai Uji Run / RFU / Ganti Seal" class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+          </div>
+        </div>
+
+        <div class="text-xs">
+          <label class="block text-[11px] font-bold text-on-surface mb-1">Uraian Logbook (Aktivitas Pekerjaan Khusus Unit Ini) <span class="text-error">*</span></label>
+          <textarea rows="3" required oninput="updateLogbookUnitField(${idx}, 'uraianLogbook', this.value)" placeholder="Jelaskan secara rinci pekerjaan teknis yang dikerjakan pada unit ini: keluhan/gejala, prosedur troubleshooting, komponen yang dibongkar/diukur/diganti, dan pengetesan akhir..." class="w-full bg-surface-container-lowest p-2.5 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary leading-relaxed">${escapeHtml(item.uraianLogbook || '')}</textarea>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderLogBookView() {
+  renderCandidateSelects();
+  
+  const dateInput = document.getElementById('logbook-date');
+  if (dateInput && !dateInput.value) {
+    dateInput.value = new Date().toISOString().split('T')[0];
+  }
+
+  const trainerDatalist = document.getElementById('list-logbook-trainers');
+  if (trainerDatalist) {
+    trainerDatalist.innerHTML = appState.trainers.map(t => `<option value="${escapeHtml(t.nama)}">`).join('');
+  }
+
+  let materiDatalist = document.getElementById('list-logbook-materi');
+  if (!materiDatalist) {
+    materiDatalist = document.createElement('datalist');
+    materiDatalist.id = 'list-logbook-materi';
+    document.body.appendChild(materiDatalist);
+  }
+  const seenCats = new Set();
+  const options = [];
+  appState.competencies.forEach(c => {
+    if (c.kategori && !seenCats.has(c.kategori)) {
+      seenCats.add(c.kategori);
+      options.push(`<option value="${escapeHtml(c.kategori)}">`);
+    }
+  });
+  if (options.length === 0) {
+    options.push('<option value="Engine & Fuel System Maintenance">', '<option value="Hydraulic System Troubleshooting">', '<option value="Power Train & Undercarriage Inspection">', '<option value="Electrical System & Starting Charging">');
+  }
+  materiDatalist.innerHTML = options.join('');
+
+  const sel = document.getElementById('logbook-peserta-select');
+  if (sel && appState.peserta.length > 0) {
+    if (appState.currentPesertaId && appState.peserta.some(p => p.id === appState.currentPesertaId)) {
+      sel.value = appState.currentPesertaId;
+    } else if (!sel.value && appState.peserta[0]) {
+      sel.value = appState.peserta[0].id;
+    }
+    autoFillLogbookPeserta(sel.value);
+  }
+
+  const mentorInput = document.getElementById('logbook-mentor-nama');
+  if (mentorInput && !mentorInput.value && appState.currentUser && appState.currentUser.nama) {
+    mentorInput.value = appState.currentUser.nama;
+  }
+
+  if (currentLogbookUnits.length === 0) {
+    initLogBookUnits();
+  } else {
+    renderLogbookUnitsList();
+  }
+
+  renderLogBookList();
+}
+
+function autoFillLogbookPeserta(selectedIdOrNip) {
+  if (!selectedIdOrNip) return;
+  const p = appState.peserta.find(x => x.id === selectedIdOrNip || x.nip === selectedIdOrNip);
+  if (p) {
+    const locInput = document.getElementById('logbook-lokasi');
+    if (locInput && p.tempatAssesment) {
+      locInput.value = p.tempatAssesment;
+    }
+  }
+}
+
+function toggleLogbookForm(forceState) {
+  const formWrapper = document.getElementById('logbook-form-wrapper');
+  const icon = document.getElementById('icon-toggle-logbook-form');
+  const lbl = document.getElementById('lbl-toggle-logbook-form');
+  if (!formWrapper) return;
+
+  const isHidden = formWrapper.classList.contains('hidden');
+  const shouldShow = (forceState !== undefined) ? forceState : isHidden;
+
+  if (shouldShow) {
+    formWrapper.classList.remove('hidden');
+    if (icon) icon.textContent = 'expand_less';
+    if (lbl) lbl.textContent = 'Sembunyikan Form';
+  } else {
+    formWrapper.classList.add('hidden');
+    if (icon) icon.textContent = 'add';
+    if (lbl) lbl.textContent = 'Tulis Log Book Baru';
+  }
+}
+
+function toggleLogbookTableCompact() {
+  appState.logbookTableCompact = !appState.logbookTableCompact;
+  const lbl = document.getElementById('lbl-toggle-logbook-compact');
+  if (lbl) {
+    lbl.textContent = appState.logbookTableCompact ? 'Perluas Tabel' : 'Ringkas Tabel';
+  }
+  document.querySelectorAll('.col-logbook-secondary').forEach(el => {
+    if (appState.logbookTableCompact) {
+      el.classList.add('hidden');
+    } else {
+      el.classList.remove('hidden');
+    }
+  });
+}
+
+function openLogBookForActiveCandidate() {
+  const targetId = lastSubmittedPesertaId || appState.currentPesertaId || (appState.peserta[0] ? appState.peserta[0].id : null);
+  if (targetId) {
+    appState.currentPesertaId = targetId;
+  }
+  switchView('logbook');
+  if (targetId) {
+    const sel = document.getElementById('logbook-peserta-select');
+    if (sel) {
+      sel.value = targetId;
+      autoFillLogbookPeserta(targetId);
+    }
+  }
+  toggleLogbookForm(true);
+}
+
+function filterLogBookList() {
+  const q = document.getElementById('search-logbook') ? document.getElementById('search-logbook').value : '';
+  renderLogBookList(q);
+}
+
+function renderLogBookList(filterQuery) {
+  const query = (filterQuery !== undefined ? filterQuery : (document.getElementById('search-logbook') ? document.getElementById('search-logbook').value : '')).toLowerCase().trim();
+
+  const allLogs = appState.logbook || [];
+
+  const kpiTotal = document.getElementById('kpi-logbook-total');
+  const kpiUnits = document.getElementById('kpi-logbook-units');
+  const kpiPeserta = document.getElementById('kpi-logbook-peserta');
+  const badgeCount = document.getElementById('logbook-count-badge');
+
+  const uniqueUnits = new Set();
+  const uniquePeserta = new Set();
+
+  allLogs.forEach(item => {
+    if (item.nomerUnit || item.modelUnit) uniqueUnits.add((item.nomerUnit || item.modelUnit).toLowerCase());
+    if (item.namaPeserta || item.idPeserta) uniquePeserta.add((item.namaPeserta || item.idPeserta).toLowerCase());
+  });
+
+  if (kpiTotal) kpiTotal.textContent = allLogs.length;
+  if (kpiUnits) kpiUnits.textContent = uniqueUnits.size;
+  if (kpiPeserta) kpiPeserta.textContent = uniquePeserta.size;
+
+  const filtered = allLogs.filter(it => {
+    if (!query) return true;
+    return (
+      (it.namaPeserta && it.namaPeserta.toLowerCase().includes(query)) ||
+      (it.idPeserta && it.idPeserta.toLowerCase().includes(query)) ||
+      (it.modelUnit && it.modelUnit.toLowerCase().includes(query)) ||
+      (it.nomerUnit && it.nomerUnit.toLowerCase().includes(query)) ||
+      (it.materKompetensi && it.materKompetensi.toLowerCase().includes(query)) ||
+      (it.uraianLogbook && it.uraianLogbook.toLowerCase().includes(query)) ||
+      (it.namaMentor && it.namaMentor.toLowerCase().includes(query)) ||
+      (it.idLogbook && it.idLogbook.toLowerCase().includes(query)) ||
+      (it.lokasi && it.lokasi.toLowerCase().includes(query))
+    );
+  });
+
+  if (badgeCount) badgeCount.textContent = `${filtered.length} Data`;
+
+  // Desktop Table
+  const tbody = document.getElementById('logbook-table-body');
+  if (tbody) {
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-outline">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-[36px] text-outline/50">menu_book</span>
+              <span class="text-xs font-semibold text-on-surface">Belum ada riwayat Log Book harian tersimpan</span>
+              <span class="text-[11px] text-outline">Isi formulir di atas untuk mencatat aktivitas pengerjaan unit dan uraian teknis per unit.</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    } else {
+      const isCompact = appState.logbookTableCompact;
+      tbody.innerHTML = filtered.map(it => {
+        const secondaryClass = `col-logbook-secondary ${isCompact ? 'hidden' : ''}`;
+        return `
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-3 px-4 whitespace-nowrap">
+              <div class="font-bold text-primary">${escapeHtml(it.date || '-')}</div>
+              <div class="font-mono text-[10px] text-secondary">${escapeHtml(it.idLogbook || '-')}</div>
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-bold text-on-surface">${escapeHtml(it.namaPeserta || '-')}</div>
+              <div class="text-[10px] text-outline font-mono">NIP: ${escapeHtml(it.idPeserta || '-')}</div>
+              <div class="text-[10px] text-outline flex items-center gap-1 mt-0.5">
+                <span class="material-symbols-outlined text-[12px]">location_on</span>
+                <span>${escapeHtml(it.lokasi || '-')}</span>
+              </div>
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-bold text-on-surface">${escapeHtml(it.modelUnit || '-')}</div>
+              <span class="inline-block mt-0.5 px-2 py-0.5 rounded bg-primary-container text-on-primary text-[10px] font-mono font-bold">
+                ${escapeHtml(it.nomerUnit || '-')}
+              </span>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap font-mono font-bold text-secondary">
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">speed</span>
+                <span>${escapeHtml(it.hmUnit || '-')} HM</span>
+              </div>
+            </td>
+            <td class="py-3 px-4 ${secondaryClass}">
+              <span class="px-2 py-0.5 rounded bg-surface-container text-on-surface text-[11px] font-medium inline-block max-w-[200px] truncate" title="${escapeHtml(it.materKompetensi || '-')}">
+                ${escapeHtml(it.materKompetensi || '-')}
+              </span>
+            </td>
+            <td class="py-3 px-4 max-w-xs lg:max-w-md">
+              <p class="text-xs text-on-surface leading-relaxed break-words whitespace-pre-wrap">${escapeHtml(it.uraianLogbook || '-')}</p>
+            </td>
+            <td class="py-3 px-4 ${secondaryClass}">
+              <div class="text-xs font-semibold text-on-surface">${escapeHtml(it.keterangan || '-')}</div>
+              <div class="text-[11px] text-secondary font-medium mt-1 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">verified_user</span>
+                <span>${escapeHtml(it.namaMentor || '-')}</span>
+              </div>
+              ${it.nomerMentor ? `<div class="text-[10px] font-mono text-outline">${escapeHtml(it.nomerMentor)}</div>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  // Mobile Cards
+  const mobileContainer = document.getElementById('logbook-cards-mobile');
+  if (mobileContainer) {
+    if (filtered.length === 0) {
+      mobileContainer.innerHTML = `
+        <div class="py-8 text-center text-outline">
+          <span class="material-symbols-outlined text-[32px] text-outline/50 mb-1">menu_book</span>
+          <p class="text-xs font-semibold text-on-surface">Belum ada riwayat Log Book</p>
+          <p class="text-[11px] text-outline">Gunakan form di atas untuk menulis aktivitas unit.</p>
+        </div>
+      `;
+    } else {
+      mobileContainer.innerHTML = filtered.map(it => {
+        return `
+          <div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container-high/80 space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="px-2 py-0.5 rounded bg-primary-container text-on-primary text-[10px] font-mono font-bold mr-1.5">
+                  ${escapeHtml(it.nomerUnit || 'UNIT')}
+                </span>
+                <span class="font-display font-bold text-xs text-primary">${escapeHtml(it.modelUnit || '-')}</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-primary font-mono text-[10px] font-bold shrink-0">
+                ${escapeHtml(it.hmUnit || '-')} HM
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-on-surface-variant border-y border-surface-container-high/50 py-1.5">
+              <div>
+                <span class="font-bold text-on-surface">${escapeHtml(it.namaPeserta || '-')}</span>
+                <span class="font-mono text-[10px] text-outline"> (${escapeHtml(it.idPeserta || '-')})</span>
+              </div>
+              <span class="font-mono text-[10px] text-secondary font-bold">${escapeHtml(it.date || '-')}</span>
+            </div>
+
+            <div class="text-xs">
+              <span class="text-[10px] uppercase font-bold text-outline tracking-wider block mb-0.5">Uraian Pekerjaan Teknis:</span>
+              <p class="text-xs text-on-surface leading-relaxed bg-surface-container-lowest p-2.5 rounded-lg border border-surface-container-high/60 whitespace-pre-wrap">${escapeHtml(it.uraianLogbook || '-')}</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+              <div>
+                <span class="text-[10px] text-outline block">Materi:</span>
+                <span class="font-medium text-on-surface truncate block" title="${escapeHtml(it.materKompetensi || '-')}">${escapeHtml(it.materKompetensi || '-')}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-outline block">Mentor Validasi:</span>
+                <span class="font-semibold text-secondary truncate block">${escapeHtml(it.namaMentor || '-')}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+}
+
+async function handleLogBookSubmit(e) {
+  e.preventDefault();
+  const selectPeserta = document.getElementById('logbook-peserta-select');
+  const selectedPesertaVal = selectPeserta ? selectPeserta.value : '';
+  const dateVal = document.getElementById('logbook-date').value;
+  const lokasiVal = document.getElementById('logbook-lokasi').value.trim();
+  const mentorNama = document.getElementById('logbook-mentor-nama').value.trim();
+  const mentorNo = document.getElementById('logbook-mentor-no').value.trim();
+
+  if (!selectedPesertaVal || !dateVal || !lokasiVal || !mentorNama) {
+    showToast('Validasi Gagal', 'Lengkapi identitas mekanik, tanggal, lokasi, dan nama mentor.', true);
+    return;
+  }
+
+  const pObj = appState.peserta.find(p => p.id === selectedPesertaVal || p.nip === selectedPesertaVal);
+  const idPeserta = pObj ? (pObj.nip || pObj.id) : selectedPesertaVal;
+  const namaPeserta = pObj ? pObj.nama : selectedPesertaVal;
+
+  const validUnits = currentLogbookUnits.filter(u => (u.modelUnit && u.modelUnit.trim()) || (u.nomerUnit && u.nomerUnit.trim()) || (u.uraianLogbook && u.uraianLogbook.trim()));
+  if (validUnits.length === 0) {
+    showToast('Validasi Unit Gagal', 'Mohon isi Model Unit, Nomor Unit, dan Uraian Logbook minimal untuk 1 unit.', true);
+    return;
+  }
+
+  const submitBtn = document.getElementById('btn-submit-logbook');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Menyimpan ke Spreadsheet...</span>`;
+  }
+
+  const nowIso = new Date().toISOString();
+  const dateCode = dateVal.replace(/-/g, '');
+  const newEntries = [];
+
+  validUnits.forEach((u, i) => {
+    const idLogbook = `LB-${dateCode}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const entry = {
+      idLogbook: idLogbook,
+      idPeserta: idPeserta,
+      namaPeserta: namaPeserta,
+      lokasi: lokasiVal,
+      date: dateVal,
+      modelUnit: (u.modelUnit || '').trim(),
+      nomerUnit: (u.nomerUnit || '').trim(),
+      hmUnit: u.hmUnit ? String(u.hmUnit).trim() : '0',
+      uraianLogbook: (u.uraianLogbook || '').trim(),
+      materKompetensi: (u.materKompetensi || '-').trim(),
+      keterangan: (u.keterangan || 'Selesai').trim(),
+      namaMentor: mentorNama,
+      nomerMentor: mentorNo,
+      timestamp: nowIso
+    };
+    newEntries.push(entry);
+    appState.logbook.unshift(entry);
+  });
+
+  localStorage.setItem('sim_logbook', JSON.stringify(appState.logbook));
+
+  if (appState.appscriptUrl) {
+    try {
+      fetch(appState.appscriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'submitLogBook',
+          data: {
+            common: {
+              idPeserta: idPeserta,
+              namaPeserta: namaPeserta,
+              lokasi: lokasiVal,
+              date: dateVal,
+              namaMentor: mentorNama,
+              nomerMentor: mentorNo
+            },
+            units: newEntries
+          }
+        })
+      }).then(r => r.json()).then(res => {
+        console.log('LogBook sync response:', res);
+      }).catch(err => {
+        console.warn('Sync LogBook background error:', err);
+      });
+    } catch (e) {
+      console.warn('Network fetch error submitLogBook:', e);
+    }
+  }
+
+  showToast('Log Book Berhasil Disimpan', `${newEntries.length} unit berhasil dicatat ke sheet Log_Book.`);
+
+  initLogBookUnits();
+  renderLogBookList();
+
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">save</span><span>Simpan Log Book ke Spreadsheet</span>`;
+  }
+}
+
+async function syncLogBookFromGSheets(showNotification = true) {
+  const syncBtn = document.getElementById('btn-refresh-logbook');
+  const syncIcon = document.getElementById('icon-sync-logbook');
+  if (syncIcon) syncIcon.classList.add('animate-spin');
+
+  try {
+    const gvizRes = await fetchSheetViaGviz('Log_Book');
+    if (gvizRes && gvizRes.rows && gvizRes.rows.length > 0) {
+      const items = [];
+      gvizRes.rows.forEach(r => {
+        const c = r.c;
+        if (!c) return;
+        const idLogbook = c[0] ? String(c[0].v || '').trim() : '';
+        if (!idLogbook || idLogbook.toLowerCase() === 'id_logbook') return;
+        items.push({
+          idLogbook: idLogbook,
+          idPeserta: c[1] ? String(c[1].v || '').trim() : '',
+          namaPeserta: c[2] ? String(c[2].v || '').trim() : '',
+          lokasi: c[3] ? String(c[3].v || '').trim() : '',
+          date: c[4] ? String(c[4].v || '').slice(0, 10) : '',
+          modelUnit: c[5] ? String(c[5].v || '').trim() : '',
+          nomerUnit: c[6] ? String(c[6].v || '').trim() : '',
+          hmUnit: c[7] ? String(c[7].v || '').trim() : '',
+          uraianLogbook: c[8] ? String(c[8].v || '').trim() : '',
+          materKompetensi: c[9] ? String(c[9].v || '').trim() : '',
+          keterangan: c[10] ? String(c[10].v || '').trim() : '',
+          namaMentor: c[11] ? String(c[11].v || '').trim() : '',
+          nomerMentor: c[12] ? String(c[12].v || '').trim() : '',
+          timestamp: c[13] ? String(c[13].v || '').trim() : ''
+        });
+      });
+      if (items.length > 0) {
+        appState.logbook = items.reverse();
+        localStorage.setItem('sim_logbook', JSON.stringify(appState.logbook));
+        if (showNotification) showToast('Sinkronisasi Log Book', `${items.length} aktivitas log book dimuat dari spreadsheet.`);
+        renderLogBookList();
+        return;
+      }
+    }
+
+    if (appState.appscriptUrl) {
+      const resp = await fetch(`${appState.appscriptUrl}?action=getLogBook`);
+      const json = await resp.json();
+      if (json && json.status === 'success' && Array.isArray(json.data) && json.data.length > 1) {
+        const rows = json.data.slice(1);
+        const items = rows.map(r => ({
+          idLogbook: String(r[0] || '').trim(),
+          idPeserta: String(r[1] || '').trim(),
+          namaPeserta: String(r[2] || '').trim(),
+          lokasi: String(r[3] || '').trim(),
+          date: String(r[4] || '').slice(0, 10),
+          modelUnit: String(r[5] || '').trim(),
+          nomerUnit: String(r[6] || '').trim(),
+          hmUnit: String(r[7] || '').trim(),
+          uraianLogbook: String(r[8] || '').trim(),
+          materKompetensi: String(r[9] || '').trim(),
+          keterangan: String(r[10] || '').trim(),
+          namaMentor: String(r[11] || '').trim(),
+          nomerMentor: String(r[12] || '').trim(),
+          timestamp: String(r[13] || '').trim()
+        })).filter(x => x.idLogbook && x.idLogbook.toLowerCase() !== 'id_logbook');
+
+        if (items.length > 0) {
+          appState.logbook = items.reverse();
+          localStorage.setItem('sim_logbook', JSON.stringify(appState.logbook));
+          if (showNotification) showToast('Sinkronisasi Log Book', `${items.length} aktivitas log book dimuat dari spreadsheet.`);
+          renderLogBookList();
+          return;
+        }
+      }
+    }
+    if (showNotification) showToast('Log Book', 'Belum ada data baru dari spreadsheet. Data lokal tetap dipakai.');
+  } catch (err) {
+    console.error('syncLogBookFromGSheets error:', err);
+    if (showNotification) showToast('Koneksi GSheets', 'Gagal menyinkronkan Log Book. Menggunakan data lokal.', true);
+  } finally {
+    if (syncIcon) syncIcon.classList.remove('animate-spin');
+  }
+}
+
+// =========================================================================
 // LEMBAR PENILAIAN KOMPETENSI (SCALE 1–4)
 // =========================================================================
 
 function renderCandidateSelects() {
   const evalSelect = document.getElementById('eval-candidate-select');
   const transSelect = document.getElementById('transcript-candidate-select');
+  const logbookSelect = document.getElementById('logbook-peserta-select');
 
   let optionsHtml = '';
   if (appState.peserta.length === 0) {
@@ -4856,6 +6438,12 @@ function renderCandidateSelects() {
     transSelect.innerHTML = optionsHtml;
     if (appState.currentPesertaId && appState.peserta.some(p => p.id === appState.currentPesertaId)) {
       transSelect.value = appState.currentPesertaId;
+    }
+  }
+  if (logbookSelect) {
+    logbookSelect.innerHTML = optionsHtml;
+    if (appState.currentPesertaId && appState.peserta.some(p => p.id === appState.currentPesertaId)) {
+      logbookSelect.value = appState.currentPesertaId;
     }
   }
 }
@@ -5874,71 +7462,163 @@ function initCharts() {
 
 function renderResultsTable() {
   const tbody = document.getElementById('results-table-body');
-  if (!tbody) return;
+  const cardsMobile = document.getElementById('results-cards-mobile');
+  if (!tbody && !cardsMobile) return;
+
+  // Toggle secondary columns in desktop results table
+  document.querySelectorAll('.col-results-secondary').forEach(el => el.classList.toggle('hidden', !!appState.resultsTableCompact));
 
   if (appState.hasil.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="7" class="py-12 text-center text-outline">
-          <div class="flex flex-col items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-4xl text-outline/40">assignment_late</span>
-            <span class="text-sm font-medium">Belum ada riwayat hasil asesmen</span>
-            <span class="text-xs text-outline/60">Data hasil akan muncul setelah asesor menyimpan asesmen atau melakukan sinkronisasi spreadsheet.</span>
-          </div>
-        </td>
-      </tr>
-    `;
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-outline">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-4xl text-outline/40">assignment_late</span>
+              <span class="text-sm font-medium">Belum ada riwayat hasil asesmen</span>
+              <span class="text-xs text-outline/60">Data hasil akan muncul setelah asesor menyimpan asesmen atau melakukan sinkronisasi spreadsheet.</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    if (cardsMobile) {
+      cardsMobile.innerHTML = `
+        <div class="p-6 text-center bg-surface-container-lowest rounded-xl border border-surface-container-high text-outline">
+          <span class="material-symbols-outlined text-4xl text-outline/40">assignment_late</span>
+          <p class="text-sm font-semibold text-on-surface mt-2">Belum ada riwayat hasil asesmen</p>
+          <p class="text-xs text-outline mt-1">Data hasil akan muncul setelah asesor menyimpan asesmen.</p>
+        </div>
+      `;
+    }
     return;
   }
 
-  tbody.innerHTML = appState.hasil.map(h => {
-    const s = (h.skorAkhir <= 4 && h.skorAkhir > 0) ? (h.skorAkhir * 25) : h.skorAkhir;
-    const isPass = s >= 75.0;
-    const badge = isPass
-      ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Kompeten</span>'
-      : '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Perlu Pembinaan</span>';
+  // Desktop Table Rows
+  if (tbody) {
+    tbody.innerHTML = appState.hasil.map(h => {
+      const s = (h.skorAkhir <= 4 && h.skorAkhir > 0) ? (h.skorAkhir * 25) : h.skorAkhir;
+      const isPass = s >= 75.0;
+      const badge = isPass
+        ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Kompeten</span>'
+        : '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Perlu Pembinaan</span>';
 
-    return `
-      <tr class="hover:bg-surface-container-low transition-colors">
-        <td class="py-3 px-4">
-          <div class="font-mono text-xs font-bold text-primary">${h.idAsesmen}</div>
-          <div class="text-[10px] text-outline">${h.tanggal} • ${h.assesment || '-'}</div>
-        </td>
-        <td class="py-3 px-4">
-          <div class="font-bold text-on-surface text-xs">${h.nama}</div>
-          <div class="font-mono text-[10px] text-outline">${h.nip}</div>
-        </td>
-        <td class="py-3 px-4">
-          <div class="text-xs text-on-surface">${h.posisi}</div>
-          <div class="text-[10px] text-outline">${h.departemen}</div>
-        </td>
-        <td class="py-3 px-4">
-          <div class="text-xs text-on-surface font-medium">${h.trainerNama}</div>
-          <div class="text-[10px] text-outline font-mono">${h.trainerId}</div>
-        </td>
-        <td class="py-3 px-4 text-center font-mono font-bold text-sm text-primary">
-          ${s.toFixed(1)} <span class="text-[10px] text-outline font-normal">/ 100</span>
-        </td>
-        <td class="py-3 px-4 text-center">
-          ${badge}
-        </td>
-        <td class="py-3 px-4 text-right">
-          <button type="button" onclick="openTranscriptByNip('${h.nip}')" class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-xs transition-all flex items-center gap-1 inline-flex shadow-2xs">
-            <span class="material-symbols-outlined text-[15px]">print</span>
-            <span>Buka Rapor</span>
+      const secHidden = appState.resultsTableCompact ? 'hidden' : '';
+
+      return `
+        <tr class="hover:bg-surface-container-low transition-colors">
+          <td class="py-3 px-4">
+            <div class="font-mono text-xs font-bold text-primary">${h.idAsesmen}</div>
+            <div class="text-[10px] text-outline">${h.tanggal} • ${h.assesment || '-'}</div>
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-bold text-on-surface text-xs">${h.nama}</div>
+            <div class="font-mono text-[10px] text-outline">NIP. ${h.nip}</div>
+            ${appState.resultsTableCompact ? `<div class="text-[10px] text-on-surface-variant truncate font-medium mt-0.5">${h.posisi} • ${h.departemen}</div>` : ''}
+          </td>
+          <td class="py-3 px-4 col-results-secondary ${secHidden}">
+            <div class="text-xs text-on-surface">${h.posisi}</div>
+            <div class="text-[10px] text-outline">${h.departemen}</div>
+          </td>
+          <td class="py-3 px-4 col-results-secondary ${secHidden}">
+            <div class="text-xs text-on-surface font-medium">${h.trainerNama}</div>
+            <div class="text-[10px] text-outline font-mono">${h.trainerId}</div>
+          </td>
+          <td class="py-3 px-4 text-center font-mono font-bold text-sm text-primary">
+            ${s.toFixed(1)} <span class="text-[10px] text-outline font-normal">/ 100</span>
+          </td>
+          <td class="py-3 px-4 text-center">
+            ${badge}
+          </td>
+          <td class="py-3 px-4 text-right">
+            <button type="button" onclick="openTranscriptByNip('${h.nip}')" class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-xs transition-all flex items-center gap-1 inline-flex shadow-2xs cursor-pointer">
+              <span class="material-symbols-outlined text-[15px]">print</span>
+              <span>Buka Rapor</span>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // Mobile Cards
+  if (cardsMobile) {
+    cardsMobile.innerHTML = appState.hasil.map(h => {
+      const s = (h.skorAkhir <= 4 && h.skorAkhir > 0) ? (h.skorAkhir * 25) : h.skorAkhir;
+      const isPass = s >= 75.0;
+      const badge = isPass
+        ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Kompeten</span>'
+        : '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Perlu Pembinaan</span>';
+
+      return `
+        <div class="bg-surface-container-lowest rounded-xl border border-surface-container-high shadow-2xs p-3.5 space-y-3">
+          
+          <!-- Top Row: Name, NIP & Final Score -->
+          <div class="flex items-start justify-between gap-2.5">
+            <div class="min-w-0">
+              <h3 class="font-bold text-on-surface text-sm truncate">${h.nama}</h3>
+              <p class="font-mono text-[11px] text-outline">NIP. ${h.nip}</p>
+            </div>
+            <div class="shrink-0 text-right">
+              <div class="font-mono font-bold text-base text-primary">${s.toFixed(1)} <span class="text-[10px] text-outline font-normal">/ 100</span></div>
+              <div class="mt-0.5">${badge}</div>
+            </div>
+          </div>
+
+          <!-- Collapsible (Hide/Unhide) Assessment Details -->
+          <details class="group bg-surface-container-low/50 rounded-lg p-2 text-xs border border-surface-container-high/50">
+            <summary class="flex items-center justify-between font-semibold text-secondary cursor-pointer list-none select-none text-[11px] px-1 py-0.5">
+              <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[15px]">info</span>
+                <span>Detail Asesmen & Penguji</span>
+              </span>
+              <span class="material-symbols-outlined text-[16px] text-outline group-open:rotate-180 transition-transform duration-200">expand_more</span>
+            </summary>
+            <div class="pt-2 mt-1.5 border-t border-surface-container-high/60 grid grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <span class="text-outline text-[10px] block">ID Asesmen</span>
+                <span class="font-mono font-semibold text-primary truncate block">${h.idAsesmen}</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Tanggal</span>
+                <span class="text-on-surface">${h.tanggal}</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Posisi & Dept</span>
+                <span class="text-on-surface font-semibold truncate block">${h.posisi} (${h.departemen})</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Trainer Penguji</span>
+                <span class="text-on-surface font-semibold truncate block">${h.trainerNama}</span>
+              </div>
+              ${h.rekomendasi ? `
+              <div class="col-span-2 pt-1">
+                <span class="text-outline text-[10px] block">Catatan / Rekomendasi</span>
+                <span class="text-on-surface-variant italic">${h.rekomendasi}</span>
+              </div>` : ''}
+            </div>
+          </details>
+
+          <!-- Action Button: Full Width Touch-Friendly -->
+          <button type="button" onclick="openTranscriptByNip('${h.nip}')" class="w-full h-10 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>Buka Transkrip / Rapor Resmi</span>
           </button>
-        </td>
-      </tr>
-    `;
-  }).join('');
+
+        </div>
+      `;
+    }).join('');
+  }
 }
 
 function openTranscriptByNip(nip) {
-  const p = appState.peserta.find(p => p.nip === nip);
+  const p = appState.peserta.find(p => String(p.nip) === String(nip));
   if (p) {
     appState.currentPesertaId = p.id;
   }
+  appState.transcriptBack = 'dashboard';
   switchView('transkrip');
+  if (p) loadCandidateTranscript(p.id);
 }
 
 function exportResultsCSV() {
@@ -6324,12 +8004,12 @@ window.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('afterprint', () => document.body.classList.remove('print-laporan'));
   const savedReportId = sessionStorage.getItem('sim_report_id');
   if (savedReportId && !appState.isTrainerLoggedIn) {
-    switchView('portal');
-    setLoginRole('laporan');
+    setLoginRole('peserta');
     handleReportLogin(null, savedReportId);
   } else if (appState.isTrainerLoggedIn && appState.currentRole === 'asesor') {
     switchView('daftar-hadir');
   } else {
+    setLoginRole('peserta');
     switchView('portal');
   }
 });
