@@ -592,7 +592,7 @@
             </div>
             <div class="space-y-1">
               <label for="code-page-tempat-input" class="block text-[11px] font-bold text-outline">Tempat Asesmen / Training:</label>
-              <input type="text" id="code-page-tempat-input" value="Workshop Bay A" oninput="updateSessionTempat(this.value)" class="w-full bg-surface-container-low text-primary font-semibold text-xs rounded-lg px-3 py-2 border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+              <input type="text" id="code-page-tempat-input" value="Workshop Pioneer" oninput="updateSessionTempat(this.value)" class="w-full bg-surface-container-low text-primary font-semibold text-xs rounded-lg px-3 py-2 border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
             </div>
           </div>
 
@@ -662,7 +662,7 @@
               <span class="px-2 py-0.5 rounded bg-primary-container text-on-primary text-[10px] font-mono font-bold">Batch 03</span>
               <span class="px-2 py-0.5 rounded bg-surface-container text-on-surface text-[10px] font-semibold flex items-center gap-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                Workshop Bay A (Heavy Equipment)
+                Workshop Pioneer (Heavy Equipment)
               </span>
             </div>
             <p class="text-xs text-on-surface-variant mt-0.5" id="attendance-session-meta">
@@ -747,7 +747,7 @@
             <span class="font-mono text-xl sm:text-2xl font-bold text-primary-container" id="kpi-proses-peserta">0</span>
             <span class="text-[11px] text-outline">Aktif</span>
           </div>
-          <span class="text-[10px] text-on-surface-variant">Di Workshop Bay</span>
+          <span class="text-[10px] text-on-surface-variant">Di Workshop Pioneer</span>
         </div>
 
         <div class="bg-surface-container-lowest p-3 sm:p-3.5 rounded-xl border border-surface-container-high shadow-2xs flex flex-col justify-between">
@@ -783,7 +783,7 @@
       <!-- Search Input -->
       <div class="relative flex-1 max-w-md">
         <span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[18px]">search</span>
-        <input type="text" id="search-peserta" oninput="filterPesertaList()" placeholder="Cari Nama Mekanik, NIP, atau Posisi..." class="w-full bg-surface-container-low pl-9 pr-3 py-2 rounded-lg text-xs text-on-surface placeholder:text-outline border border-surface-container-high focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all">
+        <input type="text" id="search-peserta" oninput="filterPesertaList()" placeholder="Cari Nama Mekanik, NIP, Jabatan, atau Section..." class="w-full bg-surface-container-low pl-9 pr-3 py-2 rounded-lg text-xs text-on-surface placeholder:text-outline border border-surface-container-high focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all">
       </div>
 
       <!-- Filter Tabs & Table Columns Toggle -->
@@ -812,7 +812,7 @@
           <thead>
             <tr class="bg-surface-container-low border-b border-surface-container-high text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
               <th class="py-3 px-4">Mekanik / Kandidat</th>
-              <th class="py-3 px-4 col-peserta-secondary">Posisi & Departemen</th>
+              <th class="py-3 px-4 col-peserta-secondary">Jabatan & Section</th>
               <th class="py-3 px-4 col-peserta-secondary">Waktu & Tempat Asesmen</th>
               <th class="py-3 px-4 text-center">Status Uji</th>
               <th class="py-3 px-4 text-center">Skor / Capaian</th>
@@ -987,34 +987,48 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="space-y-1">
-                <label class="block text-xs font-semibold text-on-surface">Posisi / Tingkat Keahlian <span class="text-error">*</span></label>
+                <label class="block text-xs font-semibold text-on-surface">Jabatan <span class="text-error">*</span></label>
                 <div class="relative flex items-center">
                   <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">engineering</span>
-                  <input type="text" id="presensi-posisi" required placeholder="Contoh: Senior Hydraulic Specialist" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest">
+                  <input type="text" id="presensi-posisi" required placeholder="Contoh: Ancillary / Service / HE" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest">
                 </div>
               </div>
 
               <div class="space-y-1">
-                <label class="block text-xs font-semibold text-on-surface">Departemen / Divisi <span class="text-error">*</span></label>
+                <label class="block text-xs font-semibold text-on-surface">Section <span class="text-error">*</span></label>
                 <div class="relative flex items-center">
-                  <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">corporate_fare</span>
-                  <select id="presensi-dept" required class="w-full bg-surface-container-low pl-10 pr-8 py-2.5 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest appearance-none cursor-pointer">
-                    <option value="Plant & Heavy Fleet Maintenance">Plant & Heavy Fleet Maintenance</option>
-                    <option value="Workshop Overhaul Bay A">Workshop Overhaul Bay A</option>
-                    <option value="Heavy Equipment Diagnostic Bay B">Heavy Equipment Diagnostic Bay B</option>
-                    <option value="Mobile Fleet Service Unit">Mobile Fleet Service Unit</option>
-                    <option value="Component Rebuild Center (CRC)">Component Rebuild Center (CRC)</option>
+                  <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">category</span>
+                  <select id="presensi-section" required class="w-full bg-surface-container-low pl-10 pr-8 py-2.5 rounded-lg text-xs font-semibold text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest appearance-none cursor-pointer">
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Welder (Fabrikasi)">Welder (Fabrikasi)</option>
+                    <option value="Tyre">Tyre</option>
+                    <option value="Rigger">Rigger</option>
+                    <option value="Toolman">Toolman</option>
+                    <option value="Fuelman">Fuelman</option>
+                    <option value="Office">Office</option>
+                    <option value="Dispatcher">Dispatcher</option>
                   </select>
-                  <span class="material-symbols-outlined absolute right-2.5 text-outline text-[16px] pointer-events-none">expand_more</span>
+                  <span class="material-symbols-outlined absolute right-3 text-outline text-[18px] pointer-events-none">expand_more</span>
                 </div>
               </div>
             </div>
 
-            <div class="space-y-1">
-              <label class="block text-xs font-semibold text-on-surface">Tempat Asesmen</label>
-              <div class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">location_on</span>
-                <input type="text" id="presensi-tempat" value="Workshop Bay A" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="block text-xs font-semibold text-on-surface">Departemen</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">corporate_fare</span>
+                  <input type="text" id="presensi-dept" value="Engineering" readonly class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-xs font-semibold text-on-surface border border-surface-container-high bg-surface-container-low/50 cursor-not-allowed" title="Departemen statis di Engineering">
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label class="block text-xs font-semibold text-on-surface">Tempat Asesmen</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">location_on</span>
+                  <input type="text" id="presensi-tempat" value="Workshop Pioneer" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest">
+                </div>
               </div>
             </div>
 
@@ -1056,7 +1070,7 @@
           <!-- Tempat Asesmen Callout -->
           <div class="p-4 rounded-lg bg-surface-container-low border border-dashed border-secondary/40 mb-4">
             <span class="text-[10px] uppercase font-bold text-outline tracking-wider block">Tempat Asesmen Terdaftar</span>
-            <div class="font-display text-xl font-extrabold text-primary my-1" id="ticket-tempat">Workshop Bay A</div>
+            <div class="font-display text-xl font-extrabold text-primary my-1" id="ticket-tempat">Workshop Pioneer</div>
             <div class="flex items-center justify-center gap-1 text-[11px] text-emerald-800 font-semibold">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
               <span>Status: Siap Diuji oleh Instructor</span>
@@ -1078,12 +1092,20 @@
               <span class="font-mono font-bold text-primary" id="ticket-id">-</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-outline">Posisi</span>
+              <span class="text-outline">Jabatan</span>
               <span class="text-on-surface" id="ticket-posisi">-</span>
             </div>
             <div class="flex justify-between">
+              <span class="text-outline">Section</span>
+              <span class="font-semibold text-primary" id="ticket-section">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-outline">Departemen</span>
+              <span class="text-on-surface font-semibold" id="ticket-dept">Engineering</span>
+            </div>
+            <div class="flex justify-between">
               <span class="text-outline">Tempat Asesmen</span>
-              <span class="text-on-surface font-semibold" id="ticket-tempat-detail">Workshop Bay A</span>
+              <span class="text-on-surface font-semibold" id="ticket-tempat-detail">Workshop Pioneer</span>
             </div>
             <div class="flex justify-between">
               <span class="text-outline">Waktu Presensi</span>
@@ -1740,7 +1762,7 @@
             <tr class="bg-surface-container-low border-b border-surface-container-high text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
               <th class="py-3 px-4">ID & Tanggal</th>
               <th class="py-3 px-4">Nama Peserta & NIP</th>
-              <th class="py-3 px-4 col-results-secondary">Posisi & Unit Kerja</th>
+              <th class="py-3 px-4 col-results-secondary">Jabatan & Section</th>
               <th class="py-3 px-4 col-results-secondary">Trainer Penguji</th>
               <th class="py-3 px-4 text-center">Skor Akhir</th>
               <th class="py-3 px-4 text-center">Status Kelulusan</th>
@@ -1955,9 +1977,9 @@
             </div>
             <div>
               <label for="logbook-lokasi" class="block text-[11px] font-bold text-on-surface mb-1">Lokasi Pengerjaan <span class="text-error">*</span></label>
-              <input type="text" id="logbook-lokasi" required list="list-logbook-lokasi" value="Workshop Bay A" class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+              <input type="text" id="logbook-lokasi" required list="list-logbook-lokasi" value="Workshop Pioneer" class="w-full bg-surface-container-lowest px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
               <datalist id="list-logbook-lokasi">
-                <option value="Workshop Bay A">
+                <option value="Workshop Pioneer">
                 <option value="Workshop Bay B">
                 <option value="Component Rebuild Center (CRC)">
                 <option value="Pit Stop Heavy Fleet">
@@ -2421,7 +2443,7 @@
     <div class="space-y-1 my-3">
       <div class="text-xs font-bold text-primary">Scan Menggunakan Smartphone</div>
       <p class="text-[11px] text-on-surface-variant">Kandidat dapat langsung memindai QR code ini untuk membuka formulir presensi mandiri.</p>
-      <div class="text-[10px] font-mono text-outline pt-1">ID Sesi: #TAB-2024-B3 • Workshop Bay A</div>
+      <div class="text-[10px] font-mono text-outline pt-1">ID Sesi: #TAB-2024-B3 • Workshop Pioneer</div>
     </div>
 
     <div class="pt-3 border-t border-surface-container-high flex flex-col gap-2">
@@ -2435,7 +2457,7 @@
   </div>
 </div>
 
-<!-- 2. MODAL EDIT DATA PESERTA OLEH TRAINER (NAMA, NIP, POSISI, DEPARTEMEN) -->
+<!-- 2. MODAL EDIT DATA PESERTA OLEH TRAINER (NAMA, NIP, JABATAN, DEPARTEMEN) -->
 <div id="modal-edit-peserta" class="fixed inset-0 z-50 bg-on-surface/50 backdrop-blur-xs flex items-center justify-center p-4 hidden no-print">
   <div class="bg-surface-container-lowest rounded-2xl max-w-md w-full max-h-[92dvh] overflow-y-auto p-5 sm:p-6 shadow-2xl border border-surface-container-high relative">
     
@@ -2446,7 +2468,7 @@
         </div>
         <div>
           <h3 class="font-display font-bold text-sm text-primary">Ubah Data Peserta & Penugasan</h3>
-          <p class="text-[10px] text-outline">Trainer dapat memperbarui nama, NIP, posisi, dan departemen</p>
+          <p class="text-[10px] text-outline">Trainer dapat memperbarui nama, NIP, jabatan, dan tempat asesmen</p>
         </div>
       </div>
       <button type="button" onclick="closeEditPesertaModal()" class="text-outline hover:text-on-surface p-1 rounded-lg cursor-pointer">
@@ -2470,9 +2492,18 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label for="edit-peserta-posisi" class="block text-[11px] font-bold text-on-surface mb-1">Posisi / Jabatan:</label>
+          <label for="edit-peserta-posisi" class="block text-[11px] font-bold text-on-surface mb-1">Jabatan:</label>
           <input type="text" id="edit-peserta-posisi" required list="list-posisi-options" class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
           <datalist id="list-posisi-options">
+            <option value="Ancillary">
+            <option value="Service">
+            <option value="HE">
+            <option value="Electrician">
+            <option value="Tyreman">
+            <option value="Welder">
+            <option value="Rigger">
+            <option value="Toolman">
+            <option value="Fuelman">
             <option value="Mekanik I - Engine Specialist">
             <option value="Mekanik II - Hydraulic System">
             <option value="Mekanik III - Powertrain">
@@ -2483,20 +2514,31 @@
         </div>
 
         <div>
-          <label for="edit-peserta-dept" class="block text-[11px] font-bold text-on-surface mb-1">Departemen / Unit:</label>
-          <input type="text" id="edit-peserta-dept" required list="list-dept-options" class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
-          <datalist id="list-dept-options">
-            <option value="Heavy Equipment Overhaul & Repair">
-            <option value="Engine & Hydraulic Service Center">
-            <option value="Plant Maintenance Division">
-            <option value="Field Support & Heavy Mining Operation">
-          </datalist>
+          <label for="edit-peserta-section" class="block text-[11px] font-bold text-on-surface mb-1">Section:</label>
+          <select id="edit-peserta-section" required class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs font-semibold text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary cursor-pointer">
+            <option value="Mechanical">Mechanical</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Welder (Fabrikasi)">Welder (Fabrikasi)</option>
+            <option value="Tyre">Tyre</option>
+            <option value="Rigger">Rigger</option>
+            <option value="Toolman">Toolman</option>
+            <option value="Fuelman">Fuelman</option>
+            <option value="Office">Office</option>
+            <option value="Dispatcher">Dispatcher</option>
+          </select>
         </div>
       </div>
 
-      <div>
-        <label for="edit-peserta-tempat" class="block text-[11px] font-bold text-on-surface mb-1">Tempat Asesmen:</label>
-        <input type="text" id="edit-peserta-tempat" class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label for="edit-peserta-dept" class="block text-[11px] font-bold text-on-surface mb-1">Departemen:</label>
+          <input type="text" id="edit-peserta-dept" value="Engineering" readonly class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs font-semibold text-on-surface border border-surface-container-high bg-surface-container-low/50 cursor-not-allowed" title="Departemen statis di Engineering">
+        </div>
+
+        <div>
+          <label for="edit-peserta-tempat" class="block text-[11px] font-bold text-on-surface mb-1">Tempat Asesmen:</label>
+          <input type="text" id="edit-peserta-tempat" class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary">
+        </div>
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-3 border-t border-surface-container-high">
@@ -2558,7 +2600,7 @@
             <tr class="bg-surface-container-low border-b border-surface-container-high text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
               <th class="py-2.5 px-3">Tanggal</th>
               <th class="py-2.5 px-3">NIP & Nama Peserta</th>
-              <th class="py-2.5 px-3">Posisi & Dept</th>
+              <th class="py-2.5 px-3">Jabatan & Section</th>
               <th class="py-2.5 px-3">Jam & Tempat</th>
               <th class="py-2.5 px-3">Trainer / Kode Sesi</th>
               <th class="py-2.5 px-3 text-center">Status</th>
@@ -4329,7 +4371,7 @@ const INITIAL_LOGBOOK = [
     idLogbook: 'LB-20261107-1011',
     idPeserta: '199307182019011005',
     namaPeserta: 'Budi Santoso',
-    lokasi: 'Workshop Bay A',
+    lokasi: 'Workshop Pioneer',
     date: '2026-11-07',
     modelUnit: 'Komatsu PC200-8 (Hydraulic Excavator)',
     nomerUnit: 'EX-201',
@@ -4345,7 +4387,7 @@ const INITIAL_LOGBOOK = [
     idLogbook: 'LB-20261107-1012',
     idPeserta: '199307182019011005',
     namaPeserta: 'Budi Santoso',
-    lokasi: 'Workshop Bay A',
+    lokasi: 'Workshop Pioneer',
     date: '2026-11-07',
     modelUnit: 'Komatsu D85ESS-2 (Crawler Dozer)',
     nomerUnit: 'DZ-085',
@@ -4513,7 +4555,10 @@ const appState = {
     return null;
   })(),
   token: sessionStorage.getItem('sim_trainer_token') || '',
-  sessionTempat: localStorage.getItem('sim_session_tempat') || 'Workshop Bay A',
+  sessionTempat: (function() {
+    const t = localStorage.getItem('sim_session_tempat');
+    return (!t || t === 'Workshop Bay A') ? 'Workshop Pioneer' : t;
+  })(),
   verifiedAttendanceCode: null,
   verifiedTrainer: null,
   scannerStream: null,
@@ -4537,6 +4582,46 @@ const appState = {
 let lastSubmittedPesertaId = null;
 appState.hasil.forEach(h => { if (!h.assesment) h.assesment = 'Assesment - 1'; });
 
+const VALID_SECTIONS = [
+  'Mechanical',
+  'Electrical',
+  'Welder (Fabrikasi)',
+  'Tyre',
+  'Rigger',
+  'Toolman',
+  'Fuelman',
+  'Office',
+  'Dispatcher'
+];
+
+function normalizeSection(raw, posisi) {
+  if (raw) {
+    const s = String(raw).trim().toLowerCase();
+    if (s.includes('elect')) return 'Electrical';
+    if (s.includes('weld') || s.includes('fabrikasi')) return 'Welder (Fabrikasi)';
+    if (s.includes('tyre') || s.includes('tire')) return 'Tyre';
+    if (s.includes('rig')) return 'Rigger';
+    if (s.includes('tool')) return 'Toolman';
+    if (s.includes('fuel')) return 'Fuelman';
+    if (s.includes('office') || s.includes('admin')) return 'Office';
+    if (s.includes('disp')) return 'Dispatcher';
+    if (s.includes('mech')) return 'Mechanical';
+  }
+  if (posisi) {
+    const p = String(posisi).trim().toLowerCase();
+    if (p.includes('elect')) return 'Electrical';
+    if (p.includes('tyre') || p.includes('tire')) return 'Tyre';
+    if (p.includes('weld') || p.includes('fabrikasi')) return 'Welder (Fabrikasi)';
+    if (p.includes('rig')) return 'Rigger';
+    if (p.includes('tool')) return 'Toolman';
+    if (p.includes('fuel')) return 'Fuelman';
+    if (p.includes('office') || p.includes('admin')) return 'Office';
+    if (p.includes('disp')) return 'Dispatcher';
+    if (p.includes('ancillary') || p.includes('service') || p.includes('he') || p.includes('mech') || p.includes('hydraul') || p.includes('engine')) return 'Mechanical';
+  }
+  return 'Mechanical';
+}
+
 function cleanLegacyMockStorage() {
   const TARGET_APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYKWTI2xu6Y606YDcu7-fE6ZCA13AIfkIyfaAxAT_o5A19m242MqAj3E1hbhwYhmziiQ/exec';
   if (appState.appscriptUrl !== TARGET_APPSCRIPT_URL) {
@@ -4557,8 +4642,20 @@ function cleanLegacyMockStorage() {
         p.tempatAssesment = p.ruang;
         delete p.ruang;
       }
+      p.departemen = 'Engineering';
+      p.section = p.section ? normalizeSection(p.section, p.posisi) : normalizeSection(null, p.posisi);
+      if (!p.tempatAssesment || p.tempatAssesment === 'Workshop Bay A') {
+        p.tempatAssesment = 'Workshop Pioneer';
+      }
     });
     localStorage.setItem('sim_peserta', JSON.stringify(appState.peserta));
+  }
+  if (Array.isArray(appState.hasil)) {
+    appState.hasil.forEach(h => {
+      h.departemen = 'Engineering';
+      h.section = h.section ? normalizeSection(h.section, h.posisi) : normalizeSection(null, h.posisi);
+    });
+    localStorage.setItem('sim_hasil', JSON.stringify(appState.hasil));
   }
 }
 
@@ -4753,14 +4850,17 @@ async function syncAllSheets(showNotification = true) {
           const nama = String(c[2] ? c[2].v : '').trim();
           if (nip && nama && nama.toLowerCase() !== 'nama' && !seenPesertaNips.has(nip)) {
             seenPesertaNips.add(nip);
+            const rawPos = c[3] ? String(c[3].v) : 'Mechanic Specialist';
+            const rawSec = (c[10] && c[10].v) ? String(c[10].v).trim() : (c[4] && String(c[4].v).trim() !== 'Engineering' && String(c[4].v).trim() !== 'Plant & Heavy Fleet Maintenance' ? String(c[4].v).trim() : null);
             livePeserta.push({
               id: 'p_' + nip,
               nip: nip,
               nama: nama,
-              posisi: c[3] ? String(c[3].v) : 'Mechanic Specialist',
-              departemen: c[4] ? String(c[4].v) : 'Plant Maintenance',
+              posisi: rawPos,
+              section: normalizeSection(rawSec, rawPos),
+              departemen: 'Engineering',
               waktu: c[5] ? String(c[5].v) : '08:00 WIB',
-              tempatAssesment: c[6] ? String(c[6].v) : 'Workshop Bay A',
+              tempatAssesment: (c[6] && String(c[6].v).trim() && String(c[6].v).trim() !== 'Workshop Bay A') ? String(c[6].v).trim() : 'Workshop Pioneer',
               status: c[7] ? String(c[7].v) : 'Siap Uji',
               idPeserta: c[9] ? String(c[9].v).trim() : '',
               foto: `https://images.unsplash.com/photo-${1500000000000 + i * 1000}?w=150`
@@ -4773,7 +4873,7 @@ async function syncAllSheets(showNotification = true) {
         const k = String(old.nip);
         const idx = livePeserta.findIndex(x => x.nip === k);
         if (idx >= 0) {
-          livePeserta[idx] = pend.has(k) ? old : { ...old, ...livePeserta[idx], id: old.id };
+          livePeserta[idx] = pend.has(k) ? old : { ...old, ...livePeserta[idx], id: old.id, departemen: 'Engineering', section: (old.section || livePeserta[idx].section || normalizeSection(null, livePeserta[idx].posisi)), tempatAssesment: (!livePeserta[idx].tempatAssesment || livePeserta[idx].tempatAssesment === 'Workshop Bay A') ? 'Workshop Pioneer' : livePeserta[idx].tempatAssesment };
         } else if (pend.has(k)) livePeserta.push(old);
       });
       if (livePeserta.length > 0) {
@@ -4835,7 +4935,8 @@ async function syncAllSheets(showNotification = true) {
               nip: nip,
               nama: c[3] ? String(c[3].v) : 'Kandidat Mekanik',
               posisi: c[4] ? String(c[4].v) : 'Senior Mechanic',
-              departemen: c[5] ? String(c[5].v) : 'Plant Maintenance',
+              section: (c[14] && c[14].v) ? normalizeSection(c[14].v, c[4] ? c[4].v : '') : normalizeSection(null, c[4] ? c[4].v : ''),
+              departemen: 'Engineering',
               trainerId: c[6] ? String(c[6].v) : 'TRN-01',
               trainerNama: c[7] ? String(c[7].v) : 'Instructor',
               skorAkhir: (function() {
@@ -4970,7 +5071,8 @@ async function syncAllSheets(showNotification = true) {
                 nip: c[2] ? String(c[2].v || '').trim() : '',
                 nama: c[3] ? String(c[3].v || '').trim() : '',
                 posisi: c[4] ? String(c[4].v || '').trim() : '',
-                departemen: c[5] ? String(c[5].v || '').trim() : '',
+                section: (c[12] && c[12].v) ? normalizeSection(c[12].v, c[4] ? c[4].v : '') : normalizeSection(null, c[4] ? c[4].v : ''),
+                departemen: 'Engineering',
                 waktu: c[6] ? String(c[6].v || '').trim() : '',
                 tempatAssesment: c[7] ? String(c[7].v || '').trim() : '',
                 trainer: c[8] ? String(c[8].v || '').trim() : '',
@@ -5040,7 +5142,8 @@ async function syncAllSheets(showNotification = true) {
                 nip: c[2] ? String(c[2].v || '').trim() : '',
                 nama: c[3] ? String(c[3].v || '').trim() : '',
                 posisi: c[4] ? String(c[4].v || '').trim() : '',
-                departemen: c[5] ? String(c[5].v || '').trim() : '',
+                section: (c[12] && c[12].v) ? normalizeSection(c[12].v, c[4] ? c[4].v : '') : normalizeSection(null, c[4] ? c[4].v : ''),
+                departemen: 'Engineering',
                 trainerId: c[6] ? String(c[6].v || '').trim() : '',
                 trainerNama: c[7] ? String(c[7].v || '').trim() : '',
                 skorAkhir: c[8] ? parseFloat(c[8].v) || 0 : 0,
@@ -5577,8 +5680,8 @@ function renderLaporan() {
         <span class="material-symbols-outlined text-primary text-[36px] hidden sm:block">school</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-3">
-        ${info('ID Peserta', p.idPeserta)}${info('ID Karyawan / NIP', p.nip)}${info('Posisi', p.posisi)}${info('Departemen', p.departemen)}
-        ${info('Tempat Asesmen', p.tempat)}${info('Presensi', p.waktu)}${info('Asesor Terakhir', S.lastHasil ? S.lastHasil.trainerNama : '')}${info('Tanggal Hasil Terakhir', S.lastHasil ? S.lastHasil.tanggal : '')}
+        ${info('ID Peserta', p.idPeserta)}${info('ID Karyawan / NIP', p.nip)}${info('Jabatan', p.posisi)}${info('Section', p.section || normalizeSection(null, p.posisi))}
+        ${info('Departemen', p.departemen || 'Engineering')}${info('Tempat Asesmen', (!p.tempat || p.tempat === 'Workshop Bay A') ? 'Workshop Pioneer' : p.tempat)}${info('Presensi', p.waktu)}${info('Asesor Terakhir', S.lastHasil ? S.lastHasil.trainerNama : '')}
       </div>
     </div>
 
@@ -5792,9 +5895,10 @@ function renderLaporanKimpak(candidateIdOrNip) {
         <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-3 text-xs">
           <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Nama Mekanik</span><span class="font-bold text-emerald-950">${escHtml(p.nama)}</span></div>
           <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">ID Karyawan / NIP</span><span class="font-mono font-bold text-on-surface">${escHtml(p.nip)}</span></div>
-          <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Posisi / Jabatan</span><span class="font-semibold text-on-surface">${escHtml(p.posisi || '-')}</span></div>
-          <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Departemen</span><span class="font-semibold text-on-surface">${escHtml(p.departemen || '-')}</span></div>
-          <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Tempat Asesmen</span><span class="font-semibold text-on-surface">${escHtml(p.tempatAssesment || p.ruang || 'Workshop Bay A')}</span></div>
+          <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Jabatan</span><span class="font-semibold text-on-surface">${escHtml(p.posisi || '-')}</span></div>
+          <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Section</span><span class="font-semibold text-emerald-900">${escHtml(p.section || normalizeSection(null, p.posisi))}</span></div>
+          <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Departemen</span><span class="font-semibold text-on-surface">${escHtml(p.departemen || 'Engineering')}</span></div>
+          <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Tempat Asesmen</span><span class="font-semibold text-on-surface">${escHtml((!p.tempatAssesment || p.tempatAssesment === 'Workshop Bay A') ? 'Workshop Pioneer' : (p.tempatAssesment || p.ruang || 'Workshop Pioneer'))}</span></div>
           <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Tanggal Laporan</span><span class="font-semibold text-on-surface">${today}</span></div>
           <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Standar Asesmen</span><span class="font-semibold text-emerald-800">KIMPAK Power Tools</span></div>
           <div><span class="text-[10px] uppercase text-emerald-900/60 font-semibold block">Total Modul Diuji</span><span class="font-mono font-bold text-emerald-800">${hPrac.length} dari ${totalModul} Modul</span></div>
@@ -6270,12 +6374,13 @@ function renderTrainerCodePage() {
 
   const tempatInput = document.getElementById('code-page-tempat-input');
   if (tempatInput) {
-    tempatInput.value = appState.sessionTempat || 'Workshop Bay A';
+    tempatInput.value = (appState.sessionTempat && appState.sessionTempat !== 'Workshop Bay A') ? appState.sessionTempat : 'Workshop Pioneer';
   }
 
   // Generate QR Code URL (encodes direct link with ?kode=...&trainer=...&tempat=...)
   const baseUrl = window.location.href.split('?')[0].split('#')[0];
-  const qrTargetUrl = `${baseUrl}?kode=${encodeURIComponent(rawCode)}&trainer=${encodeURIComponent(currentTrainer.id)}&tempat=${encodeURIComponent(appState.sessionTempat || 'Workshop Bay A')}`;
+  const activeSessionTempat = (appState.sessionTempat && appState.sessionTempat !== 'Workshop Bay A') ? appState.sessionTempat : 'Workshop Pioneer';
+  const qrTargetUrl = `${baseUrl}?kode=${encodeURIComponent(rawCode)}&trainer=${encodeURIComponent(currentTrainer.id)}&tempat=${encodeURIComponent(activeSessionTempat)}`;
   const qrImg = document.getElementById('trainer-qr-img');
   if (qrImg) {
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&color=00236f&data=${encodeURIComponent(qrTargetUrl)}`;
@@ -6313,7 +6418,7 @@ function changeActiveTrainerForCode(trainerId) {
 }
 
 function updateSessionTempat(val) {
-  appState.sessionTempat = (val || '').trim() || 'Workshop Bay A';
+  appState.sessionTempat = (val || '').trim() || 'Workshop Pioneer';
   localStorage.setItem('sim_session_tempat', appState.sessionTempat);
 }
 
@@ -6322,7 +6427,8 @@ function copyTrainerAttendanceCode() {
   const rawCode = getActiveTrainerSessionCode(currentTrainer.id);
   const formattedCode = formatAttendanceCode(rawCode);
   const baseUrl = window.location.href.split('?')[0].split('#')[0];
-  const link = `${baseUrl}?kode=${rawCode}&trainer=${encodeURIComponent(currentTrainer.id)}&tempat=${encodeURIComponent(appState.sessionTempat || 'Workshop Bay A')}`;
+  const activeSessionTempat = (appState.sessionTempat && appState.sessionTempat !== 'Workshop Bay A') ? appState.sessionTempat : 'Workshop Pioneer';
+  const link = `${baseUrl}?kode=${rawCode}&trainer=${encodeURIComponent(currentTrainer.id)}&tempat=${encodeURIComponent(activeSessionTempat)}`;
   const textToCopy = `Kode Absensi Training (${currentTrainer.nama}): ${formattedCode}\nLink Absensi: ${link}`;
 
   if (navigator.clipboard) {
@@ -6378,7 +6484,7 @@ function verifyParticipantAttendanceCode(rawInput) {
         code: cleanCode,
         formattedCode: formatAttendanceCode(cleanCode),
         trainer: t,
-        tempat: extractedTempat || appState.sessionTempat || 'Workshop Bay A'
+        tempat: (extractedTempat && extractedTempat !== 'Workshop Bay A') ? extractedTempat : ((appState.sessionTempat && appState.sessionTempat !== 'Workshop Bay A') ? appState.sessionTempat : 'Workshop Pioneer')
       };
     }
   }
@@ -6393,7 +6499,7 @@ function verifyParticipantAttendanceCode(rawInput) {
       code: cleanCode,
       formattedCode: formatAttendanceCode(cleanCode),
       trainer: matchedTrainer,
-      tempat: extractedTempat || appState.sessionTempat || 'Workshop Bay A'
+      tempat: (extractedTempat && extractedTempat !== 'Workshop Bay A') ? extractedTempat : ((appState.sessionTempat && appState.sessionTempat !== 'Workshop Bay A') ? appState.sessionTempat : 'Workshop Pioneer')
     };
   }
 
@@ -6474,7 +6580,9 @@ function preparePresensiFormView() {
       namaInput.classList.add('bg-surface-container-high/60', 'cursor-not-allowed');
     }
     if (posInput && cp.posisi) posInput.value = cp.posisi;
-    if (deptSelect && cp.departemen) deptSelect.value = cp.departemen;
+    const secSelect = document.getElementById('presensi-section');
+    if (secSelect) secSelect.value = cp.section || normalizeSection(null, cp.posisi);
+    if (deptSelect) deptSelect.value = 'Engineering';
 
     const lockedBanner = document.getElementById('presensi-locked-banner');
     if (lockedBanner) lockedBanner.classList.remove('hidden');
@@ -6495,7 +6603,7 @@ function preparePresensiFormView() {
     if (existing && existing.waktu && existing.tanggal === todayKey) {
       hasCheckedToday = true;
       todayWaktu = existing.waktu;
-      todayTempat = existing.tempatAssesment || 'Workshop Bay A';
+      todayTempat = (!existing.tempatAssesment || existing.tempatAssesment === 'Workshop Bay A') ? 'Workshop Pioneer' : existing.tempatAssesment;
     } else if (appState.presensiHarian && Array.isArray(appState.presensiHarian)) {
       const matchLog = appState.presensiHarian.find(h => 
         String(h.nip).trim().toLowerCase() === String(cp.nip).trim().toLowerCase() && 
@@ -6504,13 +6612,13 @@ function preparePresensiFormView() {
       if (matchLog) {
         hasCheckedToday = true;
         todayWaktu = matchLog.waktu || (existing ? existing.waktu : '');
-        todayTempat = matchLog.tempatAssesment || (existing ? existing.tempatAssesment : 'Workshop Bay A');
+        todayTempat = (!matchLog.tempatAssesment || matchLog.tempatAssesment === 'Workshop Bay A') ? 'Workshop Pioneer' : (existing && existing.tempatAssesment !== 'Workshop Bay A' ? existing.tempatAssesment : 'Workshop Pioneer');
       }
     }
 
     if (hasCheckedToday && alreadyBanner && alreadyText) {
       alreadyBanner.classList.remove('hidden');
-      alreadyText.textContent = `Anda sudah tercatat hadir hari ini (${todayKey}, Pukul: ${todayWaktu || (existing ? existing.waktu : '')} di ${todayTempat || 'Workshop'}).`;
+      alreadyText.textContent = `Anda sudah tercatat hadir hari ini (${todayKey}, Pukul: ${todayWaktu || (existing ? existing.waktu : '')} di ${todayTempat || 'Workshop Pioneer'}).`;
     } else if (alreadyBanner) {
       alreadyBanner.classList.add('hidden');
     }
@@ -6518,7 +6626,7 @@ function preparePresensiFormView() {
 
   const tempatInput = document.getElementById('presensi-tempat');
   if (tempatInput) {
-    tempatInput.value = appState.sessionTempat || 'Workshop Bay A';
+    tempatInput.value = (appState.sessionTempat && appState.sessionTempat !== 'Workshop Bay A') ? appState.sessionTempat : 'Workshop Pioneer';
   }
 
   const evalBtn = document.getElementById('btn-ticket-open-eval');
@@ -6758,8 +6866,8 @@ function handlePesertaLogin(e) {
       nip: val,
       nama: val,
       posisi: 'Mechanic Specialist',
-      departemen: 'Plant & Heavy Fleet Maintenance',
-      tempatAssesment: 'Workshop Bay A',
+      departemen: 'Engineering',
+      tempatAssesment: 'Workshop Pioneer',
       status: 'Siap Uji'
     };
     appState.peserta.push(matched);
@@ -7005,7 +7113,8 @@ function renderPesertaTable() {
   const filtered = appState.peserta.filter(p => {
     const matchSearch = p.nama.toLowerCase().includes(searchKeyword) ||
                         p.nip.toLowerCase().includes(searchKeyword) ||
-                        p.posisi.toLowerCase().includes(searchKeyword);
+                        p.posisi.toLowerCase().includes(searchKeyword) ||
+                        (p.section && p.section.toLowerCase().includes(searchKeyword));
     
     // Determine participant status classification
     const hasResult = appState.hasil.some(h => String(h.nip) === String(p.nip));
@@ -7259,17 +7368,20 @@ function renderPesertaTable() {
             <div class="min-w-0">
               <div class="font-bold text-on-surface text-xs">${p.nama}</div>
               <div class="font-mono text-[10px] text-outline">NIP. ${p.nip}</div>
-              ${appState.pesertaTableCompact ? `<div class="text-[10px] text-on-surface-variant truncate font-medium mt-0.5">${p.posisi} • ${p.departemen}</div>` : ''}
+              ${appState.pesertaTableCompact ? `<div class="text-[10px] text-on-surface-variant truncate font-medium mt-0.5">${p.posisi} • ${p.section || normalizeSection(null, p.posisi)} • ${p.departemen || 'Engineering'}</div>` : ''}
             </div>
           </div>
         </td>
         <td class="py-3 px-4 col-peserta-secondary ${secHidden}">
-          <div class="font-medium text-on-surface text-xs">${p.posisi}</div>
-          <div class="text-[10px] text-on-surface-variant truncate max-w-[200px]">${p.departemen}</div>
+          <div class="font-medium text-on-surface text-xs">${escHtml(p.posisi || '-')}</div>
+          <div class="text-[10px] text-on-surface-variant truncate max-w-[200px] flex items-center gap-1 mt-0.5">
+            <span class="inline-block px-1.5 py-0.2 rounded text-[9px] font-bold bg-secondary/10 text-secondary border border-secondary/20">${escHtml(p.section || normalizeSection(null, p.posisi))}</span>
+            <span class="text-outline">${escHtml(p.departemen || 'Engineering')}</span>
+          </div>
         </td>
         <td class="py-3 px-4 col-peserta-secondary ${secHidden}">
           <div class="font-mono text-on-surface text-xs font-semibold">${p.waktu}</div>
-          <div class="text-[10px] text-outline">${p.tempatAssesment || p.ruang || 'Workshop Bay A'}</div>
+          <div class="text-[10px] text-outline">${(!p.tempatAssesment || p.tempatAssesment === 'Workshop Bay A') ? 'Workshop Pioneer' : (p.tempatAssesment || p.ruang || 'Workshop Pioneer')}</div>
         </td>
         <td class="py-3 px-4 text-center">
           ${statusBadgeHtml}
@@ -7282,7 +7394,7 @@ function renderPesertaTable() {
             ${actionBtnHtml}
             <button type="button" onclick="startPracticalAssessmentForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1 cursor-pointer active:scale-95" title="Mulai Asesmen Praktik KIMPAK"><span class="material-symbols-outlined text-[13px]">handyman</span><span>1. Uji Praktik</span></button>
             <button type="button" onclick="openLaporanKimpak('${p.id}')" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1 border border-emerald-200 cursor-pointer" title="Buka Laporan Hasil Uji Praktik KIMPAK"><span class="material-symbols-outlined text-[13px]">badge</span><span>KIMPAK</span></button>
-            <button type="button" onclick="openEditPesertaModal('${p.id}')" class="px-2 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary text-[11px] font-semibold transition-all shadow-2xs flex items-center gap-1 border border-surface-container-high cursor-pointer" title="Ubah Nama, NIP, Posisi, atau Departemen">
+            <button type="button" onclick="openEditPesertaModal('${p.id}')" class="px-2 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary text-[11px] font-semibold transition-all shadow-2xs flex items-center gap-1 border border-surface-container-high cursor-pointer" title="Ubah Nama, NIP, Jabatan, atau Departemen">
               <span class="material-symbols-outlined text-[13px] text-secondary">edit</span>
               <span>Edit</span>
             </button>
@@ -7329,26 +7441,30 @@ function renderPesertaTable() {
             <summary class="flex items-center justify-between font-semibold text-secondary cursor-pointer list-none select-none text-[11px] px-1 py-0.5">
               <span class="flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[15px]">badge</span>
-                <span>Detail Posisi & Jadwal</span>
+                <span>Detail Jabatan & Jadwal</span>
               </span>
               <span class="material-symbols-outlined text-[16px] text-outline group-open:rotate-180 transition-transform duration-200">expand_more</span>
             </summary>
             <div class="pt-2 mt-1.5 border-t border-surface-container-high/60 grid grid-cols-2 gap-2 text-[11px]">
               <div>
-                <span class="text-outline text-[10px] block">Posisi</span>
-                <span class="font-semibold text-on-surface truncate block">${p.posisi}</span>
+                <span class="text-outline text-[10px] block">Jabatan</span>
+                <span class="font-semibold text-on-surface truncate block">${escHtml(p.posisi || '-')}</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Section</span>
+                <span class="font-semibold text-primary truncate block">${escHtml(p.section || normalizeSection(null, p.posisi))}</span>
               </div>
               <div>
                 <span class="text-outline text-[10px] block">Departemen</span>
-                <span class="font-semibold text-on-surface truncate block">${p.departemen}</span>
-              </div>
-              <div>
-                <span class="text-outline text-[10px] block">Waktu Presensi</span>
-                <span class="font-mono font-semibold text-on-surface">${p.waktu}</span>
+                <span class="font-semibold text-on-surface truncate block">${escHtml(p.departemen || 'Engineering')}</span>
               </div>
               <div>
                 <span class="text-outline text-[10px] block">Tempat Asesmen</span>
-                <span class="font-semibold text-on-surface">${p.tempatAssesment || p.ruang || 'Workshop Bay A'}</span>
+                <span class="font-semibold text-on-surface">${escHtml((!p.tempatAssesment || p.tempatAssesment === 'Workshop Bay A') ? 'Workshop Pioneer' : (p.tempatAssesment || p.ruang || 'Workshop Pioneer'))}</span>
+              </div>
+              <div>
+                <span class="text-outline text-[10px] block">Waktu Presensi</span>
+                <span class="font-mono font-semibold text-on-surface">${escHtml(p.waktu || '-')}</span>
               </div>
             </div>
           </details>
@@ -7368,7 +7484,7 @@ function renderPesertaTable() {
           </button>
           <button type="button" onclick="openEditPesertaModal('${p.id}')" class="w-full h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-primary text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 border border-surface-container-high cursor-pointer active:scale-98">
             <span class="material-symbols-outlined text-[14px] text-secondary">edit</span>
-            <span>Ubah Data Peserta (Nama, NIP, Posisi, Dept)</span>
+            <span>Ubah Data Peserta (Nama, NIP, Jabatan, Dept)</span>
           </button>
 
         </div>
@@ -7509,8 +7625,9 @@ function handlePresensiSubmit(e) {
   let nip = document.getElementById('presensi-nip').value.trim();
   let nama = document.getElementById('presensi-nama').value.trim();
   const posisi = document.getElementById('presensi-posisi').value.trim();
-  const dept = document.getElementById('presensi-dept').value;
-  const tempat = (document.getElementById('presensi-tempat') ? document.getElementById('presensi-tempat').value.trim() : '') || 'Workshop Bay A';
+  const section = (document.getElementById('presensi-section') ? document.getElementById('presensi-section').value.trim() : '') || normalizeSection(null, posisi);
+  const dept = 'Engineering';
+  const tempat = (document.getElementById('presensi-tempat') ? document.getElementById('presensi-tempat').value.trim() : '') || 'Workshop Pioneer';
 
   if (appState.isPesertaLoggedIn && appState.currentPeserta) {
     nip = appState.currentPeserta.nip || nip;
@@ -7530,6 +7647,7 @@ function handlePresensiSubmit(e) {
     nip: nip,
     nama: nama,
     posisi: posisi,
+    section: section,
     departemen: dept,
     waktu: waktuStr,
     tanggal: tanggalStr,
@@ -7553,6 +7671,7 @@ function handlePresensiSubmit(e) {
       nip: nip,
       nama: nama,
       posisi: posisi,
+      section: section,
       departemen: dept,
       waktu: waktuStr, // waktu presensi hari ini
       tanggal: tanggalStr,
@@ -7583,6 +7702,7 @@ function handlePresensiSubmit(e) {
     nip: nip,
     nama: nama,
     posisi: posisi,
+    section: section,
     departemen: dept,
     waktu: waktuStr,
     tempatAssesment: tempat,
@@ -7613,6 +7733,10 @@ function handlePresensiSubmit(e) {
   if (ticketNip) ticketNip.textContent = nip;
   const ticketPosisi = document.getElementById('ticket-posisi');
   if (ticketPosisi) ticketPosisi.textContent = posisi;
+  const ticketSection = document.getElementById('ticket-section');
+  if (ticketSection) ticketSection.textContent = section;
+  const ticketDept = document.getElementById('ticket-dept');
+  if (ticketDept) ticketDept.textContent = dept;
   const ticketWaktu = document.getElementById('ticket-waktu');
   if (ticketWaktu) ticketWaktu.textContent = waktuStr;
 
@@ -7647,8 +7771,9 @@ function openEditPesertaModal(pesertaId) {
   setVal('edit-peserta-nama', p.nama);
   setVal('edit-peserta-nip', p.nip);
   setVal('edit-peserta-posisi', p.posisi);
-  setVal('edit-peserta-dept', p.departemen);
-  setVal('edit-peserta-tempat', p.tempatAssesment || p.ruang || 'Workshop Bay A');
+  setVal('edit-peserta-section', p.section || normalizeSection(null, p.posisi));
+  setVal('edit-peserta-dept', 'Engineering');
+  setVal('edit-peserta-tempat', (!p.tempatAssesment || p.tempatAssesment === 'Workshop Bay A') ? 'Workshop Pioneer' : (p.tempatAssesment || p.ruang || 'Workshop Pioneer'));
 
   const modal = document.getElementById('modal-edit-peserta');
   if (modal) modal.classList.remove('hidden');
@@ -7732,7 +7857,7 @@ function renderRiwayatPresensiTable() {
         </td>
         <td class="py-2.5 px-3 text-[11px]">
           <div class="font-medium text-on-surface">${escapeHtml(item.posisi || '-')}</div>
-          <div class="text-[10px] text-outline">${escapeHtml(item.departemen || '-')}</div>
+          <div class="text-[10px] text-outline">${escapeHtml(item.section ? item.section + ' • ' : '')}${escapeHtml(item.departemen || 'Engineering')}</div>
         </td>
         <td class="py-2.5 px-3 text-[11px] whitespace-nowrap">
           <div class="font-bold text-primary">${escapeHtml(item.waktu || '-')}</div>
@@ -7760,8 +7885,9 @@ function handleSaveEditPeserta(e) {
   const newNama = document.getElementById('edit-peserta-nama').value.trim();
   const newNip = document.getElementById('edit-peserta-nip').value.trim();
   const newPosisi = document.getElementById('edit-peserta-posisi').value.trim();
-  const newDept = document.getElementById('edit-peserta-dept').value.trim();
-  const newTempat = document.getElementById('edit-peserta-tempat').value.trim() || 'Workshop Bay A';
+  const newSection = (document.getElementById('edit-peserta-section') ? document.getElementById('edit-peserta-section').value.trim() : '') || normalizeSection(null, newPosisi);
+  const newDept = 'Engineering';
+  const newTempat = document.getElementById('edit-peserta-tempat').value.trim() || 'Workshop Pioneer';
 
   if (!newNama || !newNip || !newPosisi || !newDept) {
     showToast('Validasi Gagal', 'Semua kolom wajib diisi.', true);
@@ -7793,6 +7919,7 @@ function handleSaveEditPeserta(e) {
         h.nip = newNip;
         h.nama = newNama;
         h.posisi = newPosisi;
+        h.section = newSection;
         h.departemen = newDept;
       }
     });
@@ -7803,6 +7930,7 @@ function handleSaveEditPeserta(e) {
       if (String(h.nip) === String(newNip)) {
         h.nama = newNama;
         h.posisi = newPosisi;
+        h.section = newSection;
         h.departemen = newDept;
       }
     });
@@ -7813,6 +7941,7 @@ function handleSaveEditPeserta(e) {
   appState.peserta[pIdx].nama = newNama;
   appState.peserta[pIdx].nip = newNip;
   appState.peserta[pIdx].posisi = newPosisi;
+  appState.peserta[pIdx].section = newSection;
   appState.peserta[pIdx].departemen = newDept;
   appState.peserta[pIdx].tempatAssesment = newTempat;
   localStorage.setItem('sim_peserta', JSON.stringify(appState.peserta));
@@ -7830,6 +7959,7 @@ function handleSaveEditPeserta(e) {
             nip: newNip,
             nama: newNama,
             posisi: newPosisi,
+            section: newSection,
             departemen: newDept,
             tempatAssesment: newTempat
           }
@@ -8359,7 +8489,7 @@ function openWaLogbookModalBatch(batchData) {
     namaPeserta: batchData.namaPeserta,
     idPeserta: batchData.idPeserta,
     date: batchData.entries && batchData.entries[0] ? batchData.entries[0].date : getTodayDateKey(),
-    lokasi: batchData.entries && batchData.entries[0] ? batchData.entries[0].lokasi : 'Workshop Bay A',
+    lokasi: batchData.entries && batchData.entries[0] && batchData.entries[0].lokasi && batchData.entries[0].lokasi !== 'Workshop Bay A' ? batchData.entries[0].lokasi : 'Workshop Pioneer',
     entries: batchData.entries,
     mentorNama: batchData.mentorNama,
     mentorNo: batchData.mentorNo
@@ -8671,146 +8801,7 @@ function openLogbookDetailModal(idLogbook) {
   if (badgeEl) {
     if (isEvaluated) {
       badgeEl.className = 'px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-200 text-[11px] font-bold flex items-center gap-1';
-      badgeEl.innerHTML = `<span class="material-symbols-outlined text-[13px] text-emerald-700">verified</span><span>Sudah Dinilai Mentor</span>`;
-    } else {
-      badgeEl.className = 'px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200 text-[11px] font-bold flex items-center gap-1';
-      badgeEl.innerHTML = `<span class="material-symbols-outlined text-[13px] text-amber-700">schedule</span><span>Menunggu Penilaian Mentor</span>`;
-    }
-  }
-
-  // Peserta profile lookup
-  const matchedP = (appState.peserta || []).find(p => p.id === it.idPeserta || p.nip === it.idPeserta);
-  const posisiDept = matchedP ? `${matchedP.posisi || 'Mekanik'} • ${matchedP.departemen || 'Engineering'}` : 'Teknik Mekanik Alat Berat';
-
-  // Body content
-  const bodyEl = document.getElementById('modal-detail-body');
-  if (bodyEl) {
-    bodyEl.innerHTML = `
-      <!-- Bento 1: Mekanik & Lokasi Sesi -->
-      <div class="p-4 rounded-xl bg-surface-container-low/60 border border-surface-container-high space-y-3">
-        <div class="flex items-center justify-between gap-2 border-b border-surface-container-high/60 pb-2">
-          <span class="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[16px] text-secondary">person</span>
-            <span>Identitas Mekanik & Sesi Kerja</span>
-          </span>
-          <span class="font-mono text-xs font-bold text-secondary flex items-center gap-1">
-            <span class="material-symbols-outlined text-[14px]">calendar_month</span>
-            ${escapeHtml(formatLogbookDateDisplay(it.date))}
-          </span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <div class="text-[10px] uppercase font-bold text-outline">Nama Peserta</div>
-            <div class="font-bold text-sm text-on-surface">${escapeHtml(it.namaPeserta || '-')}</div>
-            <div class="font-mono text-[11px] text-secondary font-semibold">NIP / ID: ${escapeHtml(it.idPeserta || '-')}</div>
-            <div class="text-[11px] text-outline mt-0.5">${escapeHtml(posisiDept)}</div>
-          </div>
-          <div>
-            <div class="text-[10px] uppercase font-bold text-outline">Lokasi & Mentor Pendamping</div>
-            <div class="text-xs font-semibold text-on-surface flex items-center gap-1 mt-0.5">
-              <span class="material-symbols-outlined text-[14px] text-secondary">location_on</span>
-              <span>${escapeHtml(it.lokasi || '-')}</span>
-            </div>
-            <div class="text-xs font-semibold text-on-surface flex items-center gap-1 mt-1">
-              <span class="material-symbols-outlined text-[14px] text-emerald-700">verified_user</span>
-              <span>${escapeHtml(it.namaMentor || '-')}</span>
-            </div>
-            ${it.nomerMentor ? `<div class="text-[11px] font-mono text-outline pl-5">WA: ${escapeHtml(it.nomerMentor)}</div>` : ''}
-          </div>
-        </div>
-      </div>
-
-      <!-- Bento 2: Unit Alat Berat & HM -->
-      <div class="p-4 rounded-xl bg-surface-container-low/60 border border-surface-container-high space-y-3">
-        <div class="flex items-center justify-between gap-2 border-b border-surface-container-high/60 pb-2">
-          <span class="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[16px] text-secondary">precision_manufacturing</span>
-            <span>Spesifikasi Unit Alat Berat & Hour Meter (HM)</span>
-          </span>
-          <span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-primary font-mono text-xs font-bold">
-            ${escapeHtml(it.hmUnit || '0')} HM
-          </span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <div class="text-[10px] uppercase font-bold text-outline">Model Unit</div>
-            <div class="font-display font-bold text-sm text-primary mt-0.5">${escapeHtml(it.modelUnit || '-')}</div>
-          </div>
-          <div>
-            <div class="text-[10px] uppercase font-bold text-outline">Nomor Unit Fleet</div>
-            <span class="inline-block mt-1 px-2.5 py-1 rounded-md bg-primary-container text-on-primary text-xs font-mono font-bold shadow-2xs">
-              ${escapeHtml(it.nomerUnit || '-')}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bento 3: Materi & Uraian Lengkap -->
-      <div class="p-4 rounded-xl bg-surface-container-low/60 border border-surface-container-high space-y-2.5">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[16px] text-secondary">assignment</span>
-            <span>Materi Kompetensi & Uraian Pekerjaan</span>
-          </span>
-          <span class="px-2 py-0.5 rounded bg-surface-container text-on-surface text-[11px] font-medium">
-            Status: ${escapeHtml(it.keterangan || 'Selesai')}
-          </span>
-        </div>
-
-        <div class="pt-1">
-          <div class="text-[10px] uppercase font-bold text-outline mb-1">Materi Kompetensi:</div>
-          <div class="p-2 rounded-lg bg-surface-container-lowest border border-surface-container-high text-xs font-semibold text-primary">
-            ${escapeHtml(it.materKompetensi || '-')}
-          </div>
-        </div>
-
-        <div class="pt-1">
-          <div class="text-[10px] uppercase font-bold text-outline mb-1">Rincian Uraian Logbook (Aktivitas Teknis Unit):</div>
-          <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-surface-container-high text-xs text-on-surface leading-relaxed whitespace-pre-wrap font-sans">
-            ${escapeHtml(it.uraianLogbook || '-')}
-          </div>
-        </div>
-      </div>
-
-      <!-- Bento 4: Lembar Evaluasi Mentor -->
-      <div class="p-4 rounded-xl ${isEvaluated ? 'bg-emerald-50/60 border-emerald-200' : 'bg-surface-container-low/60 border-surface-container-high'} border space-y-3">
-        <div class="flex items-center justify-between gap-2 border-b ${isEvaluated ? 'border-emerald-200' : 'border-surface-container-high/60'} pb-2">
-          <span class="text-[11px] font-bold text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[16px] text-emerald-700">rate_review</span>
-            <span>Hasil Evaluasi & Validasi Mentor (SPV)</span>
-          </span>
-          ${isEvaluated ? `
-            <span class="text-[11px] font-bold text-emerald-800">Tervalidasi di Sheet Evaluasi_Mentor</span>
-          ` : `
-            <span class="text-[11px] font-bold text-amber-800">Belum Dinilai</span>
-          `}
-        </div>
-
-        ${isEvaluated ? `
-          <div class="space-y-3">
-            <div class="flex items-center justify-between gap-2 text-xs flex-wrap">
-              <div>
-                <span class="text-[10px] uppercase font-bold text-outline block">Mentor Penilai</span>
-                <span class="font-bold text-emerald-950">${escapeHtml(existingEval.namaMentor || it.namaMentor || '-')}</span>
-                <span class="text-[10px] font-mono text-outline"> (ID: ${escapeHtml(existingEval.idMentor || '-')})</span>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
-              <div class="p-2.5 rounded-xl bg-white/80 border border-emerald-200 text-center shadow-2xs">
-                <span class="text-[10px] uppercase font-bold text-outline block mb-0.5">Kedisiplinan</span>
-                <span class="font-bold text-emerald-900 block">${escapeHtml(existingEval.nilaiKedisiplinan || '-')}</span>
-                <span class="text-xs text-emerald-700">${getStarString(existingEval.nilaiKedisiplinan)}</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-white/80 border border-emerald-200 text-center shadow-2xs">
-                <span class="text-[10px] uppercase font-bold text-outline block mb-0.5">Inisiatif</span>
-                <span class="font-bold text-emerald-900 block">${escapeHtml(existingEval.nilaiInisiatif || '-')}</span>
-                <span class="text-xs text-emerald-700">${getStarString(existingEval.nilaiInisiatif)}</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-white/80 border border-emerald-200 text-center shadow-2xs">
-                <span class="text-[10px] uppercase font-bold text-outline block mb-0.5">Pemahaman</span>
-                <span class="font-bold text-emerald-900 block">${escapeHtml(existingEval.nilaiPemahaman || '-')}</span>
-                <span class="text-xs text-emerald-700">${getStarString(existingEval.nilaiPemahaman)}</span>
+      ba
               </div>
               <div class="p-2.5 rounded-xl bg-white/80 border border-emerald-200 text-center shadow-2xs">
                 <span class="text-[10px] uppercase font-bold text-outline block mb-0.5">Safety</span>
@@ -10875,11 +10866,11 @@ function renderResultsTable() {
           <td class="py-3 px-4">
             <div class="font-bold text-on-surface text-xs">${h.nama}</div>
             <div class="font-mono text-[10px] text-outline">NIP. ${h.nip}</div>
-            ${appState.resultsTableCompact ? `<div class="text-[10px] text-on-surface-variant truncate font-medium mt-0.5">${h.posisi} • ${h.departemen}</div>` : ''}
+            ${appState.resultsTableCompact ? `<div class="text-[10px] text-on-surface-variant truncate font-medium mt-0.5">${h.posisi} • ${h.departemen || 'Engineering'}</div>` : ''}
           </td>
           <td class="py-3 px-4 col-results-secondary ${secHidden}">
             <div class="text-xs text-on-surface">${h.posisi}</div>
-            <div class="text-[10px] text-outline">${h.departemen}</div>
+            <div class="text-[10px] text-outline">${h.departemen || 'Engineering'}</div>
           </td>
           <td class="py-3 px-4 col-results-secondary ${secHidden}">
             <div class="text-xs text-on-surface font-medium">${h.trainerNama}</div>
@@ -10954,8 +10945,8 @@ function renderResultsTable() {
                 <span class="text-on-surface">${h.tanggal}</span>
               </div>
               <div>
-                <span class="text-outline text-[10px] block">Posisi & Dept</span>
-                <span class="text-on-surface font-semibold truncate block">${h.posisi} (${h.departemen})</span>
+                <span class="text-outline text-[10px] block">Jabatan & Dept</span>
+                <span class="text-on-surface font-semibold truncate block">${h.posisi} (${h.departemen || 'Engineering'})</span>
               </div>
               <div>
                 <span class="text-outline text-[10px] block">Trainer Penguji</span>
@@ -10999,8 +10990,8 @@ function editAssessmentByNip(nip) {
         nip: h.nip,
         nama: h.nama,
         posisi: h.posisi,
-        departemen: h.departemen,
-        tempat: 'Workshop Bay A',
+        departemen: 'Engineering',
+        tempat: 'Workshop Pioneer',
         waktuPresensi: h.tanggal,
         status: h.statusKelulusan || 'Selesai'
       };
@@ -11028,7 +11019,7 @@ function exportResultsCSV() {
     return;
   }
 
-  const headers = ['ID_Asesmen', 'Tanggal', 'NIP', 'Nama', 'Posisi', 'Departemen', 'Trainer', 'Skor_Akhir', 'Status_Kelulusan', 'Rekomendasi', 'Assesment'];
+  const headers = ['ID_Asesmen', 'Tanggal', 'NIP', 'Nama', 'Jabatan', 'Departemen', 'Trainer', 'Skor_Akhir', 'Status_Kelulusan', 'Rekomendasi', 'Assesment'];
   const rows = appState.hasil.map(h => [
     `"${h.idAsesmen}"`,
     `"${h.tanggal}"`,
@@ -11188,11 +11179,11 @@ function loadCandidateTranscript(pesertaId) {
         <div>
           ${kv('Nama Kandidat', p.nama)}
           ${kv('NIP / ID Karyawan', p.nip)}
-          ${kv('Posisi / Jabatan', p.posisi)}
-          ${kv('Departemen', p.departemen)}
+          ${kv('Jabatan', p.posisi)}
+          ${kv('Departemen', p.departemen || 'Engineering')}
         </div>
         <div>
-          ${kv('Tempat Asesmen', p.tempat || 'Workshop Bay A')}
+          ${kv('Tempat Asesmen', (!p.tempat || p.tempat === 'Workshop Bay A') ? 'Workshop Pioneer' : p.tempat)}
           ${kv('Instructor / Asesor', trainerNama)}
           ${kv('Tanggal Pelaksanaan', hasilRecord ? hasilRecord.tanggal : today)}
           ${kv('Status Sesi', statusText)}
@@ -11360,7 +11351,7 @@ function loadCandidateTranscript(pesertaId) {
       <!-- Pengesahan & Tanda Tangan Asesor -->
       <div class="mt-8 flex justify-end">
         <div class="text-center text-xs min-w-[220px]">
-          <div class="text-outline">${escHtml(p.tempat || 'Workshop Bay A')}, ${today}</div>
+          <div class="text-outline">${escHtml((!p.tempat || p.tempat === 'Workshop Bay A') ? 'Workshop Pioneer' : p.tempat)}, ${today}</div>
           <div class="text-[10px] uppercase font-bold text-outline mt-1">Instructor / Asesor Penguji</div>
           <div class="h-16 border-b border-surface-container-highest"></div>
           <div class="font-bold text-primary mt-1">${escHtml(trainerNama)}</div>
