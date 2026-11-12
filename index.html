@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#00236f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>SIM-ASESMEN | Sistem Penilaian Skala Kompetensi Mekanik</title>
   
   <!-- Favicon & Brand Icons -->
@@ -168,6 +172,108 @@
         margin: 12mm 10mm 12mm 10mm;
       }
     }
+
+    /* ===================================================================
+       MOBILE-FIRST "NATIVE APP" LAYER (override, tanpa mengubah desktop)
+       =================================================================== */
+    :root { --tabbar-h: 62px; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body { overscroll-behavior-y: none; }
+    #bottom-tabbar { display: none; }
+    main .flex > *, main .grid > * { min-width: 0; }
+    main table { max-width: none; }
+    .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+
+    @media (max-width: 1023.98px) {
+      /* Header: aman dari notch, tidak menutupi konten */
+      #app-navbar { padding-top: env(safe-area-inset-top); }
+      #app-navbar img { max-width: 90px; }
+      /* Menu hamburger menjadi sheet scrollable di bawah header (tidak mendorong/menimpa halaman) */
+      #mobile-nav {
+        position: absolute; top: 100%; left: 0; right: 0;
+        max-height: calc(100dvh - 130px - var(--tabbar-h) - env(safe-area-inset-bottom));
+        overflow-y: auto; -webkit-overflow-scrolling: touch;
+        border-radius: 0 0 1.25rem 1.25rem; box-shadow: 0 18px 30px rgba(0,0,0,.18);
+      }
+      #mobile-nav button { min-height: 44px; font-size: 13px; }
+      /* Konten tidak tertutup tab bar bawah / chip outbox */
+      main { padding-bottom: calc(var(--tabbar-h) + 1.25rem + env(safe-area-inset-bottom)) !important; }
+      #outbox-chip { bottom: calc(var(--tabbar-h) + 10px + env(safe-area-inset-bottom)); left: 10px; z-index: 45; }
+      #toast-notification { top: calc(env(safe-area-inset-top) + 64px) !important; z-index: 70; }
+
+      /* Bottom tab bar ala aplikasi native */
+      #bottom-tabbar {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+        height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+        padding: 6px 6px env(safe-area-inset-bottom);
+        background: rgba(255,255,255,.96); backdrop-filter: blur(14px);
+        border-top: 1px solid #dce9ff; box-shadow: 0 -4px 18px rgba(0,0,0,.07);
+        display: none; align-items: stretch; justify-content: space-around; gap: 2px;
+      }
+      #bottom-tabbar.has-items { display: flex; }
+      body.kb-open #bottom-tabbar { display: none !important; }
+      #bottom-tabbar button {
+        flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 2px; border-radius: 14px; color: #5b5f70; font-size: 10px; font-weight: 600; line-height: 1.1; background: transparent;
+      }
+      #bottom-tabbar button span.material-symbols-outlined { font-size: 24px; }
+      #bottom-tabbar button .tb-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
+      #bottom-tabbar button.active { color: #00236f; background: #dce9ff; }
+      #bottom-tabbar button.active span.material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+      #bottom-tabbar button:active { transform: scale(.94); }
+    }
+
+    @media (max-width: 639px) {
+      /* Input 16px: cegah zoom otomatis iOS, tinggi nyaman untuk jempol */
+      input:not([type=checkbox]):not([type=radio]), textarea, select { font-size: 16px !important; }
+      input:not([type=checkbox]):not([type=radio]):not([type=file]), select { min-height: 46px; }
+      button { touch-action: manipulation; }
+      main { padding-left: max(.75rem, env(safe-area-inset-left)); padding-right: max(.75rem, env(safe-area-inset-right)); }
+      @media (max-width: 400px) { #app-navbar [class*="text-[8px]"] { display: none; } }
+
+      /* Modal menjadi bottom-sheet */
+      .fixed.inset-0.z-50 { align-items: flex-end !important; padding: 0 !important; }
+      .fixed.inset-0.z-50 > div {
+        width: 100% !important; max-width: 100% !important; max-height: 92dvh; overflow-y: auto;
+        border-radius: 1.25rem 1.25rem 0 0 !important; padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      /* ---------- Trainer: Kode & Barcode Absensi ---------- */
+      #view-kode-absensi .p-6, #view-kode-absensi .p-5 { padding: 1rem !important; }
+      #view-kode-absensi .shrink-0:has(> button) { width: 100%; flex-wrap: wrap; }
+      #view-kode-absensi .shrink-0 > button { flex: 1 1 100%; justify-content: center; min-height: 46px; }
+      #trainer-active-code-display { font-size: clamp(1.5rem, 8.5vw, 2.3rem) !important; letter-spacing: .1em !important; word-break: break-all; }
+      #view-kode-absensi canvas, #view-kode-absensi svg { max-width: 100%; height: auto; }
+
+      /* ---------- Trainer: Daftar Hadir ---------- */
+      #view-daftar-hadir .flex-wrap, #view-daftar-hadir .flex { flex-wrap: wrap; }
+      #view-daftar-hadir .p-5, #view-daftar-hadir .p-6 { padding: .9rem !important; }
+      #view-daftar-hadir select, #view-daftar-hadir input { width: 100%; }
+
+      /* ---------- Peserta: Form Presensi & Portal ---------- */
+      #view-presensi-form .p-6, #view-presensi-form .p-5, #view-portal .p-6, #view-portal .p-8 { padding: 1rem !important; }
+      #view-presensi-form .grid { grid-template-columns: 1fr !important; }
+      #view-presensi-form label { font-size: 12px; }
+      /* tombol kirim presensi selalu terlihat di atas tab bar */
+      #view-presensi-form div:has(> #btn-submit-presensi) {
+        position: sticky; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 6px); z-index: 20;
+        background: rgba(255,255,255,.96); padding: .6rem; border-radius: 16px; box-shadow: 0 -6px 18px rgba(0,0,0,.1);
+        flex-wrap: wrap;
+      }
+      #btn-submit-presensi { min-height: 50px; font-size: 14px !important; }
+      #view-presensi-form div:has(> #btn-submit-presensi) > button { min-height: 48px; }
+    }
+
+    /* Header & dropdown akun rapi di smartphone */
+    @media (max-width: 1023.98px) {
+      #trainer-avatar-dropdown {
+        position: fixed !important; top: calc(env(safe-area-inset-top) + 60px); left: auto !important; right: 10px !important; margin: 0 !important;
+        width: min(310px, calc(100vw - 20px)) !important; max-height: 70dvh; overflow-y: auto; z-index: 60 !important;
+        box-shadow: 0 0 0 100vmax rgba(15,23,42,.30), 0 18px 40px rgba(0,0,0,.28);
+      }
+      #app-navbar [class*="text-[8px]"] { display: none; }
+      #trainer-dropdown-container > button { height: 36px; }
+    }
   </style>
 </head>
 <body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col antialiased">
@@ -292,7 +398,7 @@
             </button>
 
             <!-- Dropdown Menu -->
-            <div id="trainer-avatar-dropdown" class="absolute right-0 mt-2 w-52 bg-surface-container-lowest rounded-xl shadow-xl border border-surface-container-high p-2 hidden group-hover:block transition-all z-50">
+            <div id="trainer-avatar-dropdown" class="absolute right-0 mt-2 w-52 bg-surface-container-lowest rounded-xl shadow-xl border border-surface-container-high p-2 hidden transition-all z-50">
               <div class="px-3 py-2.5 border-b border-surface-container-high bg-surface-container-low/50 rounded-lg mb-1">
                 <div class="flex items-center gap-2">
                   <span class="w-7 h-7 rounded-full bg-primary text-on-primary font-bold text-xs flex items-center justify-center shrink-0" id="trainer-dropdown-initials">TR</span>
@@ -5534,6 +5640,21 @@ function printLaporan() {
   window.print();
 }
 
+// Penilaian per KELOMPOK kompetensi (kategori): kompeten hanya bila semua butir dinilai & tiap butir >= 3
+function catStats(items, scores) {
+  let r = 0, sum = 0, b = 0;
+  (items || []).forEach(c => { const v = scores[c.id]; if (v !== undefined) { r++; sum += toPoints(v); if ((v <= 4 ? v : v / 25) < 3) b++; } });
+  return { rated: r, total: (items || []).length, avg: r ? sum / r : null, below: b };
+}
+function catVerdict(rated, total, avg, below) {
+  const AMB = 'bg-amber-100 text-amber-800 border-amber-200';
+  if (!total || !rated) return { key: 'none', ok: false, done: false, t: 'Belum Dinilai', chip: 'bg-surface-container text-on-surface-variant border-surface-container-high', bar: 'bg-outline-variant' };
+  if (rated < total) return { key: 'partial', ok: false, done: false, t: 'Belum selesai dinilai (' + rated + '/' + total + ')', chip: 'bg-amber-50 text-amber-800 border-amber-200', bar: 'bg-amber-300' };
+  if (below > 0 || avg < 75) return { key: 'fail', ok: false, done: true, t: 'Perlu Pembinaan', chip: AMB, bar: 'bg-amber-500' };
+  if (avg >= 87.5) return { key: 'top', ok: true, done: true, t: 'Sangat Kompeten', chip: 'bg-emerald-100 text-emerald-800 border-emerald-200', bar: 'bg-emerald-500' };
+  return { key: 'ok', ok: true, done: true, t: 'Kompeten', chip: 'bg-blue-100 text-blue-800 border-blue-200', bar: 'bg-blue-600' };
+}
+
 function levelOf(avg, hasBelowThree = false) {
   if (avg === null || avg === undefined) return { t: 'Belum Dinilai', bar: 'bg-outline-variant', chip: 'bg-surface-container text-on-surface-variant border-surface-container-high' };
   if (hasBelowThree) return { t: 'Perlu Pembinaan', bar: 'bg-amber-500', chip: 'bg-amber-100 text-amber-800 border-amber-200' };
@@ -5566,9 +5687,9 @@ function computeReportBreakdown(scores) {
         }
       });
       rated += cr; total += items.length; sum += cs; assBelowThree += catBelowThree;
-      return { name: cname, items, rated: cr, total: items.length, avg: cr ? cs / cr : null, belowThreeCount: catBelowThree, hasBelowThree: catBelowThree > 0 };
+      return { name: cname, items, rated: cr, total: items.length, avg: cr ? cs / cr : null, belowThreeCount: catBelowThree, hasBelowThree: catBelowThree > 0, v: catVerdict(cr, items.length, cr ? cs / cr : null, catBelowThree) };
     });
-    return { name, cats: catArr, rated, total, sum, avg: rated ? sum / rated : null, belowThreeCount: assBelowThree, hasBelowThree: assBelowThree > 0 };
+    return { name, cats: catArr, catsTotal: catArr.length, catsOk: catArr.filter(c => c.v.ok).length, catsDone: catArr.filter(c => c.v.done).length, rated, total, sum, avg: rated ? sum / rated : null, belowThreeCount: assBelowThree, hasBelowThree: assBelowThree > 0 };
   });
 }
 
@@ -5585,7 +5706,8 @@ function reportSummary(R) {
   const headScore = allDone ? doneScores.reduce((x, y) => x + y, 0) / doneScores.length : overall;
   const hList = (R.hasilList || []).slice().sort((a, b) => String(a.tanggal).localeCompare(String(b.tanggal)));
   const hasBelowThree = totalBelowThree > 0;
-  return { br, totalR, totalT, pct: totalT ? Math.round(totalR / totalT * 100) : 0, overall, hmap, allDone, headScore, belowThreeCount: totalBelowThree, hasBelowThree, lastHasil: hList[hList.length - 1] || null };
+  const catsTotal = br.reduce((x, a) => x + a.catsTotal, 0), catsOk = br.reduce((x, a) => x + a.catsOk, 0), catsDone = br.reduce((x, a) => x + a.catsDone, 0);
+  return { catsTotal, catsOk, catsDone, br, totalR, totalT, pct: totalT ? Math.round(totalR / totalT * 100) : 0, overall, hmap, allDone, headScore, belowThreeCount: totalBelowThree, hasBelowThree, lastHasil: hList[hList.length - 1] || null };
 }
 
 function handleLaporanSearch(e) {
@@ -5636,8 +5758,9 @@ function renderLaporan() {
     return;
   }
   const p = R.peserta, S = reportSummary(R);
-  const lv = levelOf(S.headScore, S.hasBelowThree);
-  const statusText = S.allDone ? (S.hasBelowThree ? 'Selesai • Perlu Pembinaan' : `Selesai • ${lv.t}`) : (S.totalR ? `Sedang Diases (${S.pct}%)` : (p.status || 'Siap Uji'));
+  const allCatsDone = S.catsTotal > 0 && S.catsDone === S.catsTotal;
+  const lv = !S.totalR ? levelOf(null) : (!allCatsDone ? { chip: 'bg-amber-50 text-amber-800 border-amber-200' } : (S.catsOk === S.catsTotal ? levelOf(80) : levelOf(50, true)));
+  const statusText = !S.totalR ? (p.status || 'Siap Uji') : (!allCatsDone ? 'Belum selesai dinilai' : (S.catsOk === S.catsTotal ? 'Kompeten' : `${S.catsTotal - S.catsOk} kelompok perlu pembinaan`));
   const isPeserta = appState.reportMode === 'peserta';
   const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
   const info = (label, val) => `<div class="min-w-0"><div class="text-[10px] uppercase tracking-wider text-outline font-semibold">${label}</div><div class="text-xs font-semibold text-on-surface break-words">${escHtml(val || '-')}</div></div>`;
@@ -5645,10 +5768,10 @@ function renderLaporan() {
   const assHtml = S.br.map(a => {
     const h = S.hmap[a.name];
     const hScore = h ? toPoints(Number(h.skorAkhir) || 0) : null;
-    const al = levelOf(h ? hScore : a.avg, a.hasBelowThree);
-    const chipTxt = h ? `${hScore.toFixed(1)} • ${escHtml(h.statusKelulusan)}` : (a.avg === null ? 'Belum dinilai' : `Berjalan • ${a.avg.toFixed(1)}`);
+    const al = a.rated === 0 ? levelOf(null) : (a.rated < a.total ? { chip: 'bg-amber-50 text-amber-800 border-amber-200' } : (a.catsOk === a.catsTotal ? levelOf(80) : levelOf(50, true)));
+    const chipTxt = a.rated === 0 ? 'Belum dinilai' : (a.rated < a.total ? `Belum selesai • ${a.catsOk}/${a.catsTotal} kelompok kompeten` : `${a.catsOk}/${a.catsTotal} kelompok kompeten`);
     const cats = a.cats.map(c => {
-      const cl = levelOf(c.avg, c.hasBelowThree);
+      const cl = c.v;
       const items = c.items.map(it => {
         const v = R.scores[it.id];
         const sl = v === undefined ? levelOf(null) : levelOf(toPoints(v));
@@ -5659,10 +5782,10 @@ function renderLaporan() {
       }).join('');
       return `<div class="py-3 border-t border-surface-container-high first:border-t-0">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <div class="text-xs font-semibold text-on-surface sm:w-5/12 min-w-0">${escHtml(c.name)}</div>
+          <div class="text-xs font-semibold text-on-surface sm:w-5/12 min-w-0 flex items-start gap-1.5">${c.v.ok ? '<span class="material-symbols-outlined text-[19px] text-emerald-600 shrink-0" style="font-variation-settings:\'FILL\' 1" title="Kompeten">check_circle</span>' : ''}<span class="min-w-0">${escHtml(c.name)}<span class="block mt-0.5"><span class="inline-block px-1.5 py-0.5 rounded-full border text-[9px] font-bold ${c.v.chip}">${c.v.t}</span></span></span></div>
           <div class="flex-1 flex items-center gap-3">
-            <div class="flex-1 h-2 rounded-full bg-surface-container-high overflow-hidden"><div class="h-full rounded-full ${cl.bar}" style="width:${c.avg === null ? 0 : Math.min(100, c.avg)}%"></div></div>
-            <span class="font-mono text-xs font-bold text-primary w-10 text-right">${c.avg === null ? '-' : c.avg.toFixed(1)}</span>
+            <div class="flex-1 h-2 rounded-full bg-surface-container-high overflow-hidden"><div class="h-full rounded-full ${cl.bar}" style="width:${c.v.done ? Math.min(100, c.avg) : Math.round(c.rated / (c.total || 1) * 100)}%"></div></div>
+            <span class="font-mono text-xs font-bold text-primary w-10 text-right">${c.v.done ? c.avg.toFixed(1) : '–'}</span>
           </div>
           <div class="text-[10px] font-mono text-outline sm:w-16 sm:text-right">${c.rated}/${c.total} butir</div>
         </div>
@@ -5720,13 +5843,14 @@ function renderLaporan() {
 
     <div class="lap-card grid grid-cols-1 sm:grid-cols-3 gap-3">
       <div class="bg-gradient-to-br from-primary via-[#0a359c] to-[#1e3a8a] text-on-primary rounded-xl p-4 flex flex-col justify-center shadow-xs">
-        <div class="text-[10px] uppercase tracking-wider opacity-80 font-bold">${S.allDone ? 'Skor Akhir (Rata-rata Assesment)' : 'Rata-rata Sementara'}</div>
-        <div class="font-mono font-bold text-4xl leading-none mt-1">${S.headScore === null ? '-' : S.headScore.toFixed(1)}<span class="text-sm opacity-70"> /100</span></div>
+        <div class="text-[10px] uppercase tracking-wider opacity-80 font-bold">Kelompok Kompeten</div>
+        <div class="font-mono font-bold text-4xl leading-none mt-1">${S.catsOk}<span class="text-sm opacity-70"> /${S.catsTotal} kelompok</span></div>
+        ${allCatsDone ? '' : '<div class="text-[10px] opacity-80 mt-1.5">Belum semua kelompok selesai dinilai</div>'}
       </div>
       <div class="bg-surface-container-lowest border border-blue-100 rounded-xl p-4">
         <div class="text-[10px] uppercase tracking-wider text-outline font-bold mb-1.5">Status</div>
         <span class="inline-block px-2.5 py-1 rounded-full border text-xs font-bold ${lv.chip}">${escHtml(statusText)}</span>
-        <div class="text-[11px] text-on-surface-variant mt-2">${Object.keys(S.hmap).length}/${S.br.length} Assesment telah dinilai penuh</div>
+        <div class="text-[11px] text-on-surface-variant mt-2">${S.catsDone}/${S.catsTotal} kelompok selesai dinilai</div>
       </div>
       <div class="bg-surface-container-lowest border border-blue-100 rounded-xl p-4">
         <div class="text-[10px] uppercase tracking-wider text-outline font-bold mb-1.5">Progres Penilaian</div>
@@ -5737,7 +5861,7 @@ function renderLaporan() {
 
     ${assHtml || '<div class="lap-card bg-surface-container-lowest rounded-xl border border-surface-container-high p-6 text-center text-xs text-on-surface-variant">Belum ada butir kompetensi yang dinilai. Laporan akan terisi setelah asesor mulai menilai.</div>'}
 
-    <p class="text-[10px] text-outline text-center pb-2">Skala 1–4 = 25–100 poin • ≥87,5 Sangat Kompeten • ≥75 Kompeten • &lt;75 Perlu Pembinaan<br>Dicetak ${today}${R.updated ? ' • Data diperbarui ' + escHtml(String(R.updated).replace('T', ' ').slice(0, 16)) : ''} • Sumber: ${R.source}</p>
+    <p class="text-[10px] text-outline text-center pb-2">Skala 1–4 = 25–100 poin • ≥87,5 Sangat Kompeten • ≥75 Kompeten • &lt;75 Perlu Pembinaan<br>Kelompok kompeten (✓) = seluruh butir dinilai &amp; tiap butir ≥ 3<br>Dicetak ${today}${R.updated ? ' • Data diperbarui ' + escHtml(String(R.updated).replace('T', ' ').slice(0, 16)) : ''} • Sumber: ${R.source}</p>
   </div>`;
 }
 
@@ -10210,6 +10334,7 @@ function renderCompetencyCards() {
         name: cat.name,
         allItemsCount: cat.items.length,
         allRatedCount: cat.items.filter(c => appState.evalScores[c.id] !== undefined).length,
+        allItems: cat.items,
         items: filteredItems
       });
     }
@@ -10231,6 +10356,8 @@ function renderCompetencyCards() {
     const ratedInCat = group.allRatedCount;
     const pctInCat = totalInCat > 0 ? Math.round((ratedInCat / totalInCat) * 100) : 0;
 
+    const gst = catStats(group.allItems || [], appState.evalScores);
+    const gv = catVerdict(gst.rated, gst.total, gst.avg, gst.below);
     let borderClass = 'border-surface-container-high';
     let headerBg = 'bg-surface-container-low/50';
     let barColor = 'bg-outline/30';
@@ -10243,7 +10370,7 @@ function renderCompetencyCards() {
       badgeHtml = `
         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs">
           <span class="material-symbols-outlined text-[13px] text-emerald-600">check_circle</span>
-          <span>Kategori Selesai (100%)</span>
+          <span>${gv.ok ? gv.t + ' • ' + gst.avg.toFixed(1) : 'Perlu Pembinaan • ' + gst.below + ' butir &lt; 3'}</span>
         </span>
       `;
     } else if (ratedInCat > 0) {
@@ -10253,7 +10380,7 @@ function renderCompetencyCards() {
       badgeHtml = `
         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 shadow-2xs">
           <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-ping"></span>
-          <span>Sebagian (${ratedInCat}/${totalInCat} - ${pctInCat}%)</span>
+          <span>Belum selesai dinilai (${ratedInCat}/${totalInCat})</span>
         </span>
       `;
     } else {
@@ -10523,10 +10650,15 @@ function calculateAssessmentSummary() {
     }
   });
 
+  const catsAll = getCategoriesForActiveAssessment();
+  let catsOk = 0, catsDone = 0;
+  catsAll.forEach(cat => { const st = catStats(cat.items, appState.evalScores); const v = catVerdict(st.rated, st.total, st.avg, st.below); if (v.done) catsDone++; if (v.ok) catsOk++; });
+  const catsTotal = catsAll.length;
+  const complete = totalCount > 0 && ratedCount === totalCount;
   const pct = totalCount > 0 ? Math.round((ratedCount / totalCount) * 100) : 0;
   const avg = ratedCount > 0 ? (sum / ratedCount) : 0;
   const hasBelowThree = belowThreeCount > 0;
-  const isLulus = ratedCount > 0 && avg >= 75.0 && !hasBelowThree;
+  const isLulus = complete && avg >= 75.0 && !hasBelowThree;
 
   // Update Top Bar
   const pctEl = document.getElementById('eval-progress-pct');
@@ -10539,12 +10671,15 @@ function calculateAssessmentSummary() {
   const fabEl = document.getElementById('fab-progress'); if (fabEl) fabEl.textContent = `${pct}%`;
   if (barEl) barEl.style.width = `${pct}%`;
   if (countEl) countEl.textContent = `${ratedCount}/${totalCount}`;
-  if (avgEl) avgEl.textContent = avg.toFixed(1);
+  if (avgEl) avgEl.textContent = complete ? avg.toFixed(1) : '–';
 
   if (badgeEl) {
     if (ratedCount === 0) {
       badgeEl.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-surface-container text-on-surface-variant border border-surface-container-high shrink-0';
       badgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-outline"></span><span>Belum</span>`;
+    } else if (!complete) {
+      badgeEl.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-200 shrink-0';
+      badgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span><span>Belum selesai dinilai • ${catsOk}/${catsTotal} kelompok kompeten</span>`;
     } else if (hasBelowThree) {
       badgeEl.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0';
       badgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span><span>Pembinaan (${belowThreeCount} Butir &lt; 3)</span>`;
@@ -10622,6 +10757,11 @@ function saveAssessmentDirect(options = {}) {
     rekomendasiStr = `${appState.activeAssessment}: ${completedCats}/${cats.length} KATEGORI SELESAI (${ratedCount}/${totalCount} SOAL)`;
   }
 
+  if (isCompleted) {
+    let okCats = 0;
+    cats.forEach(cat => { const st = catStats(cat.items, appState.evalScores); if (catVerdict(st.rated, st.total, st.avg, st.below).ok) okCats++; });
+    rekomendasiStr += ` • ${okCats}/${cats.length} KELOMPOK KOMPETEN`;
+  }
   const catatanStr = isCompleted 
     ? (hasBelowThree
         ? `[${appState.activeAssessment}] Kandidat (${candidate.nama}) telah menyelesaikan seluruh ${cats.length} kategori dengan rata-rata ${avg.toFixed(1)}/100, namun BELUM LULUS karena ada ${belowThreeCount} butir sub-kompetensi bernilai di bawah 3 (syarat lulus: setiap sub-kompetensi minimal bernilai 3).`
@@ -12334,6 +12474,69 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
+// =========================================================================
+// BOTTOM TAB BAR (tampilan native di smartphone) - dibangun dari menu yang aktif
+// =========================================================================
+(function initBottomTabBar() {
+  const bar = document.createElement('nav');
+  bar.id = 'bottom-tabbar';
+  bar.className = 'no-print';
+  document.body.appendChild(bar);
+
+  const PESERTA_MAP = { openPesertaAbsen: 'presensi-form', openPesertaLaporan: 'laporan', openPesertaLaporanKimpak: 'laporan-kimpak' };
+  const viewOf = (oc) => {
+    oc = oc || '';
+    let m = oc.match(/switchView\('([^']+)'\)/);
+    if (m) return m[1];
+    m = oc.match(/(openPeserta\w+)\(/);
+    return m ? PESERTA_MAP[m[1]] : '';
+  };
+  const currentView = () => {
+    const el = document.querySelector('.view-container:not(.hidden)');
+    return el ? el.id.replace('view-', '') : '';
+  };
+  const shortLabel = (btn) => {
+    const labels = [...btn.querySelectorAll('span')]
+      .filter(s => !s.classList.contains('material-symbols-outlined') && !s.classList.contains('font-mono') && s.textContent.trim())
+      .map(s => s.textContent.trim());
+    return labels.sort((a, b) => a.length - b.length)[0] || '';
+  };
+
+  function build() {
+    const src = [...document.querySelectorAll('#desktop-nav > button.nav-tab')].filter(b => !b.classList.contains('hidden'));
+    bar.innerHTML = '';
+    if (!src.length) { bar.classList.remove('has-items'); return; }
+    const cur = currentView();
+    src.slice(0, 4).forEach(b => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const icon = b.querySelector('.material-symbols-outlined');
+      btn.innerHTML = `<span class="material-symbols-outlined">${icon ? icon.textContent : 'apps'}</span><span class="tb-label">${shortLabel(b)}</span>`;
+      if (viewOf(b.getAttribute('onclick')) === cur) btn.classList.add('active');
+      btn.onclick = () => { const mm = document.getElementById('mobile-nav'); if (mm) mm.classList.add('hidden'); b.click(); };
+      bar.appendChild(btn);
+    });
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.innerHTML = '<span class="material-symbols-outlined">menu</span><span class="tb-label">Menu</span>';
+    more.onclick = () => toggleMobileMenu();
+    bar.appendChild(more);
+    bar.classList.add('has-items');
+  }
+
+  let pending = false;
+  const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; build(); }); };
+  const nav = document.getElementById('desktop-nav');
+  const mo = new MutationObserver(schedule);
+  if (nav) mo.observe(nav, { attributes: true, subtree: true, attributeFilter: ['class'] });
+  document.querySelectorAll('.view-container').forEach(v => mo.observe(v, { attributes: true, attributeFilter: ['class'] }));
+  build();
+
+  // Sembunyikan tab bar saat keyboard muncul agar tidak menimpa input
+  document.addEventListener('focusin', e => { if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) document.body.classList.add('kb-open'); });
+  document.addEventListener('focusout', () => document.body.classList.remove('kb-open'));
+})();
 </script>
 </body>
 </html>
