@@ -274,6 +274,13 @@
       #app-navbar [class*="text-[8px]"] { display: none; }
       #trainer-dropdown-container > button { height: 36px; }
     }
+
+    /* Badge peserta compact di smartphone: hanya avatar inisial + tombol keluar */
+    @media (max-width: 639px) {
+      #peserta-profile-badge .leading-tight { display: none !important; }
+      #peserta-profile-badge > div { padding: 3px 4px 3px 3px !important; gap: 2px !important; }
+      #peserta-profile-badge { padding-left: 0 !important; border-left: 0 !important; }
+    }
   </style>
 </head>
 <body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col antialiased">
