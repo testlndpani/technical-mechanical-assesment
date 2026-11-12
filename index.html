@@ -275,11 +275,9 @@
       #trainer-dropdown-container > button { height: 36px; }
     }
 
-    /* Badge peserta compact di smartphone: hanya avatar inisial + tombol keluar */
-    @media (max-width: 639px) {
-      #peserta-profile-badge .leading-tight { display: none !important; }
-      #peserta-profile-badge > div { padding: 3px 4px 3px 3px !important; gap: 2px !important; }
-      #peserta-profile-badge { padding-left: 0 !important; border-left: 0 !important; }
+    /* Header HP: badge peserta disembunyikan (nama/NIP & Keluar sudah ada di menu burger) */
+    @media (max-width: 1023.98px) {
+      #peserta-profile-badge { display: none !important; }
     }
   </style>
 </head>
