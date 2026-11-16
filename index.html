@@ -3,10 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#00236f">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>SIM-ASESMEN | Sistem Penilaian Skala Kompetensi Mekanik</title>
   
   <!-- Favicon & Brand Icons -->
@@ -172,113 +168,6 @@
         margin: 12mm 10mm 12mm 10mm;
       }
     }
-
-    /* ===================================================================
-       MOBILE-FIRST "NATIVE APP" LAYER (override, tanpa mengubah desktop)
-       =================================================================== */
-    :root { --tabbar-h: 62px; }
-    html { -webkit-tap-highlight-color: transparent; }
-    body { overscroll-behavior-y: none; }
-    #bottom-tabbar { display: none; }
-    main .flex > *, main .grid > * { min-width: 0; }
-    main table { max-width: none; }
-    .overflow-x-auto { -webkit-overflow-scrolling: touch; }
-
-    @media (max-width: 1023.98px) {
-      /* Header: aman dari notch, tidak menutupi konten */
-      #app-navbar { padding-top: env(safe-area-inset-top); }
-      #app-navbar img { max-width: 90px; }
-      /* Menu hamburger menjadi sheet scrollable di bawah header (tidak mendorong/menimpa halaman) */
-      #mobile-nav {
-        position: absolute; top: 100%; left: 0; right: 0;
-        max-height: calc(100dvh - 130px - var(--tabbar-h) - env(safe-area-inset-bottom));
-        overflow-y: auto; -webkit-overflow-scrolling: touch;
-        border-radius: 0 0 1.25rem 1.25rem; box-shadow: 0 18px 30px rgba(0,0,0,.18);
-      }
-      #mobile-nav button { min-height: 44px; font-size: 13px; }
-      /* Konten tidak tertutup tab bar bawah / chip outbox */
-      main { padding-bottom: calc(var(--tabbar-h) + 1.25rem + env(safe-area-inset-bottom)) !important; }
-      #outbox-chip { bottom: calc(var(--tabbar-h) + 10px + env(safe-area-inset-bottom)); left: 10px; z-index: 45; }
-      #toast-notification { top: calc(env(safe-area-inset-top) + 64px) !important; z-index: 70; }
-
-      /* Bottom tab bar ala aplikasi native */
-      #bottom-tabbar {
-        position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-        height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
-        padding: 6px 6px env(safe-area-inset-bottom);
-        background: rgba(255,255,255,.96); backdrop-filter: blur(14px);
-        border-top: 1px solid #dce9ff; box-shadow: 0 -4px 18px rgba(0,0,0,.07);
-        display: none; align-items: stretch; justify-content: space-around; gap: 2px;
-      }
-      #bottom-tabbar.has-items { display: flex; }
-      body.kb-open #bottom-tabbar { display: none !important; }
-      #bottom-tabbar button {
-        flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 2px; border-radius: 14px; color: #5b5f70; font-size: 10px; font-weight: 600; line-height: 1.1; background: transparent;
-      }
-      #bottom-tabbar button span.material-symbols-outlined { font-size: 24px; }
-      #bottom-tabbar button .tb-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
-      #bottom-tabbar button.active { color: #00236f; background: #dce9ff; }
-      #bottom-tabbar button.active span.material-symbols-outlined { font-variation-settings: 'FILL' 1; }
-      #bottom-tabbar button:active { transform: scale(.94); }
-    }
-
-    @media (max-width: 639px) {
-      /* Input 16px: cegah zoom otomatis iOS, tinggi nyaman untuk jempol */
-      input:not([type=checkbox]):not([type=radio]), textarea, select { font-size: 16px !important; }
-      input:not([type=checkbox]):not([type=radio]):not([type=file]), select { min-height: 46px; }
-      button { touch-action: manipulation; }
-      main { padding-left: max(.75rem, env(safe-area-inset-left)); padding-right: max(.75rem, env(safe-area-inset-right)); }
-      @media (max-width: 400px) { #app-navbar [class*="text-[8px]"] { display: none; } }
-
-      /* Modal menjadi bottom-sheet */
-      .fixed.inset-0.z-50 { align-items: flex-end !important; padding: 0 !important; }
-      .fixed.inset-0.z-50 > div {
-        width: 100% !important; max-width: 100% !important; max-height: 92dvh; overflow-y: auto;
-        border-radius: 1.25rem 1.25rem 0 0 !important; padding-bottom: env(safe-area-inset-bottom);
-      }
-
-      /* ---------- Trainer: Kode & Barcode Absensi ---------- */
-      #view-kode-absensi .p-6, #view-kode-absensi .p-5 { padding: 1rem !important; }
-      #view-kode-absensi .shrink-0:has(> button) { width: 100%; flex-wrap: wrap; }
-      #view-kode-absensi .shrink-0 > button { flex: 1 1 100%; justify-content: center; min-height: 46px; }
-      #trainer-active-code-display { font-size: clamp(1.5rem, 8.5vw, 2.3rem) !important; letter-spacing: .1em !important; word-break: break-all; }
-      #view-kode-absensi canvas, #view-kode-absensi svg { max-width: 100%; height: auto; }
-
-      /* ---------- Trainer: Daftar Hadir ---------- */
-      #view-daftar-hadir .flex-wrap, #view-daftar-hadir .flex { flex-wrap: wrap; }
-      #view-daftar-hadir .p-5, #view-daftar-hadir .p-6 { padding: .9rem !important; }
-      #view-daftar-hadir select, #view-daftar-hadir input { width: 100%; }
-
-      /* ---------- Peserta: Form Presensi & Portal ---------- */
-      #view-presensi-form .p-6, #view-presensi-form .p-5, #view-portal .p-6, #view-portal .p-8 { padding: 1rem !important; }
-      #view-presensi-form .grid { grid-template-columns: 1fr !important; }
-      #view-presensi-form label { font-size: 12px; }
-      /* tombol kirim presensi selalu terlihat di atas tab bar */
-      #view-presensi-form div:has(> #btn-submit-presensi) {
-        position: sticky; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 6px); z-index: 20;
-        background: rgba(255,255,255,.96); padding: .6rem; border-radius: 16px; box-shadow: 0 -6px 18px rgba(0,0,0,.1);
-        flex-wrap: wrap;
-      }
-      #btn-submit-presensi { min-height: 50px; font-size: 14px !important; }
-      #view-presensi-form div:has(> #btn-submit-presensi) > button { min-height: 48px; }
-    }
-
-    /* Header & dropdown akun rapi di smartphone */
-    @media (max-width: 1023.98px) {
-      #trainer-avatar-dropdown {
-        position: fixed !important; top: calc(env(safe-area-inset-top) + 60px); left: auto !important; right: 10px !important; margin: 0 !important;
-        width: min(310px, calc(100vw - 20px)) !important; max-height: 70dvh; overflow-y: auto; z-index: 60 !important;
-        box-shadow: 0 0 0 100vmax rgba(15,23,42,.30), 0 18px 40px rgba(0,0,0,.28);
-      }
-      #app-navbar [class*="text-[8px]"] { display: none; }
-      #trainer-dropdown-container > button { height: 36px; }
-    }
-
-    /* Header HP: badge peserta disembunyikan (nama/NIP & Keluar sudah ada di menu burger) */
-    @media (max-width: 1023.98px) {
-      #peserta-profile-badge { display: none !important; }
-    }
   </style>
 </head>
 <body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col antialiased">
@@ -403,7 +292,7 @@
             </button>
 
             <!-- Dropdown Menu -->
-            <div id="trainer-avatar-dropdown" class="absolute right-0 mt-2 w-52 bg-surface-container-lowest rounded-xl shadow-xl border border-surface-container-high p-2 hidden transition-all z-50">
+            <div id="trainer-avatar-dropdown" class="absolute right-0 mt-2 w-52 bg-surface-container-lowest rounded-xl shadow-xl border border-surface-container-high p-2 hidden group-hover:block transition-all z-50">
               <div class="px-3 py-2.5 border-b border-surface-container-high bg-surface-container-low/50 rounded-lg mb-1">
                 <div class="flex items-center gap-2">
                   <span class="w-7 h-7 rounded-full bg-primary text-on-primary font-bold text-xs flex items-center justify-center shrink-0" id="trainer-dropdown-initials">TR</span>
@@ -417,6 +306,10 @@
                 <span class="material-symbols-outlined text-[16px] text-primary">badge</span>
                 <span>Portal Asesmen</span>
               </button>
+              <a href="admin.html" class="w-full text-left px-3 py-2 rounded-lg text-xs text-primary font-bold hover:bg-primary-fixed/40 flex items-center gap-2 cursor-pointer transition-colors border-t border-b border-surface-container-high my-1">
+                <span class="material-symbols-outlined text-[16px] text-primary">admin_panel_settings</span>
+                <span>Panel Administrator</span>
+              </a>
               <button type="button" onclick="logoutTrainer(); closeTrainerDropdown();" class="w-full text-left px-3 py-2 mt-0.5 rounded-lg text-xs text-error hover:bg-error-container/40 flex items-center gap-2 font-medium cursor-pointer transition-colors">
                 <span class="material-symbols-outlined text-[16px]">logout</span>
                 <span>Ganti Akun / Keluar</span>
@@ -523,8 +416,12 @@
         <span class="material-symbols-outlined text-[18px]">menu_book</span>
         <span>Log Book Harian Praktik</span>
       </button>
-      <div class="pt-2 border-t border-surface-container-high mt-2">
-        <button onclick="logoutTrainer(); toggleMobileMenu();" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-error bg-error-container/30 cursor-pointer">
+      <div class="pt-2 border-t border-surface-container-high mt-2 space-y-1.5">
+        <a href="admin.html" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-primary bg-primary-fixed/40 hover:bg-primary-fixed/60 transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+          <span>Buka Panel Administrator</span>
+        </a>
+        <button onclick="logoutTrainer(); toggleMobileMenu();" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-error bg-error-container/30 hover:bg-error-container/50 transition-colors cursor-pointer">
           <span class="material-symbols-outlined text-[18px]">logout</span>
           <span>Keluar Sesi Instructor</span>
         </button>
@@ -617,23 +514,25 @@
             <label for="peserta-login-id" class="block text-xs font-bold text-primary">NIP atau Nama Peserta <span class="text-error">*</span></label>
             <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-3 text-secondary text-[18px]">badge</span>
-              <input type="text" id="peserta-login-id" list="list-portal-peserta-nips" required autocomplete="off" placeholder="Contoh: CV2034138 atau Ismail Hantai" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-xs font-medium text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
+              <input type="text" id="peserta-login-id" required autocomplete="off" placeholder="Contoh: CV2034138 atau Ismail Hantai" class="w-full bg-surface-container-low pl-10 pr-3 py-2.5 rounded-lg text-xs font-medium text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
             </div>
-            <datalist id="list-portal-peserta-nips">
-              <!-- Populated from appState.peserta -->
-            </datalist>
-            <p class="text-[11px] text-outline">Pilih dari peserta terdaftar di kelas atau ketik NIP Anda.</p>
+            <p class="text-[11px] text-outline">Masukkan NIP atau Nama lengkap Anda untuk memulai sesi asesmen.</p>
           </div>
 
-          <!-- Quick Fill Peserta Chips (dari data live List_Peserta) -->
+          <!-- Input Password Peserta (Sama dengan NIP) -->
           <div class="space-y-1.5">
-            <div class="flex items-center justify-between text-[11px]">
-              <span class="font-bold uppercase tracking-wider text-outline text-[10px]">Pilih Cepat Peserta Terdaftar:</span>
-              <span class="text-[10px] text-secondary font-mono" id="portal-peserta-count-label">0 Peserta</span>
+            <div class="flex items-center justify-between">
+              <label for="peserta-login-pass" class="block text-xs font-bold text-primary">Kata Sandi / Password <span class="text-error">*</span></label>
+              <span class="text-[10px] font-mono text-secondary font-bold bg-secondary/10 px-2 py-0.5 rounded">Sama dengan NIP</span>
             </div>
-            <div class="flex items-center gap-1.5 flex-wrap max-h-28 overflow-y-auto p-1.5 bg-surface-container-low/60 rounded-lg border border-surface-container-high/60" id="portal-peserta-quick-pills">
-              <!-- Dynamically populated by renderPortalPesertaQuickPills() -->
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-secondary text-[18px]">lock</span>
+              <input type="password" id="peserta-login-pass" required autocomplete="current-password" placeholder="Masukkan kata sandi (sama dengan NIP)" class="w-full bg-surface-container-low pl-10 pr-10 py-2.5 rounded-lg text-xs font-medium text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all">
+              <button type="button" onclick="togglePasswordVisibility('peserta-login-pass', this)" class="absolute right-3 text-outline hover:text-on-surface cursor-pointer" title="Lihat / Sembunyikan Kata Sandi">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              </button>
             </div>
+            <p class="text-[11px] text-outline">Gunakan nomor <strong>NIP Anda</strong> sebagai kata sandi untuk masuk (contoh: CV2034138).</p>
           </div>
 
           <!-- Submit Button -->
@@ -642,6 +541,15 @@
             <span>Masuk ke Menu Peserta</span>
           </button>
         </form>
+
+        <!-- Admin Panel Quick Link -->
+        <div class="mt-6 pt-4 border-t border-surface-container-high/60 flex items-center justify-between text-[11px] text-outline">
+          <span>Portal Administrasi Sistem</span>
+          <a href="admin.html" class="inline-flex items-center gap-1 font-semibold text-primary hover:text-secondary hover:underline transition-colors">
+            <span class="material-symbols-outlined text-[14px]">admin_panel_settings</span>
+            <span>Akses Admin Panel &rarr;</span>
+          </a>
+        </div>
 
 
 
@@ -1368,7 +1276,7 @@
           <span class="font-bold text-xs text-primary uppercase tracking-wider">Step 1: Pilih Peserta Uji & Level Asesmen Teori</span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <!-- Candidate Search / Combobox -->
           <div>
             <label class="block text-xs font-bold text-primary mb-1.5 flex items-center gap-1.5">
@@ -1415,6 +1323,26 @@
             <div class="flex items-center bg-surface-container-low px-3 py-1.5 rounded-xl border border-surface-container-high">
               <select id="assessment-select" onchange="setActiveAssessment(this.value)" class="bg-transparent text-primary font-bold text-xs focus:outline-none cursor-pointer w-full py-1">
                 <!-- Populated from Nama Assesment -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Sesi Asesmen / Remedial Selector -->
+          <div>
+            <label for="eval-session-select" class="block text-xs font-bold text-primary mb-1.5 flex items-center justify-between">
+              <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-secondary">history</span>
+                <span>Sesi Asesmen (Utama / Remedial)</span>
+              </span>
+              <span class="text-[10px] font-mono text-purple-700 font-bold bg-purple-50 border border-purple-200 px-1.5 py-0.2 rounded" id="eval-session-badge">Asesmen Utama</span>
+            </label>
+            <div class="flex items-center bg-surface-container-low px-3 py-1.5 rounded-xl border border-surface-container-high">
+              <select id="eval-session-select" onchange="setEvalSession(this.value)" class="bg-transparent text-primary font-bold text-xs focus:outline-none cursor-pointer w-full py-1">
+                <option value="Asesmen Utama">Asesmen Utama (Awal / Ujian Pertama)</option>
+                <option value="Asesmen Ulang ke-1">Asesmen Ulang ke-1 (Remedial 1)</option>
+                <option value="Asesmen Ulang ke-2">Asesmen Ulang ke-2 (Remedial 2)</option>
+                <option value="Asesmen Ulang ke-3">Asesmen Ulang ke-3 (Remedial 3)</option>
+                <option value="Asesmen Ulang ke-4">Asesmen Ulang ke-4 (Remedial 4)</option>
               </select>
             </div>
           </div>
@@ -1497,6 +1425,17 @@
           <span class="text-outline font-mono text-[11px]" id="step2-eval-candidate-nip">(NIP: -)</span>
           <span class="text-outline">•</span>
           <span class="px-2 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-semibold text-[11px] border border-blue-200" id="step2-eval-assessment-name">-</span>
+          <span class="text-outline">•</span>
+          <div class="inline-flex items-center gap-1 bg-purple-50 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-lg shadow-2xs">
+            <span class="material-symbols-outlined text-[14px] text-purple-700">history</span>
+            <select id="step2-eval-session-select" onchange="setEvalSession(this.value)" class="bg-transparent text-purple-950 font-bold text-[11px] focus:outline-none cursor-pointer">
+              <option value="Asesmen Utama">Asesmen Utama</option>
+              <option value="Asesmen Ulang ke-1">Asesmen Ulang ke-1 (Remedi)</option>
+              <option value="Asesmen Ulang ke-2">Asesmen Ulang ke-2 (Remedi)</option>
+              <option value="Asesmen Ulang ke-3">Asesmen Ulang ke-3 (Remedi)</option>
+              <option value="Asesmen Ulang ke-4">Asesmen Ulang ke-4 (Remedi)</option>
+            </select>
+          </div>
         </div>
         <button type="button" onclick="saveAssessmentDirect()" class="inline-flex items-center gap-1 bg-primary hover:bg-primary-container text-on-primary px-4 py-2 rounded-xl font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95 shrink-0" id="btn-save-assessment">
           <span class="material-symbols-outlined text-[16px]">save</span>
@@ -1523,11 +1462,17 @@
         </div>
 
         <!-- Alert Banner Syarat Kelulusan: Minimal 3 Tiap Sub-Kompetensi -->
-        <div id="eval-below-three-alert" class="hidden bg-amber-50 border border-amber-200 text-amber-900 text-xs px-3 py-1.5 rounded-xl flex items-center gap-2 w-full box-border">
-          <span class="material-symbols-outlined text-[16px] text-amber-700 shrink-0">warning</span>
-          <div class="flex-1 min-w-0 text-[11px] sm:text-xs leading-tight">
-            <span class="font-bold text-amber-950">Perhatian Kelulusan:</span> Terdapat <span id="eval-below-three-count" class="font-mono font-bold text-amber-950">0</span> sub-kompetensi bernilai &lt; 3 (skor 1/2). Seluruh butir wajib &ge; 3 untuk dinyatakan <strong>LULUS</strong>.
+        <div id="eval-below-three-alert" class="hidden bg-amber-50 border border-amber-200 text-amber-900 text-xs px-3 py-1.5 rounded-xl flex items-center justify-between gap-2 w-full box-border flex-wrap">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="material-symbols-outlined text-[16px] text-amber-700 shrink-0">warning</span>
+            <div class="text-[11px] sm:text-xs leading-tight">
+              <span class="font-bold text-amber-950">Perhatian Kelulusan:</span> Terdapat <span id="eval-below-three-count" class="font-mono font-bold text-amber-950">0</span> sub-kompetensi bernilai &lt; 3 (skor 1/2). Seluruh butir wajib &ge; 3 untuk dinyatakan <strong>LULUS</strong>.
+            </div>
           </div>
+          <button type="button" onclick="startRemedialForCandidate()" class="px-2.5 py-1 bg-purple-700 hover:bg-purple-800 text-white rounded-lg font-bold text-[11px] shadow-2xs flex items-center gap-1 cursor-pointer shrink-0 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-[14px]">history</span>
+            <span>Buka Sesi Remedi</span>
+          </button>
         </div>
       </div>
 
@@ -2985,7 +2930,7 @@ const INITIAL_COMPETENCIES = [
     {
         "id":  "c9",
         "no":  9,
-        "kode":  "1.1",
+        "kode":  "1.10",
         "namaAssesment":  "Assesment - 1",
         "kategori":  "Mampu menjelaskan komponen dasar engine beserta fungsinya",
         "nama":  "Mampu menjelaskan fungsi Flywheel",
@@ -4688,6 +4633,7 @@ const appState = {
   currentPesertaId: null,
   evalScores: {},
   evalNotes: {},
+  evalRemidiKe: 'Asesmen Utama',
   
   isTrainerLoggedIn: sessionStorage.getItem('sim_trainer_logged_in') === 'true',
   isPesertaLoggedIn: sessionStorage.getItem('sim_peserta_logged_in') === 'true',
@@ -5060,18 +5006,20 @@ async function syncAllSheets(showNotification = true) {
       }
     }
 
-    // 4. Fetch Hasil if populated (Deduplicated strictly by NIP)
+    // 4. Fetch Hasil if populated (Mendukung riwayat Asesmen Utama & Asesmen Ulang / Remedial)
     const hasilTable = await fetchSheetViaGviz("Hasil");
     if (hasilTable && hasilTable.rows && hasilTable.rows.length > 0) {
       const liveHasil = [];
-      const seenHasilNips = new Set();
+      const seenHasilKeys = new Set();
       hasilTable.rows.forEach((row, i) => {
         const c = row.c;
         if (c && c[0] && c[2]) {
           const idAsesmen = String(c[0].v || '').trim();
           const nip = String(c[2].v || '').trim();
-          if (idAsesmen && nip && idAsesmen.toLowerCase() !== 'id_asesmen' && !seenHasilNips.has(nip) && !(c[9] && String(c[9].v).indexOf('Sedang Diases') === 0)) {
-            seenHasilNips.add(nip);
+          const sesi = (c[15] && c[15].v) ? String(c[15].v).trim() : 'Asesmen Utama';
+          const rowKey = idAsesmen || `${nip}_${sesi}`;
+          if (idAsesmen && nip && idAsesmen.toLowerCase() !== 'id_asesmen' && !seenHasilKeys.has(rowKey)) {
+            seenHasilKeys.add(rowKey);
             liveHasil.push({
               idAsesmen: idAsesmen,
               assesment: c[13] && String(c[13].v).trim() ? String(c[13].v).trim() : 'Assesment - 1',
@@ -5089,15 +5037,18 @@ async function syncAllSheets(showNotification = true) {
               })(),
               statusKelulusan: c[9] ? String(c[9].v) : 'Kompeten',
               rekomendasi: c[10] ? String(c[10].v) : 'LULUS UJI REKOMENDASI MADYA',
-              catatan: c[11] ? String(c[11].v) : (c[12] ? String(c[12].v) : '')
+              catatan: c[11] ? String(c[11].v) : (c[12] ? String(c[12].v) : ''),
+              remidiKe: sesi,
+              sesiAsesmen: sesi
             });
           }
         }
       });
       const pendH = pendingNips('submitHasil');
       appState.hasil.forEach(old => {
+        const oldKey = old.idAsesmen || `${old.nip}_${old.remidiKe || 'Asesmen Utama'}`;
         if (pendH.has(String(old.nip))) {
-          const i = liveHasil.findIndex(x => String(x.nip) === String(old.nip));
+          const i = liveHasil.findIndex(x => (x.idAsesmen && x.idAsesmen === old.idAsesmen) || (String(x.nip) === String(old.nip) && String(x.remidiKe || '') === String(old.remidiKe || '')));
           if (i >= 0) liveHasil[i] = old; else liveHasil.push(old);
         }
       });
@@ -5645,21 +5596,6 @@ function printLaporan() {
   window.print();
 }
 
-// Penilaian per KELOMPOK kompetensi (kategori): kompeten hanya bila semua butir dinilai & tiap butir >= 3
-function catStats(items, scores) {
-  let r = 0, sum = 0, b = 0;
-  (items || []).forEach(c => { const v = scores[c.id]; if (v !== undefined) { r++; sum += toPoints(v); if ((v <= 4 ? v : v / 25) < 3) b++; } });
-  return { rated: r, total: (items || []).length, avg: r ? sum / r : null, below: b };
-}
-function catVerdict(rated, total, avg, below) {
-  const AMB = 'bg-amber-100 text-amber-800 border-amber-200';
-  if (!total || !rated) return { key: 'none', ok: false, done: false, t: 'Belum Dinilai', chip: 'bg-surface-container text-on-surface-variant border-surface-container-high', bar: 'bg-outline-variant' };
-  if (rated < total) return { key: 'partial', ok: false, done: false, t: 'Belum selesai dinilai (' + rated + '/' + total + ')', chip: 'bg-amber-50 text-amber-800 border-amber-200', bar: 'bg-amber-300' };
-  if (below > 0 || avg < 75) return { key: 'fail', ok: false, done: true, t: 'Perlu Pembinaan', chip: AMB, bar: 'bg-amber-500' };
-  if (avg >= 87.5) return { key: 'top', ok: true, done: true, t: 'Sangat Kompeten', chip: 'bg-emerald-100 text-emerald-800 border-emerald-200', bar: 'bg-emerald-500' };
-  return { key: 'ok', ok: true, done: true, t: 'Kompeten', chip: 'bg-blue-100 text-blue-800 border-blue-200', bar: 'bg-blue-600' };
-}
-
 function levelOf(avg, hasBelowThree = false) {
   if (avg === null || avg === undefined) return { t: 'Belum Dinilai', bar: 'bg-outline-variant', chip: 'bg-surface-container text-on-surface-variant border-surface-container-high' };
   if (hasBelowThree) return { t: 'Perlu Pembinaan', bar: 'bg-amber-500', chip: 'bg-amber-100 text-amber-800 border-amber-200' };
@@ -5692,9 +5628,9 @@ function computeReportBreakdown(scores) {
         }
       });
       rated += cr; total += items.length; sum += cs; assBelowThree += catBelowThree;
-      return { name: cname, items, rated: cr, total: items.length, avg: cr ? cs / cr : null, belowThreeCount: catBelowThree, hasBelowThree: catBelowThree > 0, v: catVerdict(cr, items.length, cr ? cs / cr : null, catBelowThree) };
+      return { name: cname, items, rated: cr, total: items.length, avg: cr ? cs / cr : null, belowThreeCount: catBelowThree, hasBelowThree: catBelowThree > 0 };
     });
-    return { name, cats: catArr, catsTotal: catArr.length, catsOk: catArr.filter(c => c.v.ok).length, catsDone: catArr.filter(c => c.v.done).length, rated, total, sum, avg: rated ? sum / rated : null, belowThreeCount: assBelowThree, hasBelowThree: assBelowThree > 0 };
+    return { name, cats: catArr, rated, total, sum, avg: rated ? sum / rated : null, belowThreeCount: assBelowThree, hasBelowThree: assBelowThree > 0 };
   });
 }
 
@@ -5711,8 +5647,7 @@ function reportSummary(R) {
   const headScore = allDone ? doneScores.reduce((x, y) => x + y, 0) / doneScores.length : overall;
   const hList = (R.hasilList || []).slice().sort((a, b) => String(a.tanggal).localeCompare(String(b.tanggal)));
   const hasBelowThree = totalBelowThree > 0;
-  const catsTotal = br.reduce((x, a) => x + a.catsTotal, 0), catsOk = br.reduce((x, a) => x + a.catsOk, 0), catsDone = br.reduce((x, a) => x + a.catsDone, 0);
-  return { catsTotal, catsOk, catsDone, br, totalR, totalT, pct: totalT ? Math.round(totalR / totalT * 100) : 0, overall, hmap, allDone, headScore, belowThreeCount: totalBelowThree, hasBelowThree, lastHasil: hList[hList.length - 1] || null };
+  return { br, totalR, totalT, pct: totalT ? Math.round(totalR / totalT * 100) : 0, overall, hmap, allDone, headScore, belowThreeCount: totalBelowThree, hasBelowThree, lastHasil: hList[hList.length - 1] || null };
 }
 
 function handleLaporanSearch(e) {
@@ -5763,9 +5698,8 @@ function renderLaporan() {
     return;
   }
   const p = R.peserta, S = reportSummary(R);
-  const allCatsDone = S.catsTotal > 0 && S.catsDone === S.catsTotal;
-  const lv = !S.totalR ? levelOf(null) : (!allCatsDone ? { chip: 'bg-amber-50 text-amber-800 border-amber-200' } : (S.catsOk === S.catsTotal ? levelOf(80) : levelOf(50, true)));
-  const statusText = !S.totalR ? (p.status || 'Siap Uji') : (!allCatsDone ? 'Belum selesai dinilai' : (S.catsOk === S.catsTotal ? 'Kompeten' : `${S.catsTotal - S.catsOk} kelompok perlu pembinaan`));
+  const lv = levelOf(S.headScore, S.hasBelowThree);
+  const statusText = S.allDone ? (S.hasBelowThree ? 'Selesai • Perlu Pembinaan' : `Selesai • ${lv.t}`) : (S.totalR ? `Sedang Diases (${S.pct}%)` : (p.status || 'Siap Uji'));
   const isPeserta = appState.reportMode === 'peserta';
   const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
   const info = (label, val) => `<div class="min-w-0"><div class="text-[10px] uppercase tracking-wider text-outline font-semibold">${label}</div><div class="text-xs font-semibold text-on-surface break-words">${escHtml(val || '-')}</div></div>`;
@@ -5773,10 +5707,10 @@ function renderLaporan() {
   const assHtml = S.br.map(a => {
     const h = S.hmap[a.name];
     const hScore = h ? toPoints(Number(h.skorAkhir) || 0) : null;
-    const al = a.rated === 0 ? levelOf(null) : (a.rated < a.total ? { chip: 'bg-amber-50 text-amber-800 border-amber-200' } : (a.catsOk === a.catsTotal ? levelOf(80) : levelOf(50, true)));
-    const chipTxt = a.rated === 0 ? 'Belum dinilai' : (a.rated < a.total ? `Belum selesai • ${a.catsOk}/${a.catsTotal} kelompok kompeten` : `${a.catsOk}/${a.catsTotal} kelompok kompeten`);
+    const al = levelOf(h ? hScore : a.avg, a.hasBelowThree);
+    const chipTxt = h ? `${hScore.toFixed(1)} • ${escHtml(h.statusKelulusan)}` : (a.avg === null ? 'Belum dinilai' : `Berjalan • ${a.avg.toFixed(1)}`);
     const cats = a.cats.map(c => {
-      const cl = c.v;
+      const cl = levelOf(c.avg, c.hasBelowThree);
       const items = c.items.map(it => {
         const v = R.scores[it.id];
         const sl = v === undefined ? levelOf(null) : levelOf(toPoints(v));
@@ -5787,10 +5721,10 @@ function renderLaporan() {
       }).join('');
       return `<div class="py-3 border-t border-surface-container-high first:border-t-0">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <div class="text-xs font-semibold text-on-surface sm:w-5/12 min-w-0 flex items-start gap-1.5">${c.v.ok ? '<span class="material-symbols-outlined text-[19px] text-emerald-600 shrink-0" style="font-variation-settings:\'FILL\' 1" title="Kompeten">check_circle</span>' : ''}<span class="min-w-0">${escHtml(c.name)}<span class="block mt-0.5"><span class="inline-block px-1.5 py-0.5 rounded-full border text-[9px] font-bold ${c.v.chip}">${c.v.t}</span></span></span></div>
+          <div class="text-xs font-semibold text-on-surface sm:w-5/12 min-w-0">${escHtml(c.name)}</div>
           <div class="flex-1 flex items-center gap-3">
-            <div class="flex-1 h-2 rounded-full bg-surface-container-high overflow-hidden"><div class="h-full rounded-full ${cl.bar}" style="width:${c.v.done ? Math.min(100, c.avg) : Math.round(c.rated / (c.total || 1) * 100)}%"></div></div>
-            <span class="font-mono text-xs font-bold text-primary w-10 text-right">${c.v.done ? c.avg.toFixed(1) : '–'}</span>
+            <div class="flex-1 h-2 rounded-full bg-surface-container-high overflow-hidden"><div class="h-full rounded-full ${cl.bar}" style="width:${c.avg === null ? 0 : Math.min(100, c.avg)}%"></div></div>
+            <span class="font-mono text-xs font-bold text-primary w-10 text-right">${c.avg === null ? '-' : c.avg.toFixed(1)}</span>
           </div>
           <div class="text-[10px] font-mono text-outline sm:w-16 sm:text-right">${c.rated}/${c.total} butir</div>
         </div>
@@ -5848,14 +5782,13 @@ function renderLaporan() {
 
     <div class="lap-card grid grid-cols-1 sm:grid-cols-3 gap-3">
       <div class="bg-gradient-to-br from-primary via-[#0a359c] to-[#1e3a8a] text-on-primary rounded-xl p-4 flex flex-col justify-center shadow-xs">
-        <div class="text-[10px] uppercase tracking-wider opacity-80 font-bold">Kelompok Kompeten</div>
-        <div class="font-mono font-bold text-4xl leading-none mt-1">${S.catsOk}<span class="text-sm opacity-70"> /${S.catsTotal} kelompok</span></div>
-        ${allCatsDone ? '' : '<div class="text-[10px] opacity-80 mt-1.5">Belum semua kelompok selesai dinilai</div>'}
+        <div class="text-[10px] uppercase tracking-wider opacity-80 font-bold">${S.allDone ? 'Skor Akhir (Rata-rata Assesment)' : 'Rata-rata Sementara'}</div>
+        <div class="font-mono font-bold text-4xl leading-none mt-1">${S.headScore === null ? '-' : S.headScore.toFixed(1)}<span class="text-sm opacity-70"> /100</span></div>
       </div>
       <div class="bg-surface-container-lowest border border-blue-100 rounded-xl p-4">
         <div class="text-[10px] uppercase tracking-wider text-outline font-bold mb-1.5">Status</div>
         <span class="inline-block px-2.5 py-1 rounded-full border text-xs font-bold ${lv.chip}">${escHtml(statusText)}</span>
-        <div class="text-[11px] text-on-surface-variant mt-2">${S.catsDone}/${S.catsTotal} kelompok selesai dinilai</div>
+        <div class="text-[11px] text-on-surface-variant mt-2">${Object.keys(S.hmap).length}/${S.br.length} Assesment telah dinilai penuh</div>
       </div>
       <div class="bg-surface-container-lowest border border-blue-100 rounded-xl p-4">
         <div class="text-[10px] uppercase tracking-wider text-outline font-bold mb-1.5">Progres Penilaian</div>
@@ -5866,7 +5799,7 @@ function renderLaporan() {
 
     ${assHtml || '<div class="lap-card bg-surface-container-lowest rounded-xl border border-surface-container-high p-6 text-center text-xs text-on-surface-variant">Belum ada butir kompetensi yang dinilai. Laporan akan terisi setelah asesor mulai menilai.</div>'}
 
-    <p class="text-[10px] text-outline text-center pb-2">Skala 1–4 = 25–100 poin • ≥87,5 Sangat Kompeten • ≥75 Kompeten • &lt;75 Perlu Pembinaan<br>Kelompok kompeten (✓) = seluruh butir dinilai &amp; tiap butir ≥ 3<br>Dicetak ${today}${R.updated ? ' • Data diperbarui ' + escHtml(String(R.updated).replace('T', ' ').slice(0, 16)) : ''} • Sumber: ${R.source}</p>
+    <p class="text-[10px] text-outline text-center pb-2">Skala 1–4 = 25–100 poin • ≥87,5 Sangat Kompeten • ≥75 Kompeten • &lt;75 Perlu Pembinaan<br>Dicetak ${today}${R.updated ? ' • Data diperbarui ' + escHtml(String(R.updated).replace('T', ' ').slice(0, 16)) : ''} • Sumber: ${R.source}</p>
   </div>`;
 }
 
@@ -6970,37 +6903,20 @@ function openPesertaLaporan() {
 }
 
 function renderPortalPesertaQuickPills() {
+  // Pilihan cepat peserta terdaftar dinonaktifkan sesuai kebutuhan privasi peserta
   const container = document.getElementById('portal-peserta-quick-pills');
-  const countLabel = document.getElementById('portal-peserta-count-label');
-  const datalist = document.getElementById('list-portal-peserta-nips');
-
-  if (datalist && appState.peserta) {
-    datalist.innerHTML = appState.peserta.map(p => `<option value="${escapeHtml(p.nip)}">${escapeHtml(p.nama)} (${escapeHtml(p.nip)})</option>`).join('');
-  }
-
-  if (countLabel) {
-    countLabel.textContent = `${appState.peserta ? appState.peserta.length : 0} Peserta`;
-  }
-
-  if (!container) return;
-
-  if (!appState.peserta || appState.peserta.length === 0) {
-    container.innerHTML = `<span class="text-[11px] text-outline italic">Memuat data peserta dari spreadsheet...</span>`;
-    return;
-  }
-
-  container.innerHTML = appState.peserta.slice(0, 10).map(p => {
-    return `<button type="button" onclick="selectDemoPeserta('${escapeHtml(p.nip)}')" class="px-2 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-medium text-[11px] border border-surface-container-high cursor-pointer transition-colors" title="${escapeHtml(p.nama)} (${escapeHtml(p.posisi)})">
-      <span class="font-bold">${escapeHtml(p.nama.split(' ')[0])}</span> <span class="font-mono text-[10px] text-outline">(${escapeHtml(p.nip)})</span>
-    </button>`;
-  }).join('');
+  if (container) container.innerHTML = '';
 }
 
 function selectDemoPeserta(nip) {
   const input = document.getElementById('peserta-login-id');
+  const passInput = document.getElementById('peserta-login-pass');
   if (input) {
     input.value = nip;
     input.focus();
+  }
+  if (passInput) {
+    passInput.value = nip;
   }
   const p = appState.peserta.find(x => x.nip === nip);
   showToast('Peserta Dipilih', `${p ? p.nama : nip} siap untuk login.`);
@@ -7009,9 +6925,19 @@ function selectDemoPeserta(nip) {
 function handlePesertaLogin(e) {
   if (e) e.preventDefault();
   const input = document.getElementById('peserta-login-id');
+  const passInput = document.getElementById('peserta-login-pass');
   const val = input ? input.value.trim() : '';
+  const pass = passInput ? passInput.value.trim() : '';
+
   if (!val) {
     showToast('Input Kosong', 'Masukkan NIP atau Nama Peserta Anda.', true);
+    if (input) input.focus();
+    return;
+  }
+
+  if (!pass) {
+    showToast('Kata Sandi Kosong', 'Masukkan kata sandi (sama dengan NIP Anda).', true);
+    if (passInput) passInput.focus();
     return;
   }
 
@@ -7024,6 +6950,15 @@ function handlePesertaLogin(e) {
   );
 
   if (!matched) {
+    // Validasi akun baru / manual: kata sandi harus sama dengan input NIP
+    if (val.toUpperCase() !== pass.toUpperCase()) {
+      showToast('Kata Sandi Salah', 'Kata sandi tidak sesuai. Kata sandi harus sama persis dengan NIP Anda.', true);
+      if (passInput) {
+        passInput.value = '';
+        passInput.focus();
+      }
+      return;
+    }
     matched = {
       id: 'p_' + val.replace(/\s+/g, '_'),
       nip: val,
@@ -7035,6 +6970,17 @@ function handlePesertaLogin(e) {
     };
     appState.peserta.push(matched);
     localStorage.setItem('sim_peserta', JSON.stringify(appState.peserta));
+  } else {
+    // Peserta terdaftar: kata sandi harus sama dengan matched.nip (case-insensitive)
+    const expectedNip = String(matched.nip || matched.idPeserta || matched.id || '').trim();
+    if (pass.toUpperCase() !== expectedNip.toUpperCase()) {
+      showToast('Kata Sandi Salah', `Kata sandi tidak sesuai. Gunakan NIP Anda (${expectedNip}) sebagai kata sandi.`, true);
+      if (passInput) {
+        passInput.value = '';
+        passInput.focus();
+      }
+      return;
+    }
   }
 
   appState.isPesertaLoggedIn = true;
@@ -7046,6 +6992,9 @@ function handlePesertaLogin(e) {
 
   updateRoleDisplay();
   showToast('Login Berhasil', `Selamat datang, ${matched.nama}! Anda telah masuk ke menu Peserta.`);
+
+  // Kosongkan form password setelah berhasil login
+  if (passInput) passInput.value = '';
 
   // Buka Halaman Log Book harian secara default
   switchView('logbook');
@@ -7059,6 +7008,8 @@ function logoutPeserta() {
   sessionStorage.removeItem('sim_report_id');
   appState.verifiedAttendanceCode = null;
   appState.report = null;
+  const passInput = document.getElementById('peserta-login-pass');
+  if (passInput) passInput.value = '';
   updateRoleDisplay();
   setLoginRole('peserta');
   switchView('portal');
@@ -7369,6 +7320,10 @@ function renderPesertaTable() {
     const ratedCount = Object.keys(savedScores).length;
     const localPct = totalCompetencies > 0 ? Math.round((ratedCount / totalCompetencies) * 100) : 0;
 
+    const isPerluPembinaan = (p.status && p.status.toLowerCase().includes('pembinaan')) || 
+                             (hasResult && hasResult.statusKelulusan && hasResult.statusKelulusan.toLowerCase().includes('pembinaan')) ||
+                             (hasResult && (hasResult.skorAkhir <= 4 && hasResult.skorAkhir > 0 ? hasResult.skorAkhir * 25 : hasResult.skorAkhir) < 75);
+
     const isCompleted = p.status === 'Selesai' || hasResult !== undefined || (totalCompetencies > 0 && ratedCount >= totalCompetencies);
     const isDraft = !isCompleted && (ratedCount > 0 || (p.status && (p.status.includes('Sedang Diases') || p.status.includes('%'))));
     const isBelumHadir = !isCompleted && !isDraft && p.status === 'Belum Hadir';
@@ -7379,9 +7334,18 @@ function renderPesertaTable() {
     let actionBtnHtml = '';
     let mobileActionBtnHtml = '';
     if (isCompleted) {
-      rowClass = 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.08] transition-colors border-l-4 border-l-emerald-600';
-      cardBorderClass = 'border-l-4 border-l-emerald-600 bg-emerald-500/[0.02]';
-      statusBadgeHtml = `
+      rowClass = isPerluPembinaan 
+        ? 'bg-amber-500/[0.04] hover:bg-amber-500/[0.09] transition-colors border-l-4 border-l-amber-500'
+        : 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.08] transition-colors border-l-4 border-l-emerald-600';
+      cardBorderClass = isPerluPembinaan
+        ? 'border-l-4 border-l-amber-500 bg-amber-500/[0.02]'
+        : 'border-l-4 border-l-emerald-600 bg-emerald-500/[0.02]';
+      statusBadgeHtml = isPerluPembinaan ? `
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs">
+          <span class="material-symbols-outlined text-[13px] text-amber-700">warning</span>
+          <span>Perlu Pembinaan</span>
+        </span>
+      ` : `
         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs">
           <span class="material-symbols-outlined text-[13px] text-emerald-600">check_circle</span>
           <span>Selesai (100%)</span>
@@ -7389,6 +7353,12 @@ function renderPesertaTable() {
       `;
       actionBtnHtml = `
         <div class="flex items-center gap-1.5 flex-wrap">
+          ${isPerluPembinaan ? `
+            <button type="button" onclick="startRemedialForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-purple-700 hover:bg-purple-800 text-white text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1 cursor-pointer active:scale-95" title="Mulai Asesmen Ulang / Remedial">
+              <span class="material-symbols-outlined text-[14px]">history</span>
+              <span>Remedi</span>
+            </button>
+          ` : ''}
           <button type="button" onclick="openPenilaianForCandidate('${p.id}')" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1 cursor-pointer active:scale-95" title="Revisi Penilaian Teori">
             <span class="material-symbols-outlined text-[14px]">rate_review</span>
             <span>Revisi Teori</span>
@@ -7404,14 +7374,20 @@ function renderPesertaTable() {
         </div>
       `;
       mobileActionBtnHtml = `
-        <div class="grid grid-cols-2 gap-2 w-full">
-          <button type="button" onclick="openPenilaianForCandidate('${p.id}')" class="h-10 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+        <div class="grid ${isPerluPembinaan ? 'grid-cols-3' : 'grid-cols-2'} gap-2 w-full">
+          ${isPerluPembinaan ? `
+            <button type="button" onclick="startRemedialForCandidate('${p.id}')" class="h-10 px-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer active:scale-95">
+              <span class="material-symbols-outlined text-[16px]">history</span>
+              <span>Remedi</span>
+            </button>
+          ` : ''}
+          <button type="button" onclick="openPenilaianForCandidate('${p.id}')" class="h-10 px-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer active:scale-95">
             <span class="material-symbols-outlined text-[16px]">rate_review</span>
-            <span>Revisi Teori</span>
+            <span>Revisi</span>
           </button>
-          <button type="button" onclick="openPracticalForCandidate('${p.id}')" class="h-10 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+          <button type="button" onclick="openPracticalForCandidate('${p.id}')" class="h-10 px-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer active:scale-95">
             <span class="material-symbols-outlined text-[16px]">handyman</span>
-            <span>Uji KIMPAK</span>
+            <span>KIMPAK</span>
           </button>
         </div>
         <button type="button" onclick="openTranscriptForCandidate('${p.id}')" class="w-full mt-2 h-9 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary text-xs font-semibold transition-all shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 border border-surface-container-high">
@@ -10178,10 +10154,19 @@ function initEvaluationForCandidate(pesertaId) {
   }
 
   appState.currentPesertaId = candidate.id;
-  const savedScores = localStorage.getItem(`sim_eval_scores_${candidate.nip}`) || localStorage.getItem(`sim_eval_scores_${candidate.id}`);
-  const savedNotes = localStorage.getItem(`sim_eval_notes_${candidate.nip}`) || localStorage.getItem(`sim_eval_notes_${candidate.id}`);
+  const sesiKey = (appState.evalRemidiKe || 'Asesmen Utama').replace(/[^a-zA-Z0-9]/g, '_');
+  let savedScores = localStorage.getItem(`sim_eval_scores_${candidate.nip}_${sesiKey}`) || localStorage.getItem(`sim_eval_scores_${candidate.nip}`) || localStorage.getItem(`sim_eval_scores_${candidate.id}`);
+  let savedNotes = localStorage.getItem(`sim_eval_notes_${candidate.nip}_${sesiKey}`) || localStorage.getItem(`sim_eval_notes_${candidate.nip}`) || localStorage.getItem(`sim_eval_notes_${candidate.id}`);
   appState.evalScores = savedScores ? JSON.parse(savedScores) : {};
   appState.evalNotes = savedNotes ? JSON.parse(savedNotes) : {};
+
+  // Sync session selector & badge
+  const sel1 = document.getElementById('eval-session-select');
+  if (sel1) sel1.value = appState.evalRemidiKe || 'Asesmen Utama';
+  const badge1 = document.getElementById('eval-session-badge');
+  if (badge1) badge1.textContent = appState.evalRemidiKe || 'Asesmen Utama';
+  const sel2 = document.getElementById('step2-eval-session-select');
+  if (sel2) sel2.value = appState.evalRemidiKe || 'Asesmen Utama';
 
   // Otomatis arahkan ke kategori pertama yang belum 100% selesai (agar bisa lanjut kapan saja)
   appState.activeCategoryIndex = findFirstIncompleteCategoryIndex();
@@ -10339,7 +10324,6 @@ function renderCompetencyCards() {
         name: cat.name,
         allItemsCount: cat.items.length,
         allRatedCount: cat.items.filter(c => appState.evalScores[c.id] !== undefined).length,
-        allItems: cat.items,
         items: filteredItems
       });
     }
@@ -10361,8 +10345,6 @@ function renderCompetencyCards() {
     const ratedInCat = group.allRatedCount;
     const pctInCat = totalInCat > 0 ? Math.round((ratedInCat / totalInCat) * 100) : 0;
 
-    const gst = catStats(group.allItems || [], appState.evalScores);
-    const gv = catVerdict(gst.rated, gst.total, gst.avg, gst.below);
     let borderClass = 'border-surface-container-high';
     let headerBg = 'bg-surface-container-low/50';
     let barColor = 'bg-outline/30';
@@ -10375,7 +10357,7 @@ function renderCompetencyCards() {
       badgeHtml = `
         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs">
           <span class="material-symbols-outlined text-[13px] text-emerald-600">check_circle</span>
-          <span>${gv.ok ? gv.t + ' • ' + gst.avg.toFixed(1) : 'Perlu Pembinaan • ' + gst.below + ' butir &lt; 3'}</span>
+          <span>Kategori Selesai (100%)</span>
         </span>
       `;
     } else if (ratedInCat > 0) {
@@ -10385,7 +10367,7 @@ function renderCompetencyCards() {
       badgeHtml = `
         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 shadow-2xs">
           <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-ping"></span>
-          <span>Belum selesai dinilai (${ratedInCat}/${totalInCat})</span>
+          <span>Sebagian (${ratedInCat}/${totalInCat} - ${pctInCat}%)</span>
         </span>
       `;
     } else {
@@ -10442,18 +10424,18 @@ function renderCompetencyCards() {
                   const isActive = currentScore === val;
                   let activeStyle = '';
                   if (isActive) {
-                    if (val === 1) activeStyle = 'bg-amber-500 text-white font-bold shadow-xs';
-                    else if (val === 2) activeStyle = 'bg-emerald-600 text-white font-bold shadow-xs';
-                    else if (val === 3) activeStyle = 'bg-blue-600 text-white font-bold shadow-xs';
-                    else if (val === 4) activeStyle = 'bg-indigo-600 text-white font-bold shadow-xs';
+                    if (val === 1) activeStyle = 'bg-amber-500 text-white font-bold shadow-xs ring-2 ring-amber-300';
+                    else if (val === 2) activeStyle = 'bg-emerald-600 text-white font-bold shadow-xs ring-2 ring-emerald-300';
+                    else if (val === 3) activeStyle = 'bg-blue-600 text-white font-bold shadow-xs ring-2 ring-blue-300';
+                    else if (val === 4) activeStyle = 'bg-indigo-600 text-white font-bold shadow-xs ring-2 ring-indigo-300';
                   } else {
                     activeStyle = 'bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container hover:text-primary';
                   }
                   const labelMap = { 
-                    1: '1: Kurang (25 Poin)', 
-                    2: '2: Cukup (50 Poin)', 
-                    3: '3: Baik / Lulus (75 Poin)', 
-                    4: '4: Sangat Baik / Unggul (100 Poin)' 
+                    1: '1: Kurang (25 Poin) - Klik lagi untuk membatalkan/menghapus nilai butir ini', 
+                    2: '2: Cukup (50 Poin) - Klik lagi untuk membatalkan/menghapus nilai butir ini', 
+                    3: '3: Baik / Lulus (75 Poin) - Klik lagi untuk membatalkan/menghapus nilai butir ini', 
+                    4: '4: Sangat Baik / Unggul (100 Poin) - Klik lagi untuk membatalkan/menghapus nilai butir ini' 
                   };
                   return `
                     <button type="button" onclick="setScore('${c.id}', ${val})" class="flex-1 md:flex-none md:w-10 h-9 rounded-lg text-xs font-mono font-semibold transition-all flex flex-col items-center justify-center leading-none ${activeStyle}" title="${labelMap[val]}">
@@ -10462,6 +10444,11 @@ function renderCompetencyCards() {
                     </button>
                   `;
                 }).join('')}
+                ${currentScore !== undefined ? `
+                  <button type="button" onclick="setScore('${c.id}', null)" class="w-8 h-9 rounded-lg text-outline hover:text-error hover:bg-error-container/30 transition-all flex items-center justify-center shrink-0 cursor-pointer" title="Hapus / Kosongkan Nilai Butir Ini Saja">
+                    <span class="material-symbols-outlined text-[16px]">backspace</span>
+                  </button>
+                ` : ''}
               </div>
 
               <!-- Score Badge / Weight (Skala 100) -->
@@ -10571,19 +10558,33 @@ function renderCompetencyCards() {
 }
 
 function setScore(compId, val) {
-  appState.evalScores[compId] = val;
+  const currentVal = appState.evalScores[compId];
+  let isRemoved = false;
+  if (val === null || currentVal === val) {
+    // Jika tombol angka yang sama diklik ulang, atau tombol backspace diklik -> hapus/kosongkan nilai butir ini saja
+    delete appState.evalScores[compId];
+    isRemoved = true;
+  } else {
+    appState.evalScores[compId] = val;
+  }
   const candidate = appState.peserta.find(p => p.id === appState.currentPesertaId);
+  const sesiKey = (appState.evalRemidiKe || 'Asesmen Utama').replace(/[^a-zA-Z0-9]/g, '_');
   if (candidate) {
+    localStorage.setItem(`sim_eval_scores_${candidate.nip}_${sesiKey}`, JSON.stringify(appState.evalScores));
     localStorage.setItem(`sim_eval_scores_${candidate.nip}`, JSON.stringify(appState.evalScores));
     localStorage.setItem(`sim_eval_scores_${candidate.id}`, JSON.stringify(appState.evalScores));
+    localStorage.setItem(`sim_eval_ts_${candidate.nip}`, String(Date.now()));
   } else {
+    localStorage.setItem(`sim_eval_scores_${appState.currentPesertaId}_${sesiKey}`, JSON.stringify(appState.evalScores));
     localStorage.setItem(`sim_eval_scores_${appState.currentPesertaId}`, JSON.stringify(appState.evalScores));
   }
-  if (candidate) localStorage.setItem(`sim_eval_ts_${candidate.nip}`, String(Date.now()));
   scheduleAutoSave();
   renderCategoryPills();
   renderCompetencyCards();
   calculateAssessmentSummary();
+  if (isRemoved) {
+    showToast('Nilai Butir Dikosongkan', `Nilai sub-kompetensi ${compId} telah dihapus.`);
+  }
 }
 
 function toggleAccordion(compId) {
@@ -10601,10 +10602,14 @@ function toggleAccordion(compId) {
 function saveNote(compId, noteVal) {
   appState.evalNotes[compId] = noteVal;
   const candidate = appState.peserta.find(p => p.id === appState.currentPesertaId);
+  const sesiKey = (appState.evalRemidiKe || 'Asesmen Utama').replace(/[^a-zA-Z0-9]/g, '_');
   if (candidate) {
+    localStorage.setItem(`sim_eval_notes_${candidate.nip}_${sesiKey}`, JSON.stringify(appState.evalNotes));
     localStorage.setItem(`sim_eval_notes_${candidate.nip}`, JSON.stringify(appState.evalNotes));
     localStorage.setItem(`sim_eval_notes_${candidate.id}`, JSON.stringify(appState.evalNotes));
+    localStorage.setItem(`sim_eval_ts_${candidate.nip}`, String(Date.now()));
   } else {
+    localStorage.setItem(`sim_eval_notes_${appState.currentPesertaId}_${sesiKey}`, JSON.stringify(appState.evalNotes));
     localStorage.setItem(`sim_eval_notes_${appState.currentPesertaId}`, JSON.stringify(appState.evalNotes));
   }
   
@@ -10655,15 +10660,10 @@ function calculateAssessmentSummary() {
     }
   });
 
-  const catsAll = getCategoriesForActiveAssessment();
-  let catsOk = 0, catsDone = 0;
-  catsAll.forEach(cat => { const st = catStats(cat.items, appState.evalScores); const v = catVerdict(st.rated, st.total, st.avg, st.below); if (v.done) catsDone++; if (v.ok) catsOk++; });
-  const catsTotal = catsAll.length;
-  const complete = totalCount > 0 && ratedCount === totalCount;
   const pct = totalCount > 0 ? Math.round((ratedCount / totalCount) * 100) : 0;
   const avg = ratedCount > 0 ? (sum / ratedCount) : 0;
   const hasBelowThree = belowThreeCount > 0;
-  const isLulus = complete && avg >= 75.0 && !hasBelowThree;
+  const isLulus = ratedCount > 0 && avg >= 75.0 && !hasBelowThree;
 
   // Update Top Bar
   const pctEl = document.getElementById('eval-progress-pct');
@@ -10676,15 +10676,12 @@ function calculateAssessmentSummary() {
   const fabEl = document.getElementById('fab-progress'); if (fabEl) fabEl.textContent = `${pct}%`;
   if (barEl) barEl.style.width = `${pct}%`;
   if (countEl) countEl.textContent = `${ratedCount}/${totalCount}`;
-  if (avgEl) avgEl.textContent = complete ? avg.toFixed(1) : '–';
+  if (avgEl) avgEl.textContent = avg.toFixed(1);
 
   if (badgeEl) {
     if (ratedCount === 0) {
       badgeEl.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-surface-container text-on-surface-variant border border-surface-container-high shrink-0';
       badgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-outline"></span><span>Belum</span>`;
-    } else if (!complete) {
-      badgeEl.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-200 shrink-0';
-      badgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span><span>Belum selesai dinilai • ${catsOk}/${catsTotal} kelompok kompeten</span>`;
     } else if (hasBelowThree) {
       badgeEl.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0';
       badgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span><span>Pembinaan (${belowThreeCount} Butir &lt; 3)</span>`;
@@ -10713,6 +10710,89 @@ function calculateAssessmentSummary() {
   }
 
   return { ratedCount, totalCount, avg, belowThreeCount, hasBelowThree, isLulus };
+}
+
+// =========================================================================
+// FITUR SESI ASESMEN ULANG (REMEDIAL) & PENGELOLAAN BUTIR
+// =========================================================================
+
+function setEvalSession(val) {
+  if (!val) val = 'Asesmen Utama';
+  appState.evalRemidiKe = val;
+
+  const sel1 = document.getElementById('eval-session-select');
+  if (sel1 && sel1.value !== val) sel1.value = val;
+
+  const badge1 = document.getElementById('eval-session-badge');
+  if (badge1) badge1.textContent = val;
+
+  const sel2 = document.getElementById('step2-eval-session-select');
+  if (sel2 && sel2.value !== val) sel2.value = val;
+
+  if (appState.currentPesertaId) {
+    const candidate = appState.peserta.find(p => p.id === appState.currentPesertaId);
+    if (candidate) {
+      const sesiKey = val.replace(/[^a-zA-Z0-9]/g, '_');
+      let savedScores = localStorage.getItem(`sim_eval_scores_${candidate.nip}_${sesiKey}`);
+      let savedNotes = localStorage.getItem(`sim_eval_notes_${candidate.nip}_${sesiKey}`);
+
+      if (!savedScores && val !== 'Asesmen Utama') {
+        // Salin nilai dari Asesmen Utama sebagai modal awal remedial
+        savedScores = localStorage.getItem(`sim_eval_scores_${candidate.nip}_Asesmen_Utama`) || localStorage.getItem(`sim_eval_scores_${candidate.nip}`);
+        savedNotes = localStorage.getItem(`sim_eval_notes_${candidate.nip}_Asesmen_Utama`) || localStorage.getItem(`sim_eval_notes_${candidate.nip}`);
+      }
+
+      appState.evalScores = savedScores ? JSON.parse(savedScores) : {};
+      appState.evalNotes = savedNotes ? JSON.parse(savedNotes) : {};
+      renderCategoryPills();
+      renderCompetencyCards();
+      calculateAssessmentSummary();
+    }
+  }
+}
+
+function startRemedialForCandidate(pesertaIdOrNip) {
+  let candidate = null;
+  if (pesertaIdOrNip) {
+    candidate = appState.peserta.find(p => String(p.id) === String(pesertaIdOrNip) || String(p.nip) === String(pesertaIdOrNip));
+  }
+  if (!candidate && appState.currentPesertaId) {
+    candidate = appState.peserta.find(p => p.id === appState.currentPesertaId);
+  }
+  if (!candidate && appState.peserta.length > 0) {
+    candidate = appState.peserta[0];
+  }
+  if (!candidate) {
+    showToast('Pilih Peserta', 'Silakan pilih peserta terlebih dahulu untuk memulai asesmen ulang (remedial).', true);
+    return;
+  }
+
+  // Hitung riwayat sesi remedial untuk menentukan urutan asesmen ulang berikutnya
+  const candidateHasil = appState.hasil.filter(h => String(h.nip) === String(candidate.nip));
+  let highestRemediNum = 0;
+
+  candidateHasil.forEach(h => {
+    const sesi = (h.remidiKe || h.sesiAsesmen || '').trim();
+    const m = sesi.match(/ke-(\d+)/i);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      if (n > highestRemediNum) highestRemediNum = n;
+    }
+  });
+
+  const nextRemediNum = highestRemediNum + 1;
+  const nextSessionName = `Asesmen Ulang ke-${nextRemediNum}`;
+
+  // Set peserta aktif & sesi remedial baru
+  appState.currentPesertaId = candidate.id;
+  setEvalSession(nextSessionName);
+
+  // Arahkan ke menu penilaian Step 2 langsung
+  switchView('penilaian');
+  initEvaluationForCandidate(candidate.id);
+  setEvalStep(2);
+
+  showToast('Asesmen Ulang Dibuka', `Sesi ${nextSessionName} untuk ${candidate.nama} siap dinilai. Anda dapat memperbaiki butir yang belum kompeten.`);
 }
 
 // =========================================================================
@@ -10745,56 +10825,72 @@ function saveAssessmentDirect(options = {}) {
     if (cat.items.length > 0 && r === cat.items.length) completedCats++;
   });
 
+  const sesiStr = appState.evalRemidiKe || 'Asesmen Utama';
+  const isRemedial = (sesiStr !== 'Asesmen Utama');
+
   // Status kelulusan & rekomendasi
   // Syarat lulus: Setiap sub-kompetensi minimal nilai 3; jika ada 1 di bawah 3, belum lulus
   let statusStr = '';
   let rekomendasiStr = '';
   if (isCompleted) {
     if (hasBelowThree) {
-      statusStr = 'Perlu Pembinaan';
-      rekomendasiStr = `PEMBINAAN ULANG ${appState.activeAssessment.toUpperCase()} - (Terdapat ${belowThreeCount} sub-kompetensi nilai < 3)`;
+      statusStr = isRemedial ? `Perlu Pembinaan (${sesiStr})` : 'Perlu Pembinaan';
+      rekomendasiStr = `PEMBINAAN ULANG ${appState.activeAssessment.toUpperCase()} - [${sesiStr}] (Terdapat ${belowThreeCount} sub-kompetensi nilai < 3)`;
     } else {
-      statusStr = avg >= 87.5 ? 'Sangat Kompeten' : (avg >= 75.0 ? 'Kompeten' : 'Perlu Pembinaan');
-      rekomendasiStr = avg >= 75.0 ? `LULUS UJI ${appState.activeAssessment.toUpperCase()} - TINGKAT MADYA` : `PEMBINAAN ULANG ${appState.activeAssessment.toUpperCase()}`;
+      statusStr = isRemedial ? `LULUS (${sesiStr})` : (avg >= 87.5 ? 'Sangat Kompeten' : 'Kompeten');
+      rekomendasiStr = `LULUS UJI ${appState.activeAssessment.toUpperCase()} - [${sesiStr}] TINGKAT MADYA`;
     }
   } else {
-    statusStr = `Sedang Diases (${pct}%)`;
-    rekomendasiStr = `${appState.activeAssessment}: ${completedCats}/${cats.length} KATEGORI SELESAI (${ratedCount}/${totalCount} SOAL)`;
+    // Penilaian per kompetensi: langsung simpan status & skor riil agar nilai langsung diketahui
+    statusStr = hasBelowThree
+      ? `Perlu Pembinaan [${sesiStr}] (${ratedCount}/${totalCount} Butir)`
+      : `Sedang Diases [${sesiStr}] (${pct}%)`;
+    rekomendasiStr = `${appState.activeAssessment} [${sesiStr}]: ${completedCats}/${cats.length} KATEGORI DINILAI (${ratedCount}/${totalCount} BUTIR, Rata-rata: ${avg.toFixed(1)})`;
   }
 
-  if (isCompleted) {
-    let okCats = 0;
-    cats.forEach(cat => { const st = catStats(cat.items, appState.evalScores); if (catVerdict(st.rated, st.total, st.avg, st.below).ok) okCats++; });
-    rekomendasiStr += ` • ${okCats}/${cats.length} KELOMPOK KOMPETEN`;
-  }
   const catatanStr = isCompleted 
     ? (hasBelowThree
-        ? `[${appState.activeAssessment}] Kandidat (${candidate.nama}) telah menyelesaikan seluruh ${cats.length} kategori dengan rata-rata ${avg.toFixed(1)}/100, namun BELUM LULUS karena ada ${belowThreeCount} butir sub-kompetensi bernilai di bawah 3 (syarat lulus: setiap sub-kompetensi minimal bernilai 3).`
-        : `[${appState.activeAssessment}] Kandidat (${candidate.nama}) telah menyelesaikan seluruh ${cats.length} kategori (${avg.toFixed(1)}/100) dan seluruh sub-kompetensi memenuhi nilai minimal 3.`)
-    : `[${appState.activeAssessment}] Penilaian kandidat (${candidate.nama}) tersimpan pada tahap Kategori ${appState.activeCategoryIndex + 1}/${cats.length} dengan progres ${pct}% (${ratedCount}/${totalCount} butir selesai, rata-rata ${avg.toFixed(1)}/100${hasBelowThree ? `, ${belowThreeCount} butir < 3` : ''}).`;
+        ? `[${appState.activeAssessment} - ${sesiStr}] Kandidat (${candidate.nama}) telah menyelesaikan seluruh ${cats.length} kategori dengan rata-rata ${avg.toFixed(1)}/100, namun BELUM LULUS karena ada ${belowThreeCount} butir sub-kompetensi bernilai di bawah 3.`
+        : `[${appState.activeAssessment} - ${sesiStr}] Kandidat (${candidate.nama}) telah menyelesaikan seluruh ${cats.length} kategori (${avg.toFixed(1)}/100) dan seluruh sub-kompetensi memenuhi nilai minimal 3.`)
+    : `[${appState.activeAssessment} - ${sesiStr}] Penilaian per kompetensi kandidat (${candidate.nama}) tersimpan pada tahap Kategori ${appState.activeCategoryIndex + 1}/${cats.length} dengan progres ${pct}% (${ratedCount}/${totalCount} butir selesai, rata-rata ${avg.toFixed(1)}/100${hasBelowThree ? `, ${belowThreeCount} butir < 3` : ''}).`;
 
+  const existingSessionHasil = appState.hasil.find(h => 
+    String(h.nip) === String(candidate.nip) && 
+    String(h.remidiKe || h.sesiAsesmen || 'Asesmen Utama').toLowerCase() === sesiStr.toLowerCase()
+  );
+
+  const idSuffix = isRemedial ? `-${sesiStr.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
   const newHasil = {
     assesment: appState.activeAssessment,
-    idAsesmen: ((appState.hasil.find(h => h.nip === candidate.nip && h.assesment === appState.activeAssessment) || {}).idAsesmen) || `EVAL-${String(candidate.nip).slice(-4)}-${Date.now().toString().slice(-4)}`,
+    idAsesmen: (existingSessionHasil && existingSessionHasil.idAsesmen) || `ASM-${candidate.nip}${idSuffix}-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`,
     tanggal: new Date().toISOString().split('T')[0],
     nip: candidate.nip,
     nama: candidate.nama,
     posisi: candidate.posisi,
-    departemen: candidate.departemen,
+    section: candidate.section || normalizeSection(null, candidate.posisi),
+    departemen: candidate.departemen || 'Engineering',
     trainerId: appState.currentUser ? appState.currentUser.id : 'TRN-01',
     trainerNama: appState.currentUser ? appState.currentUser.nama : 'Instructor',
     skorAkhir: Number(avg.toFixed(2)),
     statusKelulusan: statusStr,
     rekomendasi: rekomendasiStr,
-    catatan: catatanStr
+    catatan: catatanStr,
+    remidiKe: sesiStr,
+    sesiAsesmen: sesiStr,
+    isDraft: !isCompleted,
+    progressPct: pct,
+    ratedCount: ratedCount,
+    totalCount: totalCount
   };
 
   // 1. Update Candidate Status in appState.peserta
-  // Status peserta = progres SEMUA Assesment; "Selesai" hanya bila seluruh Assesment 100%
+  // Status peserta = progres SEMUA Assesment
   const allTotal = appState.competencies.length;
   const allRated = appState.competencies.filter(c => appState.evalScores[c.id] !== undefined).length;
   const allPct = allTotal > 0 ? Math.round((allRated / allTotal) * 100) : 0;
-  const pesertaStatus = (allTotal > 0 && allRated >= allTotal) ? 'Selesai' : `Sedang Diases (${allPct}%)`;
+  const pesertaStatus = (allTotal > 0 && allRated >= allTotal) 
+    ? (hasBelowThree ? `Perlu Pembinaan (${sesiStr})` : (isRemedial ? `Lulus (${sesiStr})` : 'Selesai')) 
+    : `Sedang Diases (${allPct}%)`;
   candidate.status = pesertaStatus;
   candidate.progressPct = allPct;
   candidate.ratedCount = allRated;
@@ -10803,21 +10899,30 @@ function saveAssessmentDirect(options = {}) {
   candidate.lastUpdated = new Date().toISOString();
   localStorage.setItem('sim_peserta', JSON.stringify(appState.peserta));
 
-  // 2. Save Scores & Notes locally (both by NIP and by ID to guarantee resilience)
+  // 2. Save Scores & Notes locally (both by session, by NIP and by ID to guarantee resilience)
+  const sesiKey = sesiStr.replace(/[^a-zA-Z0-9]/g, '_');
+  localStorage.setItem(`sim_eval_scores_${candidate.nip}_${sesiKey}`, JSON.stringify(appState.evalScores));
   localStorage.setItem(`sim_eval_scores_${candidate.nip}`, JSON.stringify(appState.evalScores));
   localStorage.setItem(`sim_eval_scores_${candidate.id}`, JSON.stringify(appState.evalScores));
+  localStorage.setItem(`sim_eval_notes_${candidate.nip}_${sesiKey}`, JSON.stringify(appState.evalNotes));
   localStorage.setItem(`sim_eval_notes_${candidate.nip}`, JSON.stringify(appState.evalNotes));
   localStorage.setItem(`sim_eval_notes_${candidate.id}`, JSON.stringify(appState.evalNotes));
 
-  // 3. Hasil resmi HANYA bila 100% selesai (Hasil per NIP, bukan per Assesment)
-  if (isCompleted) {
-    const existingIdx = appState.hasil.findIndex(h => String(h.nip) === String(candidate.nip));
-    if (existingIdx >= 0) appState.hasil[existingIdx] = newHasil; else appState.hasil.push(newHasil);
-    localStorage.setItem('sim_hasil', JSON.stringify(appState.hasil));
+  // 3. Simpan nilai ke Hasil LANGSUNG per kompetensi (Bukan lagi hanya draft!)
+  const existingIdx = appState.hasil.findIndex(h => 
+    String(h.nip) === String(candidate.nip) && 
+    String(h.remidiKe || h.sesiAsesmen || 'Asesmen Utama').toLowerCase() === sesiStr.toLowerCase()
+  );
+  if (existingIdx >= 0) {
+    appState.hasil[existingIdx] = newHasil;
+  } else {
+    appState.hasil.push(newHasil);
   }
+  localStorage.setItem('sim_hasil', JSON.stringify(appState.hasil));
   localStorage.setItem(`sim_eval_ts_${candidate.nip}`, String(Date.now()));
 
-  // 4. Antre ke Spreadsheet: draf (skor+catatan lengkap) selalu, hasil akhir jika selesai. Urutan dijaga.
+  // 4. Antre ke Spreadsheet:
+  // - Draft_Asesmen untuk matriks butir scores_json
   clearTimeout(autoSaveTimer);
   const assIds = new Set(getCompetenciesForActiveAssessment().map(c => c.id));
   const pick = (o) => Object.fromEntries(Object.entries(o || {}).filter(([k]) => assIds.has(k)));
@@ -10827,12 +10932,16 @@ function saveAssessmentDirect(options = {}) {
     avgScore: Number(avg.toFixed(2)),
     scoresJson: JSON.stringify(pick(appState.evalScores)), notesJson: JSON.stringify(pick(appState.evalNotes)),
     trainerId: newHasil.trainerId, trainerNama: newHasil.trainerNama,
-    status: pesertaStatus
+    status: pesertaStatus,
+    remidiKe: sesiStr
   });
-  if (isCompleted) enqueue('submitHasil', newHasil);
+
+  // - Sheet Hasil: LANGSUNG KIRIM HASIL agar nilai langsung terdata di Hasil resmi Google Sheets!
+  enqueue('submitHasil', newHasil);
   const sentPromise = flushOutbox();
 
-  // 5. Update UI immediately (tanpa overlay modal)
+  // 5. Update UI immediately
+  renderResultsTable();
   renderPesertaTable();
   updatePesertaBadges();
   renderCategoryPills();
@@ -11143,7 +11252,17 @@ function renderResultsTable() {
       return `
         <tr class="hover:bg-surface-container-low transition-colors">
           <td class="py-3 px-4">
-            <div class="font-mono text-xs font-bold text-primary">${h.idAsesmen}</div>
+            <div class="font-mono text-xs font-bold text-primary flex items-center gap-1.5 flex-wrap">
+              <span>${h.idAsesmen}</span>
+              ${h.remidiKe || h.sesiAsesmen ? `
+                <span class="px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                  (h.remidiKe || h.sesiAsesmen) === 'Asesmen Utama'
+                    ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                    : 'bg-purple-100 text-purple-900 border border-purple-300'
+                }">
+                  ${h.remidiKe || h.sesiAsesmen}
+                </span>` : ''}
+            </div>
             <div class="text-[10px] text-outline">${h.tanggal} • ${h.assesment || '-'}</div>
           </td>
           <td class="py-3 px-4">
@@ -11166,7 +11285,13 @@ function renderResultsTable() {
             ${badge}
           </td>
           <td class="py-3 px-4 text-right">
-            <div class="inline-flex items-center gap-1.5 justify-end">
+            <div class="inline-flex items-center gap-1.5 justify-end flex-wrap">
+              ${!isPass ? `
+                <button type="button" onclick="startRemedialForCandidate('${h.nip}')" class="px-2.5 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs transition-all flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95" title="Mulai Asesmen Ulang / Remedial">
+                  <span class="material-symbols-outlined text-[15px]">history</span>
+                  <span>Remedi</span>
+                </button>
+              ` : ''}
               <button type="button" onclick="editAssessmentByNip('${h.nip}')" class="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition-all flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95" title="Revisi Nilai Peserta">
                 <span class="material-symbols-outlined text-[15px]">edit</span>
                 <span>Revisi Nilai</span>
@@ -11220,8 +11345,18 @@ function renderResultsTable() {
             </summary>
             <div class="pt-2 mt-1.5 border-t border-surface-container-high/60 grid grid-cols-2 gap-2 text-[11px]">
               <div>
-                <span class="text-outline text-[10px] block">ID Asesmen</span>
-                <span class="font-mono font-semibold text-primary truncate block">${h.idAsesmen}</span>
+                <span class="text-outline text-[10px] block">ID Asesmen & Sesi</span>
+                <div class="flex items-center gap-1 flex-wrap">
+                  <span class="font-mono font-semibold text-primary truncate block">${h.idAsesmen}</span>
+                  ${h.remidiKe || h.sesiAsesmen ? `
+                    <span class="px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                      (h.remidiKe || h.sesiAsesmen) === 'Asesmen Utama'
+                        ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                        : 'bg-purple-100 text-purple-900 border border-purple-300'
+                    }">
+                      ${h.remidiKe || h.sesiAsesmen}
+                    </span>` : ''}
+                </div>
               </div>
               <div>
                 <span class="text-outline text-[10px] block">Tanggal</span>
@@ -11244,14 +11379,20 @@ function renderResultsTable() {
           </details>
 
           <!-- Action Button: Touch-Friendly Grid -->
-          <div class="grid grid-cols-2 gap-2 pt-1 border-t border-surface-container-high/60">
+          <div class="grid ${!isPass ? 'grid-cols-3' : 'grid-cols-2'} gap-2 pt-1 border-t border-surface-container-high/60">
+            ${!isPass ? `
+              <button type="button" onclick="startRemedialForCandidate('${h.nip}')" class="h-10 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="Asesmen Ulang">
+                <span class="material-symbols-outlined text-[15px]">history</span>
+                <span>Remedi</span>
+              </button>
+            ` : ''}
             <button type="button" onclick="editAssessmentByNip('${h.nip}')" class="h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
               <span class="material-symbols-outlined text-[16px]">edit</span>
-              <span>Revisi Nilai</span>
+              <span>Revisi</span>
             </button>
             <button type="button" onclick="openTranscriptByNip('${h.nip}')" class="h-10 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
               <span class="material-symbols-outlined text-[16px]">print</span>
-              <span>Buka Rapor</span>
+              <span>Rapor</span>
             </button>
           </div>
 
@@ -11383,15 +11524,33 @@ function loadCandidateTranscript(pesertaId) {
   const matrixItemsRows = [];
   const pembinaanList = [];
 
-  S.br.forEach(a => {
+  let globalCatCounter = 0;
+
+  S.br.forEach((a, aIdx) => {
+    // Jika ada lebih dari 1 modul asesmen, tampilkan header modul asesmen
+    if (S.br.length > 1) {
+      matrixItemsRows.push(`
+        <tr class="bg-primary text-white font-bold text-xs">
+          <td colspan="4" class="py-2 px-3 uppercase tracking-wider">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[15px]">bookmark</span>
+              <span>Modul Asesmen: ${escHtml(a.name)}</span>
+            </div>
+          </td>
+        </tr>
+      `);
+    }
+
     a.cats.forEach((cat, cIdx) => {
+      globalCatCounter++;
+      const catNumber = globalCatCounter;
       const cLv = levelOf(cat.avg, cat.hasBelowThree);
       const isCatKompeten = cat.avg !== null && cat.avg >= 75.0 && !cat.hasBelowThree;
 
       catSummaryRows.push(`
-        <tr class="border-b border-surface-container-high hover:bg-surface-container-low/40">
+        <tr class="border-b border-surface-container-high hover:bg-surface-container-low/40 transition-colors">
           <td class="py-2.5 px-3 font-semibold text-xs text-on-surface leading-tight">
-            <span class="font-mono text-[10px] text-secondary font-bold mr-1">K${cIdx + 1}.</span>
+            <span class="font-mono text-[10px] text-secondary font-bold mr-1">K${catNumber}.</span>
             ${escHtml(cat.name)}
           </td>
           <td class="py-2.5 px-2 text-center font-mono text-xs">${cat.rated}/${cat.total}</td>
@@ -11404,17 +11563,39 @@ function loadCandidateTranscript(pesertaId) {
         </tr>
       `);
 
+      // Header Group / Kategori untuk Matriks Butir Capaian
+      matrixItemsRows.push(`
+        <tr class="bg-blue-50/80 border-t-2 border-b border-blue-200">
+          <td colspan="4" class="py-2.5 px-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-primary text-white shadow-2xs shrink-0">K${catNumber}</span>
+                <span class="font-bold text-xs text-primary tracking-wide leading-tight">${escHtml(cat.name)}</span>
+              </div>
+              <div class="flex items-center gap-2.5 text-[10px] font-mono shrink-0 ml-auto">
+                <span class="text-outline font-medium">${cat.rated}/${cat.total} Butir</span>
+                <span class="font-bold ${isCatKompeten ? 'text-primary' : (cat.avg === null ? 'text-outline' : 'text-amber-800')}">
+                  Rata-rata: ${cat.avg === null ? '-' : cat.avg.toFixed(1)}
+                </span>
+                <span class="px-2 py-0.2 rounded-full border text-[9px] font-bold ${cLv.chip}">${cLv.t}</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `);
+
       cat.items.forEach(it => {
         const v = R.scores[it.id];
         const scoreDisplay = v === undefined ? '-' : toPoints(v);
         const itemKompeten = v !== undefined && toPoints(v) >= 75;
         const itemLv = v === undefined ? { t: 'Belum', chip: 'bg-surface-container text-outline border-surface-container-high' } : levelOf(toPoints(v));
+        const displayKode = (it.kode === '1.1' && (it.id === 'c9' || it.no === 9)) ? '1.10' : (it.kode || it.no);
 
         matrixItemsRows.push(`
-          <tr class="border-b border-surface-container-high text-[11px] hover:bg-surface-container-low/30">
-            <td class="py-2 px-2.5 font-mono font-bold text-secondary text-center shrink-0">${escHtml(it.kode || it.no)}</td>
-            <td class="py-2 px-2.5 font-medium text-on-surface">
-              <div>${escHtml(it.nama)}</div>
+          <tr class="border-b border-surface-container-high text-[11px] hover:bg-surface-container-low/30 transition-colors">
+            <td class="py-2 px-2.5 font-mono font-bold text-secondary text-center shrink-0">${escHtml(displayKode)}</td>
+            <td class="py-2 px-3 font-medium text-on-surface">
+              <div class="leading-snug">${escHtml(it.nama)}</div>
             </td>
             <td class="py-2 px-2 text-center font-mono font-bold ${itemKompeten ? 'text-primary' : (v === undefined ? 'text-outline' : 'text-amber-800')}">
               ${scoreDisplay}
@@ -11426,7 +11607,7 @@ function loadCandidateTranscript(pesertaId) {
         `);
 
         if (v !== undefined && toPoints(v) < 75) {
-          pembinaanList.push(`[${it.kode || it.no}] ${it.nama} (Nilai: ${(toPoints(v) / 25).toFixed(0)} / Skor: ${toPoints(v)})`);
+          pembinaanList.push(`[${displayKode}] ${it.nama} (Nilai: ${(toPoints(v) / 25).toFixed(0)} / Skor: ${toPoints(v)})`);
         }
       });
     });
@@ -11469,7 +11650,8 @@ function loadCandidateTranscript(pesertaId) {
           ${kv('Tempat Asesmen', (!p.tempat || p.tempat === 'Workshop Bay A') ? 'Workshop Pioneer' : p.tempat)}
           ${kv('Instructor / Asesor', trainerNama)}
           ${kv('Tanggal Pelaksanaan', hasilRecord ? hasilRecord.tanggal : today)}
-          ${kv('Status Sesi', statusText)}
+          ${kv('Sesi Asesmen', (hasilRecord && (hasilRecord.remidiKe || hasilRecord.sesiAsesmen)) || appState.evalRemidiKe || 'Asesmen Utama')}
+          ${kv('Status Keputusan', statusText)}
         </div>
       </div>
 
@@ -11586,7 +11768,17 @@ function loadCandidateTranscript(pesertaId) {
       <div class="flex items-center justify-between gap-3 pb-3 border-b-2 border-primary">
         <div>
           <div class="text-[10px] uppercase tracking-widest text-outline font-bold">Lampiran Transkrip • Matriks Butir Capaian</div>
-          <div class="font-display font-bold text-lg text-primary">${escHtml(p.nama)}</div>
+          <div class="font-display font-bold text-lg text-primary flex items-center gap-2">
+            <span>${escHtml(p.nama)}</span>
+            ${(hasilRecord && (hasilRecord.remidiKe || hasilRecord.sesiAsesmen)) ? `
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                (hasilRecord.remidiKe || hasilRecord.sesiAsesmen) === 'Asesmen Utama'
+                  ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                  : 'bg-purple-100 text-purple-900 border border-purple-300'
+              }">
+                ${hasilRecord.remidiKe || hasilRecord.sesiAsesmen}
+              </span>` : ''}
+          </div>
         </div>
         <div class="text-right font-mono text-xs text-outline">
           NIP. ${escHtml(p.nip)}
@@ -11624,6 +11816,12 @@ function loadCandidateTranscript(pesertaId) {
             ${pembinaanList.slice(0, 10).map(x => `<li>${escHtml(x)}</li>`).join('')}
             ${pembinaanList.length > 10 ? `<li class="italic text-outline">... dan ${pembinaanList.length - 10} butir kompetensi lainnya</li>` : ''}
           </ul>
+          <div class="mt-3 flex justify-end print:hidden">
+            <button type="button" onclick="startRemedialForCandidate('${p.id}')" class="px-3 py-1.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
+              <span class="material-symbols-outlined text-[15px]">history</span>
+              <span>Buka Asesmen Ulang (Remedial)</span>
+            </button>
+          </div>
         ` : `
           <p class="text-xs text-on-surface-variant">
             Seluruh butir kompetensi yang telah dinilai memenuhi atau melampaui standar kelulusan minimum (≥ 3 / 75,0). Tidak terdapat rekomendasi pembinaan khusus.
@@ -12333,6 +12531,8 @@ function setEvalStep(stepNum) {
       if (nameEl) nameEl.textContent = candidate ? candidate.nama : '-';
       if (nipEl) nipEl.textContent = candidate ? `(NIP: ${candidate.nip})` : '';
       if (assessEl) assessEl.textContent = appState.activeAssessment || 'Junior Technician';
+      const sel2 = document.getElementById('step2-eval-session-select');
+      if (sel2) sel2.value = appState.evalRemidiKe || 'Asesmen Utama';
       renderCategoryPills();
       renderCompetencyCards();
       calculateAssessmentSummary();
@@ -12384,6 +12584,12 @@ function updateEvalStep1Summary() {
       return `<option value="${escapeHtml(assName)}" ${assName === appState.activeAssessment ? 'selected' : ''}>${escapeHtml(assName)} (${uniqueCats} Kategori)</option>`;
     }).join('');
   }
+
+  // Populate & sync session dropdown & badge
+  const sel1 = document.getElementById('eval-session-select');
+  if (sel1) sel1.value = appState.evalRemidiKe || 'Asesmen Utama';
+  const badge1 = document.getElementById('eval-session-badge');
+  if (badge1) badge1.textContent = appState.evalRemidiKe || 'Asesmen Utama';
 
   calculateAssessmentSummary();
 }
@@ -12479,69 +12685,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
-// =========================================================================
-// BOTTOM TAB BAR (tampilan native di smartphone) - dibangun dari menu yang aktif
-// =========================================================================
-(function initBottomTabBar() {
-  const bar = document.createElement('nav');
-  bar.id = 'bottom-tabbar';
-  bar.className = 'no-print';
-  document.body.appendChild(bar);
-
-  const PESERTA_MAP = { openPesertaAbsen: 'presensi-form', openPesertaLaporan: 'laporan', openPesertaLaporanKimpak: 'laporan-kimpak' };
-  const viewOf = (oc) => {
-    oc = oc || '';
-    let m = oc.match(/switchView\('([^']+)'\)/);
-    if (m) return m[1];
-    m = oc.match(/(openPeserta\w+)\(/);
-    return m ? PESERTA_MAP[m[1]] : '';
-  };
-  const currentView = () => {
-    const el = document.querySelector('.view-container:not(.hidden)');
-    return el ? el.id.replace('view-', '') : '';
-  };
-  const shortLabel = (btn) => {
-    const labels = [...btn.querySelectorAll('span')]
-      .filter(s => !s.classList.contains('material-symbols-outlined') && !s.classList.contains('font-mono') && s.textContent.trim())
-      .map(s => s.textContent.trim());
-    return labels.sort((a, b) => a.length - b.length)[0] || '';
-  };
-
-  function build() {
-    const src = [...document.querySelectorAll('#desktop-nav > button.nav-tab')].filter(b => !b.classList.contains('hidden'));
-    bar.innerHTML = '';
-    if (!src.length) { bar.classList.remove('has-items'); return; }
-    const cur = currentView();
-    src.slice(0, 4).forEach(b => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      const icon = b.querySelector('.material-symbols-outlined');
-      btn.innerHTML = `<span class="material-symbols-outlined">${icon ? icon.textContent : 'apps'}</span><span class="tb-label">${shortLabel(b)}</span>`;
-      if (viewOf(b.getAttribute('onclick')) === cur) btn.classList.add('active');
-      btn.onclick = () => { const mm = document.getElementById('mobile-nav'); if (mm) mm.classList.add('hidden'); b.click(); };
-      bar.appendChild(btn);
-    });
-    const more = document.createElement('button');
-    more.type = 'button';
-    more.innerHTML = '<span class="material-symbols-outlined">menu</span><span class="tb-label">Menu</span>';
-    more.onclick = () => toggleMobileMenu();
-    bar.appendChild(more);
-    bar.classList.add('has-items');
-  }
-
-  let pending = false;
-  const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; build(); }); };
-  const nav = document.getElementById('desktop-nav');
-  const mo = new MutationObserver(schedule);
-  if (nav) mo.observe(nav, { attributes: true, subtree: true, attributeFilter: ['class'] });
-  document.querySelectorAll('.view-container').forEach(v => mo.observe(v, { attributes: true, attributeFilter: ['class'] }));
-  build();
-
-  // Sembunyikan tab bar saat keyboard muncul agar tidak menimpa input
-  document.addEventListener('focusin', e => { if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) document.body.classList.add('kb-open'); });
-  document.addEventListener('focusout', () => document.body.classList.remove('kb-open'));
-})();
 </script>
 </body>
 </html>

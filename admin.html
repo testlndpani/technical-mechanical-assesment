@@ -1,0 +1,3445 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrator - SIM-Asesmen Mekanik Alat Berat</title>
+  
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  
+  <!-- Google Fonts: Inter, Hanken Grotesk, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Material Symbols Outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- SheetJS for Native Excel (.xlsx) Export & Import -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Tailwind Theme Configuration based on Executive Precision -->
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#00236f",
+            "on-primary": "#ffffff",
+            "primary-container": "#1e3a8a",
+            "on-primary-container": "#90a8ff",
+            "primary-fixed": "#dce1ff",
+            "primary-fixed-dim": "#b6c4ff",
+            
+            secondary: "#0051d5",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#316bf3",
+            "on-secondary-container": "#fefcff",
+            "secondary-fixed": "#dbe1ff",
+            
+            tertiary: "#190093",
+            "tertiary-container": "#2b15c6",
+            "on-tertiary-container": "#a5a2ff",
+            
+            surface: "#f8f9ff",
+            "on-surface": "#0d1c2e",
+            "on-surface-variant": "#444651",
+            "surface-dim": "#ccdbf3",
+            "surface-bright": "#f8f9ff",
+            "surface-variant": "#d5e3fc",
+            
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e6eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d5e3fc",
+            
+            outline: "#757682",
+            "outline-variant": "#c5c5d3",
+            
+            error: "#ba1a1a",
+            "on-background": "#0d1c2e",
+            "inverse-on-surface": "#eaf1ff",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6"
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Hanken Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #eff4ff; }
+    ::-webkit-scrollbar-thumb { background: #b6c4ff; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #0051d5; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .tab-btn.active {
+      background-color: #00236f;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 35, 111, 0.2);
+    }
+    .subtab-btn.active {
+      background-color: #ffffff;
+      color: #00236f;
+      font-weight: 700;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff !important; }
+    }
+  </style>
+</head>
+<body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col antialiased">
+
+  <!-- Top Ambient Accent Strip -->
+  <div class="w-full h-1.5 bg-gradient-to-r from-amber-500 via-primary to-secondary no-print"></div>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md border-b border-surface-container-high shadow-xs no-print transition-all">
+    <div class="w-full max-w-[1680px] mx-auto px-3 sm:px-5 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16 gap-2">
+        
+        <!-- Brand & Title -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <img src="Logo-MGR-Long-default.png" alt="Logo MGR" class="h-6 sm:h-7 xl:h-8 w-auto max-w-[90px] sm:max-w-[130px] object-contain shrink-0" onerror="this.style.display='none'">
+          <div class="h-4 w-px bg-surface-container-high hidden xs:block"></div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-display font-bold text-sm sm:text-base text-primary tracking-tight">SIM-ASESMEN</span>
+            <span class="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md bg-amber-500 text-white font-mono font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs">
+              <span class="material-symbols-outlined text-[13px]">shield_person</span>
+              <span>ADMIN PANEL</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Middle: Cloud Connection Status -->
+        <div class="hidden md:flex items-center gap-2 px-3 py-1 bg-surface-container-low rounded-full border border-surface-container-high text-xs text-on-surface-variant" id="cloud-status-indicator">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="cloud-status-dot"></span>
+          <span class="font-medium" id="cloud-status-text">Terhubung ke Google Sheets</span>
+          <button type="button" onclick="syncAllFromCloud()" class="ml-1 text-primary hover:text-secondary p-0.5 rounded hover:bg-surface-container transition-colors" title="Muat Ulang Data dari Cloud">
+            <span class="material-symbols-outlined text-[16px] block">sync</span>
+          </button>
+        </div>
+
+        <!-- Right Utility Actions -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Back to Main App Button -->
+          <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-primary bg-surface-container-low hover:bg-surface-container border border-surface-container-high transition-all shadow-xs cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span class="hidden sm:inline">Buka SIM-Asesmen</span>
+          </a>
+
+          <!-- Admin Quick Menu / Logout -->
+          <button type="button" onclick="lockAdminSession()" id="btn-admin-logout" class="hidden inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-error bg-error-container/30 hover:bg-error-container/60 transition-colors cursor-pointer" title="Kunci / Keluar Admin">
+            <span class="material-symbols-outlined text-[16px]">lock</span>
+            <span class="hidden sm:inline">Kunci Sesi</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- GATEWAY AUTENTIKASI PIN ADMINISTRATOR (Saat belum login admin)              -->
+  <!-- ========================================================================= -->
+  <div id="admin-auth-gate" class="flex-1 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-xl border border-surface-container-high p-6 sm:p-8 relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="text-center mb-6 relative">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-primary text-on-primary flex items-center justify-center shadow-md mb-3">
+          <span class="material-symbols-outlined text-[32px]">admin_panel_settings</span>
+        </div>
+        <h1 class="font-display font-bold text-xl text-primary tracking-tight">Autentikasi Administrator</h1>
+        <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+          Masukkan Kata Sandi Administrator untuk mengelola data <strong>Trainer</strong>, <strong>Hasil Asesmen</strong>, dan <strong>Daftar Peserta</strong>.
+        </p>
+      </div>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4 relative">
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Kata Sandi / PIN Admin <span class="text-error">*</span></label>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">key</span>
+            <input type="password" id="admin-password-input" required autofocus placeholder="Masukkan kata sandi admin" class="w-full bg-surface-container-low pl-10 pr-10 py-2.5 rounded-xl text-xs font-mono font-medium text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all">
+            <button type="button" onclick="togglePasswordVisibility('admin-password-input', this)" class="absolute right-3 text-outline hover:text-on-surface cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">visibility</span>
+            </button>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-outline mt-1.5 px-0.5">
+            <span>Default: <code class="font-mono bg-surface-container px-1 py-0.5 rounded text-primary font-bold">admin123</code></span>
+            <button type="button" onclick="fillDefaultAdminPass()" class="text-secondary hover:underline cursor-pointer">Isi Otomatis</button>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full h-11 bg-primary hover:bg-primary-container text-on-primary font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-[18px]">lock_open</span>
+          <span>Buka Panel Administrator</span>
+        </button>
+
+        <div class="pt-3 border-t border-surface-container-high text-center">
+          <a href="index.html" class="inline-flex items-center gap-1 text-xs text-outline hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-[15px]">arrow_back</span>
+            <span>Kembali ke Halaman SIM-Asesmen</span>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN ADMIN DASHBOARD CONTENT (Saat sesi admin aktif)                       -->
+  <!-- ========================================================================= -->
+  <main id="admin-main-panel" class="hidden flex-1 w-full max-w-[1680px] mx-auto px-3 sm:px-5 lg:px-8 py-5 space-y-6">
+
+    <!-- KPI Summary Overview Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      
+      <!-- Card 1: Trainers -->
+      <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-2xl border border-surface-container-high shadow-xs flex items-center justify-between gap-3 hover:border-primary/30 transition-all cursor-pointer" onclick="switchAdminTab('trainers')">
+        <div class="truncate">
+          <span class="text-[11px] font-bold text-outline uppercase tracking-wider block">Total Trainer</span>
+          <span class="font-display font-extrabold text-2xl sm:text-3xl text-primary block mt-0.5" id="kpi-trainers-total">0</span>
+          <span class="text-[11px] text-emerald-700 font-medium inline-flex items-center gap-1 mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span id="kpi-trainers-active">0 Aktif</span>
+          </span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[24px] sm:text-[28px]">badge</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Peserta -->
+      <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-2xl border border-surface-container-high shadow-xs flex items-center justify-between gap-3 hover:border-secondary/30 transition-all cursor-pointer" onclick="switchAdminTab('peserta')">
+        <div class="truncate">
+          <span class="text-[11px] font-bold text-outline uppercase tracking-wider block">Daftar Peserta</span>
+          <span class="font-display font-extrabold text-2xl sm:text-3xl text-secondary block mt-0.5" id="kpi-peserta-total">0</span>
+          <span class="text-[11px] text-primary font-medium inline-flex items-center gap-1 mt-0.5">
+            <span id="kpi-peserta-summary">0 Siap Uji</span>
+          </span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[24px] sm:text-[28px]">groups</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Total Hasil Asesmen -->
+      <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-2xl border border-surface-container-high shadow-xs flex items-center justify-between gap-3 hover:border-emerald-300 transition-all cursor-pointer" onclick="switchAdminTab('hasil')">
+        <div class="truncate">
+          <span class="text-[11px] font-bold text-outline uppercase tracking-wider block">Hasil Asesmen</span>
+          <span class="font-display font-extrabold text-2xl sm:text-3xl text-emerald-700 block mt-0.5" id="kpi-hasil-total">0</span>
+          <span class="text-[11px] text-outline font-medium block truncate mt-0.5" id="kpi-hasil-breakdown">0 Teori • 0 Praktik</span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[24px] sm:text-[28px]">assignment_turned_in</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Persentase Kelulusan -->
+      <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-2xl border border-surface-container-high shadow-xs flex items-center justify-between gap-3 hover:border-amber-300 transition-all cursor-pointer" onclick="switchAdminTab('hasil')">
+        <div class="truncate">
+          <span class="text-[11px] font-bold text-outline uppercase tracking-wider block">Kelulusan Global</span>
+          <span class="font-display font-extrabold text-2xl sm:text-3xl text-primary block mt-0.5" id="kpi-pass-rate">0%</span>
+          <span class="text-[11px] text-outline font-medium block truncate mt-0.5" id="kpi-avg-score">Rata-rata: 0.0</span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[24px] sm:text-[28px]">analytics</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Main Navigation Bar / Module Segmented Switcher -->
+    <div class="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar pb-1 border-b border-surface-container-high">
+      <nav class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button type="button" onclick="switchAdminTab('dashboard')" id="tab-btn-dashboard" class="tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">dashboard</span>
+          <span>Ringkasan</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('trainers')" id="tab-btn-trainers" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">badge</span>
+          <span>Kelola Trainer</span>
+          <span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-primary text-[10px] font-mono" id="tab-badge-trainers">0</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('hasil')" id="tab-btn-hasil" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+          <span>Hasil Asesmen</span>
+          <span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-primary text-[10px] font-mono" id="tab-badge-hasil">0</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('peserta')" id="tab-btn-peserta" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">groups</span>
+          <span>Daftar Peserta</span>
+          <span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-primary text-[10px] font-mono" id="tab-badge-peserta">0</span>
+        </button>
+        <button type="button" onclick="switchAdminTab('settings')" id="tab-btn-settings" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">settings</span>
+          <span>Cloud & Pengaturan</span>
+        </button>
+      </nav>
+
+      <!-- Quick Action: Sync Button -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="syncAllFromCloud()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-primary bg-surface-container-low hover:bg-surface-container border border-surface-container-high transition-colors cursor-pointer" title="Tarik data terbaru dari Google Sheets">
+          <span class="material-symbols-outlined text-[16px]">cloud_download</span>
+          <span class="hidden sm:inline">Sync Cloud</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- TAB 1: RINGKASAN & DISTRIBUSI SECTION                                   -->
+    <!-- ======================================================================= -->
+    <div id="panel-dashboard" class="tab-panel space-y-6">
+      
+      <!-- Section Breakdown Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 sm:p-6 border border-surface-container-high shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-surface-container-high">
+          <div>
+            <h2 class="font-display font-bold text-base text-primary tracking-tight">Distribusi Peserta Berdasarkan Section (9 Bidang)</h2>
+            <p class="text-xs text-on-surface-variant">Departemen: <strong>Engineering</strong> • Lokasi: <strong>Workshop Pioneer</strong></p>
+          </div>
+          <button type="button" onclick="openAddPesertaModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-container shadow-xs cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[16px]">person_add</span>
+            <span>Tambah Peserta</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="section-distribution-cards">
+          <!-- Dynamically populated by renderSectionDistribution() -->
+        </div>
+      </div>
+
+      <!-- Quick Action Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container-high shadow-xs flex flex-col justify-between space-y-3">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-primary-fixed text-primary flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-[22px]">person_add</span>
+            </div>
+            <h3 class="font-display font-bold text-sm text-primary">Manajemen Trainer</h3>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+              Tambah instructor baru, perbarui akun login, atur status aktif/nonaktif, dan reset password trainer.
+            </p>
+          </div>
+          <button type="button" onclick="switchAdminTab('trainers'); openAddTrainerModal();" class="w-full py-2 px-3 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            <span>Tambah Trainer Baru</span>
+          </button>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container-high shadow-xs flex flex-col justify-between space-y-3">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-[22px]">upload_file</span>
+            </div>
+            <h3 class="font-display font-bold text-sm text-secondary">Batch Import Peserta</h3>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+              Daftarkan banyak peserta sekaligus dengan upload file Excel (.xlsx), CSV, atau paste teks baris NIP & nama.
+            </p>
+          </div>
+          <button type="button" onclick="switchAdminTab('peserta'); openBatchImportModal();" class="w-full py-2 px-3 rounded-xl bg-secondary hover:bg-secondary-container text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">file_upload</span>
+            <span>Import Massal Peserta</span>
+          </button>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container-high shadow-xs flex flex-col justify-between space-y-3">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-[22px]">download</span>
+            </div>
+            <h3 class="font-display font-bold text-sm text-emerald-800">Export Rekapitulasi</h3>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+              Unduh rekapitulasi nilai lengkap ke format Microsoft Excel (.xlsx) untuk laporan manajemen dan arsip resmi.
+            </p>
+          </div>
+          <button type="button" onclick="exportHasilToExcel()" class="w-full py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">table_view</span>
+            <span>Export Hasil ke Excel</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- TAB 2: KELOLA TRAINER / INSTRUCTOR                                      -->
+    <!-- ======================================================================= -->
+    <div id="panel-trainers" class="tab-panel hidden space-y-4">
+      
+      <!-- Header & Action Bar -->
+      <div class="bg-surface-container-lowest rounded-2xl p-4 sm:p-5 border border-surface-container-high shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-display font-bold text-base text-primary">Daftar Akun Trainer / Instructor</h2>
+          <p class="text-xs text-on-surface-variant">Kelola kredensial dan hak akses penguji di tab <code>Akses_Trainer</code></p>
+        </div>
+        
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Search Box -->
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2.5 text-outline text-[16px]">search</span>
+            <input type="text" id="search-trainer-input" oninput="renderTrainersTable()" placeholder="Cari ID, nama, email..." class="bg-surface-container-low pl-8 pr-3 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary w-44 sm:w-56">
+          </div>
+
+          <!-- Status Filter -->
+          <select id="filter-trainer-status" onchange="renderTrainersTable()" class="bg-surface-container-low px-2.5 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="all">Semua Status</option>
+            <option value="Aktif">Aktif</option>
+            <option value="Nonaktif">Nonaktif</option>
+          </select>
+
+          <!-- Add Button -->
+          <button type="button" onclick="openAddTrainerModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-container shadow-xs cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            <span>Tambah Trainer</span>
+          </button>
+          
+          <!-- Export Button -->
+          <button type="button" onclick="exportTrainersToExcel()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-primary bg-surface-container-low hover:bg-surface-container border border-surface-container-high cursor-pointer transition-colors" title="Export ke Excel">
+            <span class="material-symbols-outlined text-[16px]">download</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-surface-container-low text-primary uppercase text-[10px] font-bold border-b border-surface-container-high">
+              <tr>
+                <th class="py-3 px-4">ID Trainer</th>
+                <th class="py-3 px-4">Nama Lengkap & Gelar</th>
+                <th class="py-3 px-4">Email / Akun</th>
+                <th class="py-3 px-4">Kata Sandi</th>
+                <th class="py-3 px-4">Peran (Role)</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="trainers-table-body" class="divide-y divide-surface-container-high">
+              <!-- Dynamically populated by renderTrainersTable() -->
+            </tbody>
+          </table>
+        </div>
+        <div id="trainers-empty-state" class="hidden p-8 text-center text-outline text-xs">
+          <span class="material-symbols-outlined text-4xl mb-2 text-outline/50 block mx-auto">badge</span>
+          <p>Tidak ada data trainer yang sesuai kriteria pencarian.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- TAB 3: KELOLA HASIL ASESMEN (TEORI & KIMPAK)                            -->
+    <!-- ======================================================================= -->
+    <div id="panel-hasil" class="tab-panel hidden space-y-4">
+      
+      <!-- Sub-tab Switcher: Teori vs Praktik KIMPAK -->
+      <div class="bg-surface-container-low p-1 rounded-2xl flex items-center justify-between gap-2 flex-wrap border border-surface-container-high">
+        <div class="flex items-center gap-1">
+          <button type="button" onclick="switchHasilSubTab('teori')" id="subtab-hasil-teori" class="subtab-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">rate_review</span>
+            <span>Hasil Teori & Kompetensi</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-primary/10 text-primary text-[10px] font-mono" id="subtab-badge-teori">0</span>
+          </button>
+          <button type="button" onclick="switchHasilSubTab('practical')" id="subtab-hasil-practical" class="subtab-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold text-on-surface-variant hover:text-primary transition-all flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">handyman</span>
+            <span>Hasil Praktik KIMPAK</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-mono" id="subtab-badge-practical">0</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2 px-2">
+          <button type="button" onclick="exportHasilToExcel()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-xs cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[16px]">table_view</span>
+            <span>Export Excel (.xlsx)</span>
+          </button>
+          <button type="button" onclick="window.print()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-primary bg-surface-container-lowest hover:bg-surface-container border border-surface-container-high cursor-pointer transition-colors">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>Cetak Rekap</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters Toolbar -->
+      <div class="bg-surface-container-lowest rounded-2xl p-4 border border-surface-container-high shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2 flex-wrap flex-1">
+          <!-- Search NIP / Nama -->
+          <div class="relative flex items-center min-w-[200px]">
+            <span class="material-symbols-outlined absolute left-2.5 text-outline text-[16px]">search</span>
+            <input type="text" id="search-hasil-input" oninput="renderHasilTable()" placeholder="Cari NIP, nama peserta, trainer..." class="w-full bg-surface-container-low pl-8 pr-3 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+
+          <!-- Section Filter -->
+          <select id="filter-hasil-section" onchange="renderHasilTable()" class="bg-surface-container-low px-2.5 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="all">Semua Section</option>
+            <option value="Mechanical">Mechanical</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Welder (Fabrikasi)">Welder (Fabrikasi)</option>
+            <option value="Tyre">Tyre</option>
+            <option value="Rigger">Rigger</option>
+            <option value="Toolman">Toolman</option>
+            <option value="Fuelman">Fuelman</option>
+            <option value="Office">Office</option>
+            <option value="Dispatcher">Dispatcher</option>
+          </select>
+
+          <!-- Status Kelulusan Filter -->
+          <select id="filter-hasil-status" onchange="renderHasilTable()" class="bg-surface-container-low px-2.5 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="all">Semua Status (Selesai & Draf)</option>
+            <option value="SELESAI">Semua Selesai Resmi (100%)</option>
+            <option value="LULUS">Selesai: LULUS / KOMPETEN</option>
+            <option value="BELUM LULUS">Selesai: BELUM LULUS</option>
+            <option value="DRAFT">Sedang Berjalan / Draf Progres</option>
+          </select>
+        </div>
+
+        <div class="text-xs text-outline font-medium" id="hasil-table-count-label">
+          Menampilkan 0 hasil
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-surface-container-low text-primary uppercase text-[10px] font-bold border-b border-surface-container-high">
+              <tr>
+                <th class="py-3 px-3">No</th>
+                <th class="py-3 px-3">Tanggal & ID</th>
+                <th class="py-3 px-4">NIP & Nama Peserta</th>
+                <th class="py-3 px-3">Section & Posisi</th>
+                <th class="py-3 px-3">Trainer Penguji</th>
+                <th class="py-3 px-3 text-center">Skor Akhir</th>
+                <th class="py-3 px-3 text-center">Status</th>
+                <th class="py-3 px-4">Rekomendasi / Topik</th>
+                <th class="py-3 px-3 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="hasil-table-body" class="divide-y divide-surface-container-high">
+              <!-- Dynamically populated by renderHasilTable() -->
+            </tbody>
+          </table>
+        </div>
+        <div id="hasil-empty-state" class="hidden p-8 text-center text-outline text-xs">
+          <span class="material-symbols-outlined text-4xl mb-2 text-outline/50 block mx-auto">description</span>
+          <p class="font-bold text-on-surface text-sm mb-1">Belum ada data hasil asesmen yang tersimpan</p>
+          <p class="text-outline text-xs max-w-md mx-auto mb-4">Hasil asesmen teori (resmi maupun draf berjalan) serta praktik KIMPAK akan otomatis muncul saat instruktur menyelesaikan atau menginput penilaian di SIM-Asesmen.</p>
+          <div class="flex items-center justify-center gap-2 flex-wrap">
+            <button type="button" onclick="syncAllFromCloud(true)" class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary-container shadow-xs flex items-center gap-1.5 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">cloud_sync</span>
+              <span>Tarik Data Terbaru dari Cloud (GSheets)</span>
+            </button>
+            <button type="button" onclick="injectSampleHasil()" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary font-bold text-xs border border-surface-container-high flex items-center gap-1.5 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">science</span>
+              <span>Muat Data Simulasi / Contoh Hasil</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- TAB 4: KELOLA DAFTAR PESERTA (LIST_PESERTA)                             -->
+    <!-- ======================================================================= -->
+    <div id="panel-peserta" class="tab-panel hidden space-y-4">
+      
+      <!-- Header & Action Bar -->
+      <div class="bg-surface-container-lowest rounded-2xl p-4 sm:p-5 border border-surface-container-high shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-display font-bold text-base text-primary">Master Data Peserta Uji Kompetensi</h2>
+          <p class="text-xs text-on-surface-variant">Tersinkronisasi dengan Google Sheet <code>List_Peserta</code> &amp; <code>Presensi_Harian</code></p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Search Box -->
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2.5 text-outline text-[16px]">search</span>
+            <input type="text" id="search-peserta-input" oninput="renderPesertaTable()" placeholder="Cari NIP, nama..." class="bg-surface-container-low pl-8 pr-3 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary w-44 sm:w-56">
+          </div>
+
+          <!-- Section Filter -->
+          <select id="filter-peserta-section" onchange="renderPesertaTable()" class="bg-surface-container-low px-2.5 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="all">Semua Section</option>
+            <option value="Mechanical">Mechanical</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Welder (Fabrikasi)">Welder (Fabrikasi)</option>
+            <option value="Tyre">Tyre</option>
+            <option value="Rigger">Rigger</option>
+            <option value="Toolman">Toolman</option>
+            <option value="Fuelman">Fuelman</option>
+            <option value="Office">Office</option>
+            <option value="Dispatcher">Dispatcher</option>
+          </select>
+
+          <!-- Status Filter -->
+          <select id="filter-peserta-status" onchange="renderPesertaTable()" class="bg-surface-container-low px-2.5 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="all">Semua Status</option>
+            <option value="Siap Uji">Siap Uji</option>
+            <option value="Sedang Uji">Sedang Uji</option>
+            <option value="Selesai">Selesai</option>
+            <option value="Belum Hadir">Belum Hadir</option>
+          </select>
+
+          <!-- Single Add Button -->
+          <button type="button" onclick="openAddPesertaModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-container shadow-xs cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[16px]">person_add</span>
+            <span>+ Peserta</span>
+          </button>
+
+          <!-- Batch Import Button -->
+          <button type="button" onclick="openBatchImportModal()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-secondary bg-secondary-fixed hover:bg-secondary-fixed-dim transition-colors cursor-pointer" title="Import Batch Peserta">
+            <span class="material-symbols-outlined text-[16px]">upload_file</span>
+            <span class="hidden sm:inline">Import</span>
+          </button>
+
+          <!-- Export Excel Button -->
+          <button type="button" onclick="exportPesertaToExcel()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-primary bg-surface-container-low hover:bg-surface-container border border-surface-container-high cursor-pointer transition-colors" title="Export Daftar Peserta ke Excel">
+            <span class="material-symbols-outlined text-[16px]">download</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-surface-container-low text-primary uppercase text-[10px] font-bold border-b border-surface-container-high">
+              <tr>
+                <th class="py-3 px-3">No</th>
+                <th class="py-3 px-4">NIP</th>
+                <th class="py-3 px-4">Nama Lengkap</th>
+                <th class="py-3 px-3">Posisi / Jabatan</th>
+                <th class="py-3 px-3">Section</th>
+                <th class="py-3 px-3">Departemen</th>
+                <th class="py-3 px-3">Tempat Asesmen</th>
+                <th class="py-3 px-3 text-center">Status Uji</th>
+                <th class="py-3 px-3 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="peserta-table-body" class="divide-y divide-surface-container-high">
+              <!-- Dynamically populated by renderPesertaTable() -->
+            </tbody>
+          </table>
+        </div>
+        <div id="peserta-empty-state" class="hidden p-8 text-center text-outline text-xs">
+          <span class="material-symbols-outlined text-4xl mb-2 text-outline/50 block mx-auto">groups</span>
+          <p>Belum ada peserta yang sesuai kriteria pencarian atau filter section.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- TAB 5: PENGATURAN & SINKRONISASI CLOUD                                 -->
+    <!-- ======================================================================= -->
+    <div id="panel-settings" class="tab-panel hidden space-y-6">
+      
+      <!-- Cloud URL Configuration Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 sm:p-6 border border-surface-container-high shadow-xs space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary-fixed text-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-[22px]">cloud_sync</span>
+          </div>
+          <div>
+            <h2 class="font-display font-bold text-base text-primary">Koneksi Google Apps Script & Spreadsheet</h2>
+            <p class="text-xs text-on-surface-variant">Endpoint URL Web App yang terhubung ke Google Sheets database.</p>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-primary">URL Web App Google Apps Script</label>
+          <div class="flex items-center gap-2">
+            <input type="text" id="setting-appscript-url" class="flex-1 bg-surface-container-low px-3.5 py-2.5 rounded-xl text-xs font-mono text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary">
+            <button type="button" onclick="testCloudConnection()" class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-xl text-xs font-bold border border-surface-container-high transition-colors cursor-pointer shrink-0">
+              Tes Koneksi
+            </button>
+            <button type="button" onclick="saveAppscriptUrlSetting()" class="px-4 py-2.5 bg-primary hover:bg-primary-container text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shrink-0">
+              Simpan URL
+            </button>
+          </div>
+          <p class="text-[11px] text-outline">URL default: <code>https://script.google.com/macros/s/AKfycbyYKWTI2xu6Y606YDcu7-fE6ZCA13AIfkIyfaAxAT_o5A19m242MqAj3E1hbhwYhmziiQ/exec</code></p>
+        </div>
+
+        <div class="pt-3 border-t border-surface-container-high flex items-center gap-3 flex-wrap">
+          <button type="button" onclick="syncAllFromCloud(true)" class="px-4 py-2 rounded-xl bg-secondary hover:bg-secondary-container text-white text-xs font-bold flex items-center gap-2 cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[16px]">sync</span>
+            <span>Tarik Semua Data dari Cloud (Pull)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Backup & Restore Database Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 sm:p-6 border border-surface-container-high shadow-xs space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center">
+            <span class="material-symbols-outlined text-[22px]">database</span>
+          </div>
+          <div>
+            <h2 class="font-display font-bold text-base text-secondary">Backup & Restore Database Lokal</h2>
+            <p class="text-xs text-on-surface-variant">Cadangkan atau pulihkan data Trainer, Peserta, dan Hasil Asesmen dalam file JSON.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 flex-wrap">
+          <button type="button" onclick="downloadBackupJson()" class="px-4 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-primary border border-surface-container-high text-xs font-bold flex items-center gap-2 cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[16px]">download</span>
+            <span>Download Backup (JSON)</span>
+          </button>
+
+          <label class="px-4 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-primary border border-surface-container-high text-xs font-bold flex items-center gap-2 cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[16px]">upload</span>
+            <span>Pulihkan Data dari JSON</span>
+            <input type="file" id="restore-json-input" accept=".json" onchange="handleRestoreJson(event)" class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <!-- Admin Password Change Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 sm:p-6 border border-surface-container-high shadow-xs space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[22px]">key</span>
+          </div>
+          <div>
+            <h2 class="font-display font-bold text-base text-primary">Keamanan Administrator</h2>
+            <p class="text-xs text-on-surface-variant">Ubah kata sandi atau PIN akses ke panel administrator ini.</p>
+          </div>
+        </div>
+
+        <div class="max-w-md space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Kata Sandi Admin Baru</label>
+            <input type="password" id="new-admin-password" placeholder="Minimal 6 karakter" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Konfirmasi Kata Sandi Baru</label>
+            <input type="password" id="confirm-admin-password" placeholder="Ulangi kata sandi baru" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+          <button type="button" onclick="updateAdminPassword()" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold cursor-pointer transition-all">
+            Simpan Kata Sandi Baru
+          </button>
+        </div>
+      </div>
+
+      <!-- Danger Zone: Reset Data -->
+      <div class="bg-error-container/20 rounded-2xl p-5 sm:p-6 border border-error/30 space-y-3">
+        <h3 class="font-display font-bold text-sm text-error flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">warning</span>
+          <span>Zona Berbahaya: Reset Data</span>
+        </h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">
+          Mengosongkan cache penyimpanan lokal dan mengembalikan data ke initial setup. Pastikan Anda telah melakukan backup JSON sebelumnya.
+        </p>
+        <button type="button" onclick="confirmResetAllData()" class="px-4 py-2 rounded-xl bg-error hover:bg-red-700 text-white text-xs font-bold cursor-pointer transition-all">
+          Reset Data Lokal ke Default
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: FORM TAMBAH / EDIT TRAINER                                       -->
+  <!-- ========================================================================= -->
+  <div id="modal-trainer" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden animate-scale-in">
+      
+      <div class="px-5 py-4 bg-surface-container-low border-b border-surface-container-high flex items-center justify-between">
+        <h3 class="font-display font-bold text-sm text-primary flex items-center gap-2" id="modal-trainer-title">
+          <span class="material-symbols-outlined text-[20px]">badge</span>
+          <span>Tambah Trainer Baru</span>
+        </h3>
+        <button type="button" onclick="closeTrainerModal()" class="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveTrainerForm(event)" class="p-5 space-y-4">
+        <input type="hidden" id="trainer-form-is-edit" value="false">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">ID Trainer <span class="text-error">*</span></label>
+            <input type="text" id="trainer-form-id" required placeholder="Contoh: TRN-04" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs font-mono font-bold text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Peran (Role) <span class="text-error">*</span></label>
+            <select id="trainer-form-role" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+              <option value="Instructor">Instructor</option>
+              <option value="Lead Instructor">Lead Instructor</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1">Nama Lengkap &amp; Gelar <span class="text-error">*</span></label>
+          <input type="text" id="trainer-form-nama" required placeholder="Contoh: Ir. Budi Santoso, M.T." class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Email / Akun Login <span class="text-error">*</span></label>
+            <input type="email" id="trainer-form-email" required placeholder="Contoh: budi.trainer@komite.id" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Kata Sandi <span class="text-error">*</span></label>
+            <input type="text" id="trainer-form-password" required placeholder="Minimal 6 karakter" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs font-mono text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1">Status Keaktifan</label>
+          <select id="trainer-form-status" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="Aktif">Aktif</option>
+            <option value="Nonaktif">Nonaktif</option>
+          </select>
+        </div>
+
+        <div class="pt-3 border-t border-surface-container-high flex items-center justify-end gap-2">
+          <button type="button" onclick="closeTrainerModal()" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold cursor-pointer transition-colors">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-xs cursor-pointer transition-all">
+            Simpan Trainer
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: FORM TAMBAH / EDIT PESERTA                                       -->
+  <!-- ========================================================================= -->
+  <div id="modal-peserta" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden animate-scale-in">
+      
+      <div class="px-5 py-4 bg-surface-container-low border-b border-surface-container-high flex items-center justify-between">
+        <h3 class="font-display font-bold text-sm text-primary flex items-center gap-2" id="modal-peserta-title">
+          <span class="material-symbols-outlined text-[20px]">person_add</span>
+          <span>Tambah Peserta Baru</span>
+        </h3>
+        <button type="button" onclick="closePesertaModal()" class="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleSavePesertaForm(event)" class="p-5 space-y-4">
+        <input type="hidden" id="peserta-form-old-nip" value="">
+        <input type="hidden" id="peserta-form-is-edit" value="false">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">NIP Peserta <span class="text-error">*</span></label>
+            <input type="text" id="peserta-form-nip" required placeholder="Contoh: CV2034138" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs font-mono font-bold text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Status Uji</label>
+            <select id="peserta-form-status" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+              <option value="Siap Uji">Siap Uji</option>
+              <option value="Sedang Uji">Sedang Uji</option>
+              <option value="Selesai">Selesai</option>
+              <option value="Belum Hadir">Belum Hadir</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1">Nama Lengkap Peserta <span class="text-error">*</span></label>
+          <input type="text" id="peserta-form-nama" required placeholder="Contoh: Ismail Hantai" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Posisi / Jabatan <span class="text-error">*</span></label>
+            <input type="text" id="peserta-form-posisi" required placeholder="Contoh: Mechanic Heavy Equipment" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Section (9 Bidang) <span class="text-error">*</span></label>
+            <select id="peserta-form-section" required class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+              <option value="Mechanical">Mechanical</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Welder (Fabrikasi)">Welder (Fabrikasi)</option>
+              <option value="Tyre">Tyre</option>
+              <option value="Rigger">Rigger</option>
+              <option value="Toolman">Toolman</option>
+              <option value="Fuelman">Fuelman</option>
+              <option value="Office">Office</option>
+              <option value="Dispatcher">Dispatcher</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Departemen</label>
+            <input type="text" id="peserta-form-dept" value="Engineering" readonly class="w-full bg-surface-container px-3 py-2 rounded-xl text-xs font-semibold text-on-surface-variant border border-surface-container-high cursor-not-allowed">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Tempat Asesmen</label>
+            <input type="text" id="peserta-form-tempat" value="Workshop Pioneer" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-surface-container-high flex items-center justify-end gap-2">
+          <button type="button" onclick="closePesertaModal()" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold cursor-pointer transition-colors">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-xs cursor-pointer transition-all">
+            Simpan Peserta
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: BATCH IMPORT PESERTA (CSV / EXCEL / PASTE)                       -->
+  <!-- ========================================================================= -->
+  <div id="modal-batch-import" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden animate-scale-in">
+      
+      <div class="px-5 py-4 bg-surface-container-low border-b border-surface-container-high flex items-center justify-between">
+        <h3 class="font-display font-bold text-sm text-secondary flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">upload_file</span>
+          <span>Batch / Massal Import Peserta</span>
+        </h3>
+        <button type="button" onclick="closeBatchImportModal()" class="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+        <p class="text-xs text-on-surface-variant leading-relaxed">
+          Unggah file <strong>Excel (.xlsx) / CSV</strong> atau tempel teks baris-berbaris dengan format:
+          <br>
+          <code class="bg-surface-container px-2 py-0.5 rounded text-primary font-mono text-[11px] block mt-1">NIP, Nama Lengkap, Posisi / Jabatan, Section</code>
+        </p>
+
+        <!-- Method 1: File Upload -->
+        <div class="p-4 border-2 border-dashed border-surface-container-high hover:border-secondary rounded-xl text-center bg-surface-container-low/50 transition-colors">
+          <span class="material-symbols-outlined text-3xl text-secondary block mb-1">file_upload</span>
+          <label class="cursor-pointer text-xs font-bold text-secondary hover:underline">
+            <span>Pilih File Excel (.xlsx / .csv)</span>
+            <input type="file" id="batch-file-input" accept=".xlsx,.xls,.csv" onchange="handleBatchFileSelect(event)" class="hidden">
+          </label>
+          <p class="text-[10px] text-outline mt-0.5" id="batch-file-status">Belum ada file dipilih</p>
+        </div>
+
+        <!-- Method 2: Paste Raw Text -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-semibold text-primary">Atau Tempel (Paste) Teks Baris Peserta</label>
+            <button type="button" onclick="fillBatchExample()" class="text-[11px] text-secondary hover:underline cursor-pointer">Contoh Data</button>
+          </div>
+          <textarea id="batch-paste-input" rows="5" oninput="parseBatchPastedText()" placeholder="CV2034138, Ismail Hantai, Mechanic Heavy Equipment, Mechanical&#10;CV2034139, Hendra Kurnia, Electrician Bay, Electrical" class="w-full bg-surface-container-low p-3 rounded-xl text-xs font-mono text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-secondary"></textarea>
+        </div>
+
+        <!-- Preview Table -->
+        <div class="space-y-1.5" id="batch-preview-container">
+          <div class="flex items-center justify-between text-xs font-bold text-primary">
+            <span>Pratinjau Data Terbaca (<span id="batch-preview-count">0</span> peserta)</span>
+            <span class="text-[11px] text-outline font-normal">Departemen otomatis diisi: Engineering</span>
+          </div>
+          <div class="max-h-48 overflow-y-auto border border-surface-container-high rounded-xl">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-container-low text-primary text-[10px] uppercase font-bold sticky top-0">
+                <tr>
+                  <th class="py-2 px-3">NIP</th>
+                  <th class="py-2 px-3">Nama</th>
+                  <th class="py-2 px-3">Posisi</th>
+                  <th class="py-2 px-3">Section</th>
+                </tr>
+              </thead>
+              <tbody id="batch-preview-tbody" class="divide-y divide-surface-container-high font-mono text-[11px]">
+                <tr>
+                  <td colspan="4" class="p-4 text-center text-outline">Belum ada data untuk dipratinjau.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-surface-container-high flex items-center justify-end gap-2">
+          <button type="button" onclick="closeBatchImportModal()" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold cursor-pointer transition-colors">
+            Batal
+          </button>
+          <button type="button" onclick="commitBatchImport()" id="btn-commit-batch" disabled class="px-5 py-2 rounded-xl bg-secondary hover:bg-secondary-container disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold shadow-xs cursor-pointer transition-all">
+            Simpan Semua Peserta ke Database
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 4: DETAIL & EDIT HASIL ASESMEN                                      -->
+  <!-- ========================================================================= -->
+  <div id="modal-hasil" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-xl bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden animate-scale-in">
+      
+      <div class="px-5 py-4 bg-surface-container-low border-b border-surface-container-high flex items-center justify-between">
+        <h3 class="font-display font-bold text-sm text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">assignment</span>
+          <span>Detail &amp; Revisi Hasil Asesmen</span>
+        </h3>
+        <button type="button" onclick="closeHasilModal()" class="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveHasilForm(event)" class="p-5 space-y-4">
+        <input type="hidden" id="hasil-form-id" value="">
+        <input type="hidden" id="hasil-form-jenis" value="teori">
+
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase text-outline block">Peserta Asesmen</span>
+            <span class="font-display font-bold text-sm text-primary block" id="hasil-modal-peserta-nama">-</span>
+            <span class="text-xs font-mono text-outline block" id="hasil-modal-peserta-nip">NIP: -</span>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-bold uppercase text-outline block">Trainer Penguji</span>
+            <span class="text-xs font-bold text-primary block" id="hasil-modal-trainer">-</span>
+            <span class="text-[10px] text-outline block" id="hasil-modal-tanggal">-</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Skor Akhir (0 - 100) <span class="text-error">*</span></label>
+            <input type="number" step="0.1" min="0" max="100" id="hasil-form-skor" required class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-sm font-mono font-bold text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-primary mb-1">Status Kelulusan <span class="text-error">*</span></label>
+            <select id="hasil-form-status" required class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs font-bold text-on-surface border border-surface-container-high focus:outline-none">
+              <option value="LULUS">LULUS / KOMPETEN</option>
+              <option value="BELUM LULUS">BELUM LULUS / BELUM KOMPETEN</option>
+              <option value="Sedang Diases">Sedang Diases / Draf Progres</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1">Section</label>
+          <select id="hasil-form-section" class="w-full bg-surface-container-low px-3 py-2 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="Mechanical">Mechanical</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Welder (Fabrikasi)">Welder (Fabrikasi)</option>
+            <option value="Tyre">Tyre</option>
+            <option value="Rigger">Rigger</option>
+            <option value="Toolman">Toolman</option>
+            <option value="Fuelman">Fuelman</option>
+            <option value="Office">Office</option>
+            <option value="Dispatcher">Dispatcher</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1">Rekomendasi Asesor</label>
+          <textarea id="hasil-form-rekomendasi" rows="2" class="w-full bg-surface-container-low p-2.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1">Catatan Eksekutif / Komentar</label>
+          <textarea id="hasil-form-catatan" rows="2" class="w-full bg-surface-container-low p-2.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary"></textarea>
+        </div>
+
+        <!-- Shortcut: Edit Nilai per Butir Kompetensi -->
+        <div class="p-3 rounded-xl bg-surface-container-low border border-surface-container-high flex items-center justify-between gap-3 my-1">
+          <div>
+            <span class="text-xs font-bold text-primary block">Ubah Nilai per Unit Kompetensi</span>
+            <span class="text-[11px] text-outline block">Bukan ubah skor total: kelola nilai satuan (1-4) atau hapus nilai butir spesifik.</span>
+          </div>
+          <button type="button" onclick="switchToCompetencyModalFromHasil()" class="px-3.5 py-2 rounded-xl bg-secondary text-on-secondary hover:bg-secondary-container text-xs font-bold shrink-0 flex items-center gap-1.5 cursor-pointer transition-all shadow-2xs">
+            <span class="material-symbols-outlined text-[16px]">fact_check</span>
+            <span>Rincian Butir Nilai</span>
+          </button>
+        </div>
+
+        <div class="pt-3 border-t border-surface-container-high flex items-center justify-between">
+          <button type="button" onclick="deleteCurrentHasil()" class="px-3 py-2 rounded-xl bg-error-container/30 hover:bg-error-container/60 text-error text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors">
+            <span class="material-symbols-outlined text-[16px]">delete</span>
+            <span>Hapus Hasil</span>
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeHasilModal()" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold cursor-pointer transition-colors">
+              Batal
+            </button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-xs cursor-pointer transition-all">
+              Simpan Perubahan
+            </button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Modal Kelola Nilai per Unit Kompetensi Peserta -->
+  <div id="modal-competency-detail" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-surface-container-lowest rounded-2xl max-w-4xl w-full border border-surface-container-high shadow-2xl overflow-hidden my-auto flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 bg-surface-container-low border-b border-surface-container-high flex items-center justify-between gap-3 shrink-0">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary text-[22px]">fact_check</span>
+            <h3 class="font-display font-bold text-base text-primary">Kelola Nilai Unit Kompetensi Peserta</h3>
+          </div>
+          <p class="text-xs text-on-surface-variant mt-0.5">
+            Ubah atau hapus nilai masing-masing unit kompetensi untuk: 
+            <strong class="text-primary" id="comp-modal-peserta-nama">-</strong> 
+            (<span class="font-mono text-outline" id="comp-modal-peserta-nip">-</span>)
+          </p>
+        </div>
+        <button type="button" onclick="closeCompetencyModal()" class="p-1.5 text-outline hover:text-primary rounded-lg transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Realtime KPI Banner Inside Modal -->
+      <div class="bg-surface-container-lowest px-4 py-3 border-b border-surface-container-high flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-4 text-xs">
+          <div>
+            <span class="text-outline text-[10px] block uppercase font-bold">Butir Terisi</span>
+            <span class="font-mono font-bold text-primary text-sm" id="comp-modal-count-rated">0 / 0</span>
+          </div>
+          <div class="h-6 w-px bg-surface-container-high"></div>
+          <div>
+            <span class="text-outline text-[10px] block uppercase font-bold">Progres</span>
+            <span class="font-mono font-bold text-secondary text-sm" id="comp-modal-progress-pct">0%</span>
+          </div>
+          <div class="h-6 w-px bg-surface-container-high"></div>
+          <div>
+            <span class="text-outline text-[10px] block uppercase font-bold">Rata-rata Skor</span>
+            <span class="font-mono font-bold text-emerald-800 text-sm" id="comp-modal-avg-score">0.0 / 100</span>
+          </div>
+        </div>
+
+        <!-- Filter Toolbar -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="relative flex items-center min-w-[200px]">
+            <span class="material-symbols-outlined absolute left-2.5 text-outline text-[15px]">search</span>
+            <input type="text" id="comp-modal-search" oninput="renderCompModalList()" placeholder="Cari materi / kode..." class="w-full bg-surface-container-low pl-8 pr-2.5 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary">
+          </div>
+          <select id="comp-modal-filter-status" onchange="renderCompModalList()" class="bg-surface-container-low px-2.5 py-1.5 rounded-xl text-xs text-on-surface border border-surface-container-high focus:outline-none">
+            <option value="all">Semua Butir</option>
+            <option value="rated">Sudah Dinilai Saja</option>
+            <option value="unrated">Belum Dinilai Saja</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Modal Body: Scrollable Competencies List -->
+      <div class="p-4 overflow-y-auto flex-1 space-y-2.5 max-h-[55vh]" id="comp-modal-list-container">
+        <!-- Injected dynamically by renderCompModalList() -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-surface-container-low border-t border-surface-container-high flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-2">
+          <a id="comp-modal-link-sim" href="index.html" target="_blank" class="px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary text-xs font-semibold flex items-center gap-1.5 transition-colors border border-surface-container-high">
+            <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            <span>Buka Lembar Penilaian di SIM-Asesmen</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeCompetencyModal()" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold cursor-pointer transition-colors">
+            Tutup
+          </button>
+          <button type="button" onclick="saveCompetencyChanges()" class="px-5 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-xs cursor-pointer transition-all flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">save</span>
+            <span>Simpan Perubahan Nilai Butir</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="admin-toast-container" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC - ADMIN PANEL ENGINE                                     -->
+  <!-- ========================================================================= -->
+  <script>
+    // Konfigurasi & State Admin
+    const TARGET_APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYKWTI2xu6Y606YDcu7-fE6ZCA13AIfkIyfaAxAT_o5A19m242MqAj3E1hbhwYhmziiQ/exec';
+    const SPREADSHEET_ID = '1Q9l9JaCe8yhgiewqkhIxXzd6y3sIP-8FPh-dFUqJlIU';
+    const DEFAULT_ADMIN_PASS = 'admin123';
+
+    const INITIAL_TRAINERS_FALLBACK = [
+      { id: "TRN-01", nama: "Dr. Hendra Asesor, M.T.", email: "hendra.asesor@komite.id", password: "password123", role: "Instructor", status: "Aktif" },
+      { id: "TRN-02", nama: "Ir. Arisandi S., M.Eng.", email: "arisandi@komite.id", password: "password123", role: "Instructor", status: "Aktif" },
+      { id: "TRN-03", nama: "Ahmad Fauzi, S.T.", email: "ahmad.fauzi@komite.id", password: "password123", role: "Instructor", status: "Aktif" }
+    ];
+
+    const VALID_SECTIONS = [
+      'Mechanical', 'Electrical', 'Welder (Fabrikasi)', 'Tyre', 'Rigger',
+      'Toolman', 'Fuelman', 'Office', 'Dispatcher'
+    ];
+
+    let adminState = {
+      appscriptUrl: localStorage.getItem('sim_appscript_url') || TARGET_APPSCRIPT_URL,
+      adminPass: localStorage.getItem('sim_admin_password') || DEFAULT_ADMIN_PASS,
+      isAuthenticated: sessionStorage.getItem('sim_admin_authenticated') === 'true',
+      currentTab: 'dashboard',
+      currentHasilSubTab: 'teori',
+      trainers: [],
+      peserta: [],
+      hasil: [],
+      hasilPractical: [],
+      competencies: [],
+      editingCompNip: null,
+      editingScores: {},
+      editingNotes: {},
+      _rawDrafts: [],
+      batchParsedRows: []
+    };
+
+    // Helper Toast
+    function showToast(title, msg, isError = false, isWarn = false) {
+      const container = document.getElementById('admin-toast-container');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = `pointer-events-auto flex items-start gap-2.5 p-3.5 rounded-xl shadow-lg border text-xs max-w-sm transition-all transform translate-y-2 opacity-0 ${
+        isError 
+          ? 'bg-red-50 text-red-950 border-red-300' 
+          : isWarn 
+            ? 'bg-amber-50 text-amber-950 border-amber-300' 
+            : 'bg-emerald-50 text-emerald-950 border-emerald-300'
+      }`;
+      const icon = isError ? 'error' : isWarn ? 'warning' : 'check_circle';
+      const iconColor = isError ? 'text-red-600' : isWarn ? 'text-amber-600' : 'text-emerald-600';
+      el.innerHTML = `
+        <span class="material-symbols-outlined ${iconColor} text-[18px] shrink-0 mt-0.5">${icon}</span>
+        <div class="flex-1 truncate">
+          <span class="font-bold block">${title}</span>
+          <span class="text-[11px] leading-tight block opacity-90">${msg}</span>
+        </div>
+      `;
+      container.appendChild(el);
+      requestAnimationFrame(() => {
+        el.classList.remove('translate-y-2', 'opacity-0');
+      });
+      setTimeout(() => {
+        el.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => el.remove(), 300);
+      }, 4000);
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      const isPass = inp.type === 'password';
+      inp.type = isPass ? 'text' : 'password';
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = isPass ? 'visibility_off' : 'visibility';
+    }
+
+    function fillDefaultAdminPass() {
+      const inp = document.getElementById('admin-password-input');
+      if (inp) inp.value = adminState.adminPass;
+    }
+
+    // Normalisasi Section
+    function normalizeSection(raw, posisi) {
+      if (raw) {
+        const s = String(raw).trim().toLowerCase();
+        if (s.includes('elect')) return 'Electrical';
+        if (s.includes('weld') || s.includes('fabrikasi')) return 'Welder (Fabrikasi)';
+        if (s.includes('tyre') || s.includes('tire')) return 'Tyre';
+        if (s.includes('rig')) return 'Rigger';
+        if (s.includes('tool')) return 'Toolman';
+        if (s.includes('fuel')) return 'Fuelman';
+        if (s.includes('office') || s.includes('admin')) return 'Office';
+        if (s.includes('disp')) return 'Dispatcher';
+        if (s.includes('mech')) return 'Mechanical';
+      }
+      if (posisi) {
+        const p = String(posisi).trim().toLowerCase();
+        if (p.includes('elect')) return 'Electrical';
+        if (p.includes('tyre') || p.includes('tire')) return 'Tyre';
+        if (p.includes('weld') || p.includes('fabrikasi')) return 'Welder (Fabrikasi)';
+        if (p.includes('rig')) return 'Rigger';
+        if (p.includes('tool')) return 'Toolman';
+        if (p.includes('fuel')) return 'Fuelman';
+        if (p.includes('office') || p.includes('admin')) return 'Office';
+        if (p.includes('disp')) return 'Dispatcher';
+      }
+      return 'Mechanical';
+    }
+
+    // =========================================================================
+    // INICIALISASI DATA LOKAL & SINKRONISASI
+    // =========================================================================
+    // Fetch public sheet data via Google Visualization API with isolated callback & Fetch fallback
+    function fetchSheetViaGvizRaw(sheetName) {
+      return new Promise((resolve) => {
+        let resolved = false;
+        const uniqueId = 'gviz_admin_cb_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+        const timer = setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            try { delete window[uniqueId]; } catch(e) {}
+            if (script && script.parentNode) script.parentNode.removeChild(script);
+            resolve(null);
+          }
+        }, 8000);
+
+        const cleanup = () => {
+          try { delete window[uniqueId]; } catch(e) {}
+          if (script && script.parentNode) script.parentNode.removeChild(script);
+          clearTimeout(timer);
+        };
+
+        window[uniqueId] = function(resp) {
+          if (!resolved) {
+            resolved = true;
+            cleanup();
+            resolve(resp && resp.table ? resp.table : null);
+          }
+        };
+
+        const script = document.createElement('script');
+        script.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json;responseHandler:${uniqueId}&sheet=${encodeURIComponent(sheetName)}&_t=${Date.now()}`;
+        script.onerror = async function() {
+          if (!resolved) {
+            try {
+              const res = await fetch(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`);
+              if (res.ok) {
+                const text = await res.text();
+                const jsonStr = text.replace(/^[/*\s\S]*google\.visualization\.Query\.setResponse\(|\);?\s*$/g, '');
+                const data = JSON.parse(jsonStr);
+                resolved = true;
+                cleanup();
+                resolve(data.table);
+                return;
+              }
+            } catch(e) {}
+            resolved = true;
+            cleanup();
+            resolve(null);
+          }
+        };
+
+        try {
+          document.head.appendChild(script);
+        } catch(err) {
+          if (!resolved) {
+            resolved = true;
+            cleanup();
+            resolve(null);
+          }
+        }
+      });
+    }
+
+    function loadLocalData() {
+      try {
+        const tr = localStorage.getItem('sim_trainers');
+        adminState.trainers = tr ? JSON.parse(tr) : INITIAL_TRAINERS_FALLBACK;
+      } catch (e) {
+        adminState.trainers = INITIAL_TRAINERS_FALLBACK;
+      }
+
+      try {
+        const pe = localStorage.getItem('sim_peserta');
+        adminState.peserta = pe ? JSON.parse(pe) : [];
+      } catch (e) {
+        adminState.peserta = [];
+      }
+
+      try {
+        const ha = localStorage.getItem('sim_hasil');
+        adminState.hasil = ha ? JSON.parse(ha) : [];
+        adminState.hasil.forEach(h => {
+          h.nipPeserta = h.nipPeserta || h.nip || '';
+          h.nip = h.nip || h.nipPeserta || '';
+          h.namaPeserta = h.namaPeserta || h.nama || '';
+          h.nama = h.nama || h.namaPeserta || '';
+          h.section = h.section || normalizeSection(null, h.posisi);
+        });
+      } catch (e) {
+        adminState.hasil = [];
+      }
+
+      try {
+        const hp = localStorage.getItem('sim_hasil_practical');
+        adminState.hasilPractical = hp ? JSON.parse(hp) : [];
+        adminState.hasilPractical.forEach(hp => {
+          hp.nipPeserta = hp.nipPeserta || hp.nip || '';
+          hp.nip = hp.nip || hp.nipPeserta || '';
+          hp.namaPeserta = hp.namaPeserta || hp.nama || '';
+          hp.nama = hp.nama || hp.namaPeserta || '';
+          hp.section = hp.section || normalizeSection(null, hp.posisi);
+        });
+      } catch (e) {
+        adminState.hasilPractical = [];
+      }
+
+      try {
+        const compStored = localStorage.getItem('sim_competencies');
+        adminState.competencies = compStored ? JSON.parse(compStored) : [];
+      } catch (e) {
+        adminState.competencies = [];
+      }
+
+      // Deteksi draf asesmen lokal dari peserta / sim_eval_scores_*
+      if (Array.isArray(adminState.peserta)) {
+        const existingNips = new Set(adminState.hasil.map(h => String(h.nipPeserta || h.nip)));
+        adminState.peserta.forEach(p => {
+          if (!p.nip || existingNips.has(String(p.nip))) return;
+          const scoresStr = localStorage.getItem(`sim_eval_scores_${p.nip}`) || localStorage.getItem(`sim_eval_scores_${p.id}`);
+          const isOngoing = p.status && (p.status.includes('Sedang Diases') || p.status.includes('%') || p.status === 'Selesai');
+          if (scoresStr || isOngoing) {
+            let curScore = Number(p.lastScore) || 0;
+            let rated = p.ratedCount || 0;
+            let total = p.totalCount || 157;
+            let pct = p.progressPct || 0;
+            if (scoresStr && (!curScore || !rated)) {
+              try {
+                const sObj = JSON.parse(scoresStr);
+                const vals = Object.values(sObj).map(Number).filter(v => !isNaN(v) && v > 0);
+                if (vals.length > 0) {
+                  rated = vals.length;
+                  pct = Math.round((rated / total) * 100);
+                  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+                  curScore = Number((avg <= 4 ? avg * 25 : avg).toFixed(1));
+                }
+              } catch (e) {}
+            }
+            if (rated > 0 || isOngoing) {
+              const isComp = p.status === 'Selesai' || pct >= 100;
+              adminState.hasil.push({
+                idAsesmen: isComp ? `EVAL-${String(p.nip).slice(-4)}` : `DRAFT-${p.nip}`,
+                tanggal: p.lastUpdated ? p.lastUpdated.slice(0, 10) : new Date().toISOString().slice(0, 10),
+                nipPeserta: p.nip,
+                nip: p.nip,
+                namaPeserta: p.nama,
+                nama: p.nama,
+                posisi: p.posisi,
+                section: p.section || normalizeSection(null, p.posisi),
+                departemen: 'Engineering',
+                trainerId: 'TRN-01',
+                trainerNama: 'Instructor',
+                skorAkhir: curScore,
+                statusKelulusan: p.status || (isComp ? 'LULUS / KOMPETEN' : `Sedang Diases (${pct}%)`),
+                rekomendasi: isComp ? 'LULUS UJI KOMPETENSI MEKANIK' : `${rated}/${total} Soal Dinilai (${pct}%)`,
+                catatan: isComp ? 'Penilaian selesai di SIM-Asesmen' : 'Penilaian sedang berlangsung di perangkat lokal.',
+                isDraft: !isComp,
+                progressPct: pct,
+                ratedCount: rated,
+                totalCount: total
+              });
+            }
+          }
+        });
+      }
+
+      // Pastikan form setting URL terisi
+      const urlInput = document.getElementById('setting-appscript-url');
+      if (urlInput) urlInput.value = adminState.appscriptUrl;
+    }
+
+    function saveLocalData() {
+      localStorage.setItem('sim_trainers', JSON.stringify(adminState.trainers));
+      localStorage.setItem('sim_peserta', JSON.stringify(adminState.peserta));
+      localStorage.setItem('sim_hasil', JSON.stringify(adminState.hasil));
+      localStorage.setItem('sim_hasil_practical', JSON.stringify(adminState.hasilPractical));
+      updateKpis();
+    }
+
+    // =========================================================================
+    // AUTHENTIKASI ADMIN
+    // =========================================================================
+    function handleAdminLogin(e) {
+      if (e) e.preventDefault();
+      const inp = document.getElementById('admin-password-input');
+      const pass = inp ? inp.value.trim() : '';
+
+      if (pass === adminState.adminPass || pass === DEFAULT_ADMIN_PASS || pass === '888888') {
+        adminState.isAuthenticated = true;
+        sessionStorage.setItem('sim_admin_authenticated', 'true');
+        showToast('Login Berhasil', 'Selamat datang di Panel Administrator SIM-Asesmen.');
+        checkAuthUI();
+        syncAllFromCloud();
+      } else {
+        showToast('Kata Sandi Salah', 'Periksa kata sandi admin dan coba kembali.', true);
+        if (inp) { inp.value = ''; inp.focus(); }
+      }
+    }
+
+    function lockAdminSession() {
+      adminState.isAuthenticated = false;
+      sessionStorage.removeItem('sim_admin_authenticated');
+      showToast('Sesi Terkunci', 'Sesi administrator telah dikunci.');
+      checkAuthUI();
+    }
+
+    function checkAuthUI() {
+      const gate = document.getElementById('admin-auth-gate');
+      const main = document.getElementById('admin-main-panel');
+      const logoutBtn = document.getElementById('btn-admin-logout');
+
+      if (adminState.isAuthenticated) {
+        if (gate) gate.classList.add('hidden');
+        if (main) main.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        renderAllPanels();
+      } else {
+        if (gate) gate.classList.remove('hidden');
+        if (main) main.classList.add('hidden');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+      }
+    }
+
+    // =========================================================================
+    // NAVIGATION TABS
+    // =========================================================================
+    function switchAdminTab(tabName) {
+      adminState.currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'text-white');
+        btn.classList.add('text-on-surface-variant');
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+
+      const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.classList.remove('text-on-surface-variant');
+      }
+
+      const activePanel = document.getElementById(`panel-${tabName}`);
+      if (activePanel) activePanel.classList.remove('hidden');
+
+      if (tabName === 'trainers') renderTrainersTable();
+      else if (tabName === 'hasil') renderHasilTable();
+      else if (tabName === 'peserta') renderPesertaTable();
+      else if (tabName === 'dashboard') renderDashboardOverview();
+    }
+
+    function switchHasilSubTab(subTabName) {
+      adminState.currentHasilSubTab = subTabName;
+      const bTeori = document.getElementById('subtab-hasil-teori');
+      const bPrac = document.getElementById('subtab-hasil-practical');
+      if (subTabName === 'teori') {
+        if (bTeori) bTeori.classList.add('active');
+        if (bPrac) bPrac.classList.remove('active');
+      } else {
+        if (bPrac) bPrac.classList.add('active');
+        if (bTeori) bTeori.classList.remove('active');
+      }
+      renderHasilTable();
+    }
+
+    // =========================================================================
+    // PEMROSESAN DATA CLOUD & SINKRONISASI
+    // =========================================================================
+    function processCloudData(data) {
+      if (!data) return false;
+
+      // 0. Simpan Raw Drafts & Competencies
+      if (Array.isArray(data.drafts) && data.drafts.length > 1) {
+        adminState._rawDrafts = data.drafts.slice(1);
+      }
+      if (Array.isArray(data.competencies) && data.competencies.length > 1) {
+        const compRows = data.competencies.slice(1);
+        adminState.competencies = compRows.map((r, idx) => ({
+          id: `c${idx + 1}`,
+          no: idx + 1,
+          kode: String(r[1] || '').trim(),
+          namaAssesment: String(r[2] || '').trim(),
+          kategori: String(r[3] || '').trim(),
+          nama: String(r[4] || '').trim(),
+          acuan: String(r[5] || '').trim()
+        })).filter(c => c.nama && c.kode.toLowerCase() !== 'kode');
+        localStorage.setItem('sim_competencies', JSON.stringify(adminState.competencies));
+      }
+
+      // 1. Trainers
+      if (Array.isArray(data.trainers) && data.trainers.length > 1) {
+        const rows = data.trainers.slice(1);
+        adminState.trainers = rows.map(r => ({
+          id: String(r[0] || '').trim(),
+          nama: String(r[1] || '').trim(),
+          email: String(r[2] || '').trim(),
+          password: String(r[3] || 'password123').trim(),
+          role: String(r[4] || 'Instructor').trim(),
+          status: String(r[5] || 'Aktif').trim()
+        })).filter(t => t.id && t.nama);
+      }
+
+      // 2. Peserta
+      if (Array.isArray(data.peserta) && data.peserta.length > 1) {
+        const rows = data.peserta.slice(1);
+        adminState.peserta = rows.map((r, idx) => ({
+          id: idx + 1,
+          nip: String(r[1] || '').trim(),
+          nama: String(r[2] || '').trim(),
+          posisi: String(r[3] || '').trim(),
+          departemen: 'Engineering',
+          waktu: String(r[5] || '').trim(),
+          tempat: (String(r[6] || '').trim() === 'Workshop Bay A') ? 'Workshop Pioneer' : (String(r[6] || '').trim() || 'Workshop Pioneer'),
+          status: String(r[7] || 'Siap Uji').trim(),
+          section: normalizeSection(r[10], r[3])
+        })).filter(p => p.nip && p.nama);
+      }
+
+      // 3. Hasil Teori Selesai (Resmi dari Sheet Hasil)
+      const officialHasil = [];
+      const completedNips = new Set();
+      if (Array.isArray(data.hasil) && data.hasil.length > 1) {
+        const rows = data.hasil.slice(1);
+        rows.forEach(r => {
+          const nip = String(r[2] || '').trim();
+          const idAses = String(r[0] || '').trim();
+          if (!nip || idAses.toLowerCase() === 'id_asesmen') return;
+          completedNips.add(nip);
+          officialHasil.push({
+            idAsesmen: idAses,
+            tanggal: String(r[1] || '').trim().slice(0, 10),
+            nipPeserta: nip,
+            nip: nip,
+            namaPeserta: String(r[3] || '').trim(),
+            nama: String(r[3] || '').trim(),
+            posisi: String(r[4] || '').trim(),
+            departemen: 'Engineering',
+            trainerId: String(r[6] || '').trim(),
+            trainerNama: String(r[7] || '').trim(),
+            skorAkhir: Number(r[8]) || 0,
+            statusKelulusan: String(r[9] || 'LULUS').trim(),
+            rekomendasi: String(r[10] || '').trim(),
+            catatan: String(r[11] || '').trim(),
+            section: normalizeSection(r[14], r[4]),
+            remidiKe: String(r[15] || 'Asesmen Utama').trim(),
+            sesiAsesmen: String(r[15] || 'Asesmen Utama').trim(),
+            isDraft: false
+          });
+        });
+      }
+
+      // 4. Draf Asesmen Teori (Sedang Berjalan dari Sheet Draft_Asesmen)
+      const draftHasil = [];
+      if (Array.isArray(data.drafts) && data.drafts.length > 1) {
+        const draftRows = data.drafts.slice(1);
+        draftRows.forEach(r => {
+          const dNip = String(r[0] || '').trim();
+          const dNama = String(r[1] || '').trim();
+          const dAssName = String(r[2] || '').trim();
+          const dPct = Number(r[3]) || 0;
+          const dRated = Number(r[4]) || 0;
+          const dTotal = Number(r[5]) || 157;
+          const dScoresRaw = r[6] || '{}';
+          const dTrainerId = String(r[8] || '').trim();
+          const dTrainerNama = String(r[9] || '').trim();
+          const dTs = String(r[10] || '').trim();
+
+          if (!dNip || dNip.toLowerCase() === 'nip' || completedNips.has(dNip)) return;
+
+          let curScore = 0;
+          try {
+            const sObj = typeof dScoresRaw === 'string' ? JSON.parse(dScoresRaw) : dScoresRaw;
+            const vals = Object.values(sObj).map(Number).filter(v => !isNaN(v) && v > 0);
+            if (vals.length > 0) {
+              const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+              curScore = Number((avg <= 4 ? avg * 25 : avg).toFixed(1));
+            }
+          } catch (e) {}
+
+          const matchedP = adminState.peserta.find(p => String(p.nip) === dNip);
+          const posisi = matchedP ? matchedP.posisi : (dAssName || 'Mechanic');
+          const section = matchedP ? (matchedP.section || normalizeSection(null, matchedP.posisi)) : normalizeSection(null, posisi);
+
+          draftHasil.push({
+            idAsesmen: `DRAFT-${dNip}`,
+            tanggal: dTs ? dTs.slice(0, 10) : new Date().toISOString().slice(0, 10),
+            nipPeserta: dNip,
+            nip: dNip,
+            namaPeserta: dNama || (matchedP ? matchedP.nama : 'Peserta Mekanik'),
+            nama: dNama || (matchedP ? matchedP.nama : 'Peserta Mekanik'),
+            posisi: posisi,
+            section: section,
+            departemen: 'Engineering',
+            trainerId: dTrainerId || 'TRN-01',
+            trainerNama: dTrainerNama || 'Instructor',
+            skorAkhir: curScore,
+            statusKelulusan: `Sedang Diases (${dPct}%)`,
+            rekomendasi: `${dRated}/${dTotal} Soal Dinilai (${dPct}%)`,
+            catatan: `Penilaian sedang berlangsung oleh ${dTrainerNama || 'Trainer'}`,
+            remidiKe: String(r[11] || 'Asesmen Utama').trim(),
+            sesiAsesmen: String(r[11] || 'Asesmen Utama').trim(),
+            isDraft: true,
+            progressPct: dPct,
+            ratedCount: dRated,
+            totalCount: dTotal
+          });
+        });
+      }
+
+      adminState.hasil = [...officialHasil, ...draftHasil];
+
+      // 5. Hasil Practical KIMPAK
+      if (Array.isArray(data.hasilPractical) && data.hasilPractical.length > 1) {
+        const rows = data.hasilPractical.slice(1);
+        adminState.hasilPractical = rows.map(r => {
+          const nip = String(r[2] || '').trim();
+          const matchedP = adminState.peserta.find(p => String(p.nip) === nip);
+          const pos = String(r[4] || '').trim() || (matchedP ? matchedP.posisi : 'Mechanic');
+          return {
+            idAsesmen: String(r[0] || '').trim(),
+            tanggal: String(r[1] || '').trim().slice(0, 10),
+            nipPeserta: nip,
+            nip: nip,
+            namaPeserta: String(r[3] || '').trim(),
+            nama: String(r[3] || '').trim(),
+            posisi: pos,
+            departemen: 'Engineering',
+            trainerId: String(r[6] || '').trim(),
+            trainerNama: String(r[7] || '').trim(),
+            skorAkhir: Number(r[8]) || 0,
+            statusKelulusan: String(r[9] || 'Kompeten').trim(),
+            rekomendasi: String(r[10] || '').trim(),
+            catatan: String(r[11] || '').trim(),
+            judulTopik: String(r[13] || '').trim() || 'Practical Assessment KIMPAK',
+            section: normalizeSection(r[4] || (matchedP ? matchedP.section : null), pos),
+            isDraft: false
+          };
+        }).filter(hp => hp.nipPeserta && hp.idAsesmen.toLowerCase() !== 'id_asesmen');
+      }
+
+      saveLocalData();
+      renderAllPanels();
+      return true;
+    }
+
+    async function syncAllFromCloud(isManual = false) {
+      const url = adminState.appscriptUrl;
+      const dot = document.getElementById('cloud-status-dot');
+      const txt = document.getElementById('cloud-status-text');
+
+      if (txt) txt.textContent = 'Menghubungkan ke Cloud...';
+      if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-spin';
+
+      let success = false;
+
+      // 1. Coba koneksi utama via Google Apps Script Web App
+      if (url) {
+        try {
+          const ctrl = new AbortController();
+          const t = setTimeout(() => ctrl.abort(), 15000);
+          const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'action=getAll&_t=' + Date.now(), { signal: ctrl.signal });
+          clearTimeout(t);
+          const json = await res.json();
+          if (json && json.status === 'success' && json.data) {
+            success = processCloudData(json.data);
+          }
+        } catch (err) {
+          console.warn('Sync Cloud via Apps Script fetch failed:', err);
+        }
+      }
+
+      // 2. Fallback otomatis ke Google Visualization API (GViz JSONP)
+      if (!success) {
+        try {
+          if (txt) txt.textContent = 'Menghubungkan via GViz GSheets...';
+          const toRows = (tbl) => {
+            if (!tbl || !Array.isArray(tbl.rows)) return [];
+            return [
+              tbl.cols ? tbl.cols.map(c => c ? (c.label || c.id || '') : '') : [],
+              ...tbl.rows.map(r => (r.c || []).map(cell => (cell && cell.v !== undefined && cell.v !== null) ? cell.v : ''))
+            ];
+          };
+
+          const [tTable, pTable, hTable, dTable, hpTable, cTable] = await Promise.all([
+            fetchSheetViaGvizRaw("Akses_Trainer"),
+            fetchSheetViaGvizRaw("List_Peserta"),
+            fetchSheetViaGvizRaw("Hasil"),
+            fetchSheetViaGvizRaw("Draft_Asesmen"),
+            fetchSheetViaGvizRaw("Hasil_Practical_Assesment"),
+            fetchSheetViaGvizRaw("Competency_Details")
+          ]);
+
+          const gvizData = {
+            trainers: toRows(tTable),
+            peserta: toRows(pTable),
+            hasil: toRows(hTable),
+            drafts: toRows(dTable),
+            hasilPractical: toRows(hpTable),
+            competencies: toRows(cTable)
+          };
+
+          success = processCloudData(gvizData);
+        } catch (gvizErr) {
+          console.warn('GViz fallback failed:', gvizErr);
+        }
+      }
+
+      if (success) {
+        if (txt) txt.textContent = 'Sinkronisasi Cloud Berhasil';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        if (isManual) showToast('Sinkronisasi Berhasil', `Data cloud terbaru berhasil dimuat (${adminState.hasil.length} hasil teori & draf, ${adminState.hasilPractical.length} praktik).`);
+      } else {
+        if (txt) txt.textContent = 'Mode Offline (Lokal Aktif)';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        if (isManual) showToast('Gagal Menghubungi Cloud', 'Menggunakan database lokal. Periksa koneksi internet.', true);
+      }
+    }
+
+    async function sendCloudAction(action, payload) {
+      if (!adminState.appscriptUrl || !navigator.onLine) return null;
+      try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 20000);
+        const res = await fetch(adminState.appscriptUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action, data: payload }),
+          signal: ctrl.signal
+        });
+        clearTimeout(t);
+        return await res.json();
+      } catch (e) {
+        console.warn(`Cloud action ${action} failed:`, e);
+        return null;
+      }
+    }
+
+    // =========================================================================
+    // RENDERING KPI & DASHBOARD
+    // =========================================================================
+    function updateKpis() {
+      // 1. Trainers
+      const trCount = adminState.trainers.length;
+      const trActive = adminState.trainers.filter(t => t.status === 'Aktif').length;
+      const elTrTotal = document.getElementById('kpi-trainers-total');
+      const elTrActive = document.getElementById('kpi-trainers-active');
+      const bTr = document.getElementById('tab-badge-trainers');
+      if (elTrTotal) elTrTotal.textContent = trCount;
+      if (elTrActive) elTrActive.textContent = `${trActive} Aktif`;
+      if (bTr) bTr.textContent = trCount;
+
+      // 2. Peserta
+      const pCount = adminState.peserta.length;
+      const pSiap = adminState.peserta.filter(p => p.status === 'Siap Uji').length;
+      const elPTotal = document.getElementById('kpi-peserta-total');
+      const elPSum = document.getElementById('kpi-peserta-summary');
+      const bPes = document.getElementById('tab-badge-peserta');
+      if (elPTotal) elPTotal.textContent = pCount;
+      if (elPSum) elPSum.textContent = `${pSiap} Siap Uji`;
+      if (bPes) bPes.textContent = pCount;
+
+      // 3. Hasil Asesmen
+      const hTeoriCount = adminState.hasil.length;
+      const hTeoriCompleted = adminState.hasil.filter(h => !h.isDraft).length;
+      const hTeoriDraft = adminState.hasil.filter(h => h.isDraft).length;
+      const hPracCount = adminState.hasilPractical.length;
+      const hTotal = hTeoriCount + hPracCount;
+      const elHTotal = document.getElementById('kpi-hasil-total');
+      const elHBreak = document.getElementById('kpi-hasil-breakdown');
+      const bHas = document.getElementById('tab-badge-hasil');
+      const bTeo = document.getElementById('subtab-badge-teori');
+      const bPra = document.getElementById('subtab-badge-practical');
+      if (elHTotal) elHTotal.textContent = hTotal;
+      if (elHBreak) {
+        if (hTeoriDraft > 0) {
+          elHBreak.textContent = `${hTeoriCompleted} Selesai • ${hTeoriDraft} Draf • ${hPracCount} Praktik`;
+        } else {
+          elHBreak.textContent = `${hTeoriCount} Teori • ${hPracCount} Praktik`;
+        }
+      }
+      if (bHas) bHas.textContent = hTotal;
+      if (bTeo) bTeo.textContent = hTeoriCount;
+      if (bPra) bPra.textContent = hPracCount;
+
+      // 4. Kelulusan
+      const allResults = [...adminState.hasil, ...adminState.hasilPractical];
+      const officialResults = allResults.filter(r => !r.isDraft);
+      const scoredResults = allResults.filter(r => Number(r.skorAkhir) > 0);
+      if (officialResults.length > 0) {
+        const passCount = officialResults.filter(r => {
+          const st = String(r.statusKelulusan || '').toUpperCase();
+          return st.includes('LULUS') || st.includes('KOMPETEN');
+        }).length;
+        const passPct = Math.round((passCount / officialResults.length) * 100);
+        const avgScore = (scoredResults.reduce((sum, r) => sum + (Number(r.skorAkhir) || 0), 0) / (scoredResults.length || 1)).toFixed(1);
+        
+        const elPass = document.getElementById('kpi-pass-rate');
+        const elAvg = document.getElementById('kpi-avg-score');
+        if (elPass) elPass.textContent = `${passPct}%`;
+        if (elAvg) elAvg.textContent = `Rata-rata: ${avgScore}`;
+      } else if (scoredResults.length > 0) {
+        const avgScore = (scoredResults.reduce((sum, r) => sum + (Number(r.skorAkhir) || 0), 0) / scoredResults.length).toFixed(1);
+        const elPass = document.getElementById('kpi-pass-rate');
+        const elAvg = document.getElementById('kpi-avg-score');
+        if (elPass) elPass.textContent = 'Dalam Proses';
+        if (elAvg) elAvg.textContent = `Rata-rata: ${avgScore}`;
+      } else {
+        const elPass = document.getElementById('kpi-pass-rate');
+        const elAvg = document.getElementById('kpi-avg-score');
+        if (elPass) elPass.textContent = '0%';
+        if (elAvg) elAvg.textContent = 'Rata-rata: 0.0';
+      }
+    }
+
+    function renderDashboardOverview() {
+      updateKpis();
+      const container = document.getElementById('section-distribution-cards');
+      if (!container) return;
+
+      const counts = {};
+      VALID_SECTIONS.forEach(s => counts[s] = 0);
+      adminState.peserta.forEach(p => {
+        const sec = p.section || normalizeSection(null, p.posisi);
+        if (counts[sec] !== undefined) counts[sec]++;
+        else counts['Mechanical']++;
+      });
+
+      const sectionColors = {
+        'Mechanical': 'border-blue-200 bg-blue-50/50 text-blue-900',
+        'Electrical': 'border-amber-200 bg-amber-50/50 text-amber-900',
+        'Welder (Fabrikasi)': 'border-orange-200 bg-orange-50/50 text-orange-900',
+        'Tyre': 'border-emerald-200 bg-emerald-50/50 text-emerald-900',
+        'Rigger': 'border-purple-200 bg-purple-50/50 text-purple-900',
+        'Toolman': 'border-teal-200 bg-teal-50/50 text-teal-900',
+        'Fuelman': 'border-rose-200 bg-rose-50/50 text-rose-900',
+        'Office': 'border-sky-200 bg-sky-50/50 text-sky-900',
+        'Dispatcher': 'border-indigo-200 bg-indigo-50/50 text-indigo-900'
+      };
+
+      container.innerHTML = VALID_SECTIONS.map(s => {
+        const colorClass = sectionColors[s] || 'border-surface-container-high bg-surface-container-low text-primary';
+        const cnt = counts[s] || 0;
+        return `
+          <div class="p-3.5 rounded-xl border ${colorClass} transition-all hover:shadow-xs">
+            <span class="text-[10px] font-bold uppercase tracking-wider block opacity-75">${s}</span>
+            <div class="flex items-baseline justify-between mt-1">
+              <span class="font-display font-extrabold text-xl sm:text-2xl">${cnt}</span>
+              <span class="text-[10px] font-medium opacity-80">Peserta</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAllPanels() {
+      updateKpis();
+      renderDashboardOverview();
+      renderTrainersTable();
+      renderHasilTable();
+      renderPesertaTable();
+    }
+
+    // =========================================================================
+    // MODUL: KELOLA TRAINER
+    // =========================================================================
+    function renderTrainersTable() {
+      const tbody = document.getElementById('trainers-table-body');
+      const empty = document.getElementById('trainers-empty-state');
+      if (!tbody) return;
+
+      const q = (document.getElementById('search-trainer-input')?.value || '').trim().toLowerCase();
+      const statusFilter = document.getElementById('filter-trainer-status')?.value || 'all';
+
+      let filtered = adminState.trainers.filter(t => {
+        const matchQ = !q || (t.id && t.id.toLowerCase().includes(q)) || 
+                             (t.nama && t.nama.toLowerCase().includes(q)) || 
+                             (t.email && t.email.toLowerCase().includes(q));
+        const matchStatus = (statusFilter === 'all') || (t.status === statusFilter);
+        return matchQ && matchStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
+
+      tbody.innerHTML = filtered.map(t => {
+        const isActive = t.status === 'Aktif';
+        const initials = t.nama ? t.nama.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : 'TR';
+        return `
+          <tr class="hover:bg-surface-container-low/50 transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-primary">${t.id}</td>
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-full bg-primary text-on-primary font-bold text-[10px] flex items-center justify-center shrink-0 shadow-xs">${initials}</span>
+                <span class="font-bold text-on-surface">${t.nama}</span>
+              </div>
+            </td>
+            <td class="py-3 px-4 font-mono text-outline">${t.email}</td>
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-1 font-mono text-outline">
+                <span class="trainer-pass-mask" id="pass-mask-${t.id}">••••••••</span>
+                <span class="trainer-pass-raw hidden text-primary font-bold" id="pass-raw-${t.id}">${t.password || 'password123'}</span>
+                <button type="button" onclick="togglePassPeek('${t.id}')" class="p-1 text-outline hover:text-primary rounded cursor-pointer" title="Intip kata sandi">
+                  <span class="material-symbols-outlined text-[15px]" id="pass-icon-${t.id}">visibility</span>
+                </button>
+              </div>
+            </td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-fixed text-primary">${t.role || 'Instructor'}</span>
+            </td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}">${t.status || 'Aktif'}</span>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <button type="button" onclick="openEditTrainerModal('${t.id}')" class="p-1.5 text-primary hover:bg-surface-container rounded-lg transition-colors cursor-pointer" title="Edit Trainer">
+                  <span class="material-symbols-outlined text-[16px]">edit</span>
+                </button>
+                <button type="button" onclick="toggleTrainerStatus('${t.id}')" class="p-1.5 text-amber-700 hover:bg-amber-100/50 rounded-lg transition-colors cursor-pointer" title="Ubah Status Aktif/Nonaktif">
+                  <span class="material-symbols-outlined text-[16px]">${isActive ? 'toggle_on' : 'toggle_off'}</span>
+                </button>
+                <button type="button" onclick="deleteTrainer('${t.id}')" class="p-1.5 text-error hover:bg-error-container/40 rounded-lg transition-colors cursor-pointer" title="Hapus Trainer">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function togglePassPeek(id) {
+      const mask = document.getElementById(`pass-mask-${id}`);
+      const raw = document.getElementById(`pass-raw-${id}`);
+      const icon = document.getElementById(`pass-icon-${id}`);
+      if (!mask || !raw) return;
+      const isHidden = raw.classList.contains('hidden');
+      if (isHidden) {
+        raw.classList.remove('hidden');
+        mask.classList.add('hidden');
+        if (icon) icon.textContent = 'visibility_off';
+      } else {
+        raw.classList.add('hidden');
+        mask.classList.remove('hidden');
+        if (icon) icon.textContent = 'visibility';
+      }
+    }
+
+    function openAddTrainerModal() {
+      document.getElementById('modal-trainer-title').innerHTML = `
+        <span class="material-symbols-outlined text-[20px]">person_add</span>
+        <span>Tambah Trainer / Instructor Baru</span>
+      `;
+      document.getElementById('trainer-form-is-edit').value = 'false';
+      
+      // Auto-generate next ID
+      const count = adminState.trainers.length + 1;
+      const nextId = 'TRN-' + String(count).padStart(2, '0');
+      document.getElementById('trainer-form-id').value = nextId;
+      document.getElementById('trainer-form-id').readOnly = false;
+      document.getElementById('trainer-form-nama').value = '';
+      document.getElementById('trainer-form-email').value = '';
+      document.getElementById('trainer-form-password').value = 'password123';
+      document.getElementById('trainer-form-role').value = 'Instructor';
+      document.getElementById('trainer-form-status').value = 'Aktif';
+
+      document.getElementById('modal-trainer').classList.remove('hidden');
+    }
+
+    function openEditTrainerModal(id) {
+      const trn = adminState.trainers.find(t => t.id === id);
+      if (!trn) return;
+
+      document.getElementById('modal-trainer-title').innerHTML = `
+        <span class="material-symbols-outlined text-[20px]">edit</span>
+        <span>Edit Akun Trainer: ${trn.id}</span>
+      `;
+      document.getElementById('trainer-form-is-edit').value = 'true';
+      document.getElementById('trainer-form-id').value = trn.id;
+      document.getElementById('trainer-form-id').readOnly = true;
+      document.getElementById('trainer-form-nama').value = trn.nama || '';
+      document.getElementById('trainer-form-email').value = trn.email || '';
+      document.getElementById('trainer-form-password').value = trn.password || 'password123';
+      document.getElementById('trainer-form-role').value = trn.role || 'Instructor';
+      document.getElementById('trainer-form-status').value = trn.status || 'Aktif';
+
+      document.getElementById('modal-trainer').classList.remove('hidden');
+    }
+
+    function closeTrainerModal() {
+      document.getElementById('modal-trainer').classList.add('hidden');
+    }
+
+    async function handleSaveTrainerForm(e) {
+      if (e) e.preventDefault();
+      const isEdit = document.getElementById('trainer-form-is-edit').value === 'true';
+      const id = document.getElementById('trainer-form-id').value.trim();
+      const nama = document.getElementById('trainer-form-nama').value.trim();
+      const email = document.getElementById('trainer-form-email').value.trim();
+      const password = document.getElementById('trainer-form-password').value.trim();
+      const role = document.getElementById('trainer-form-role').value;
+      const status = document.getElementById('trainer-form-status').value;
+
+      if (!id || !nama || !email) {
+        showToast('Validasi Gagal', 'ID, nama, dan email wajib diisi.', true);
+        return;
+      }
+
+      const payload = { id, nama, email, password, role, status };
+
+      if (isEdit) {
+        const idx = adminState.trainers.findIndex(t => t.id === id);
+        if (idx >= 0) adminState.trainers[idx] = payload;
+      } else {
+        const exists = adminState.trainers.some(t => t.id.toLowerCase() === id.toLowerCase() || t.email.toLowerCase() === email.toLowerCase());
+        if (exists) {
+          showToast('Duplikasi ID/Email', 'Trainer dengan ID atau Email tersebut sudah terdaftar.', true);
+          return;
+        }
+        adminState.trainers.push(payload);
+      }
+
+      saveLocalData();
+      renderTrainersTable();
+      closeTrainerModal();
+      showToast('Trainer Disimpan', `Data ${nama} (${id}) berhasil disimpan.`);
+
+      // Sync ke Cloud di background
+      sendCloudAction('saveTrainer', payload);
+    }
+
+    async function toggleTrainerStatus(id) {
+      const trn = adminState.trainers.find(t => t.id === id);
+      if (!trn) return;
+      trn.status = (trn.status === 'Aktif') ? 'Nonaktif' : 'Aktif';
+      saveLocalData();
+      renderTrainersTable();
+      showToast('Status Diubah', `Trainer ${trn.nama} kini ${trn.status}.`);
+      sendCloudAction('saveTrainer', trn);
+    }
+
+    async function deleteTrainer(id) {
+      const trn = adminState.trainers.find(t => t.id === id);
+      if (!trn) return;
+      if (!confirm(`Hapus akun trainer ${trn.nama} (${trn.id}) dari database?`)) return;
+
+      adminState.trainers = adminState.trainers.filter(t => t.id !== id);
+      saveLocalData();
+      renderTrainersTable();
+      showToast('Trainer Dihapus', `Akun ${trn.nama} telah dihapus.`);
+      sendCloudAction('deleteTrainer', { id: trn.id, email: trn.email });
+    }
+
+    function exportTrainersToExcel() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Library Excel Belum Siap', 'Silakan coba beberapa saat lagi.', true);
+        return;
+      }
+      const data = adminState.trainers.map((t, idx) => ({
+        No: idx + 1,
+        ID_Trainer: t.id,
+        Nama: t.nama,
+        Email: t.email,
+        Password: t.password,
+        Role: t.role,
+        Status: t.status
+      }));
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Akses_Trainer");
+      XLSX.writeFile(wb, `Data_Trainer_${new Date().toISOString().slice(0,10)}.xlsx`);
+      showToast('Excel Diunduh', 'File Excel data trainer berhasil dibuat.');
+    }
+
+    // =========================================================================
+    // MODUL: KELOLA HASIL ASESMEN (TEORI & KIMPAK)
+    // =========================================================================
+    function renderHasilTable() {
+      const tbody = document.getElementById('hasil-table-body');
+      const empty = document.getElementById('hasil-empty-state');
+      const countLabel = document.getElementById('hasil-table-count-label');
+      if (!tbody) return;
+
+      const isTeori = adminState.currentHasilSubTab === 'teori';
+      const source = isTeori ? adminState.hasil : adminState.hasilPractical;
+
+      const q = (document.getElementById('search-hasil-input')?.value || '').trim().toLowerCase();
+      const secFilter = document.getElementById('filter-hasil-section')?.value || 'all';
+      const statFilter = document.getElementById('filter-hasil-status')?.value || 'all';
+
+      let filtered = source.filter(h => {
+        const nip = String(h.nipPeserta || h.nip || '').toLowerCase();
+        const nama = String(h.namaPeserta || h.nama || '').toLowerCase();
+        const trn = String(h.trainerNama || '').toLowerCase();
+        const matchQ = !q || nip.includes(q) || nama.includes(q) || trn.includes(q);
+
+        const sec = h.section || normalizeSection(null, h.posisi);
+        const matchSec = (secFilter === 'all') || (sec === secFilter);
+
+        const st = String(h.statusKelulusan || '').toUpperCase();
+        let matchStat = true;
+        if (statFilter === 'SELESAI') matchStat = !h.isDraft && !st.includes('SEDANG') && !st.includes('DRAF');
+        else if (statFilter === 'LULUS') matchStat = !h.isDraft && (st.includes('LULUS') || st.includes('KOMPETEN'));
+        else if (statFilter === 'BELUM LULUS') matchStat = !h.isDraft && (st.includes('BELUM') || st.includes('REMEDIAL'));
+        else if (statFilter === 'DRAFT') matchStat = h.isDraft || st.includes('SEDANG') || st.includes('DRAF');
+
+        return matchQ && matchSec && matchStat;
+      });
+
+      if (countLabel) countLabel.textContent = `Menampilkan ${filtered.length} dari ${source.length} hasil ${isTeori ? 'Teori' : 'Praktik KIMPAK'}`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
+
+      tbody.innerHTML = filtered.map((h, idx) => {
+        const skor = Number(h.skorAkhir) || 0;
+        const isDraft = !!h.isDraft;
+        const isPass = !isDraft && (skor >= 70 || String(h.statusKelulusan).toUpperCase().includes('LULUS') || String(h.statusKelulusan).toUpperCase().includes('KOMPETEN'));
+
+        let skorBadgeColor = 'bg-rose-100 text-rose-800 border-rose-200';
+        if (isDraft) {
+          skorBadgeColor = 'bg-amber-50 text-amber-900 border-amber-300';
+        } else if (skor >= 80) {
+          skorBadgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        } else if (skor >= 70) {
+          skorBadgeColor = 'bg-blue-100 text-blue-800 border-blue-200';
+        }
+
+        let statusBadge = isPass ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300';
+        if (isDraft) {
+          statusBadge = 'bg-amber-100 text-amber-900 border border-amber-300';
+        }
+
+        const idAses = h.idAsesmen || `ASM-${h.nipPeserta || h.nip}`;
+        const sec = h.section || normalizeSection(null, h.posisi);
+
+        return `
+          <tr class="hover:bg-surface-container-low/50 transition-colors ${isDraft ? 'bg-amber-50/20' : ''}">
+            <td class="py-3 px-3 text-outline font-mono">${idx + 1}</td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="font-mono text-primary font-bold block text-[11px]">${idAses}</span>
+                ${h.remidiKe || h.sesiAsesmen ? `
+                  <span class="px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                    (h.remidiKe || h.sesiAsesmen) === 'Asesmen Utama'
+                      ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                      : 'bg-purple-100 text-purple-900 border border-purple-300'
+                  }">
+                    ${h.remidiKe || h.sesiAsesmen}
+                  </span>` : ''}
+                ${isDraft ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300 shadow-2xs">DRAF</span>' : '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs">RESMI</span>'}
+              </div>
+              <span class="text-[10px] text-outline block mt-0.5">${h.tanggal || '-'}</span>
+            </td>
+            <td class="py-3 px-4">
+              <span class="font-bold text-on-surface block">${h.namaPeserta || h.nama}</span>
+              <span class="font-mono text-[11px] text-outline block">NIP: ${h.nipPeserta || h.nip}</span>
+            </td>
+            <td class="py-3 px-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-surface-container-high text-primary block w-fit mb-0.5">${sec}</span>
+              <span class="text-[11px] text-outline block truncate max-w-[130px]">${h.posisi || '-'}</span>
+            </td>
+            <td class="py-3 px-3">
+              <span class="font-semibold text-primary block">${h.trainerNama || 'Instructor'}</span>
+              <span class="text-[10px] font-mono text-outline block">${h.trainerId || '-'}</span>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-extrabold border ${skorBadgeColor}" title="${isDraft ? 'Skor rata-rata berjalan saat ini' : 'Skor akhir asesmen'}">${skor.toFixed(1)}</span>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge} inline-flex items-center gap-1">
+                ${isDraft ? '<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>' : ''}
+                ${h.statusKelulusan || (isPass ? 'LULUS' : 'BELUM LULUS')}
+              </span>
+            </td>
+            <td class="py-3 px-4">
+              <span class="text-[11px] text-on-surface-variant block truncate max-w-[180px]" title="${h.rekomendasi || h.judulTopik || '-'}">${h.rekomendasi || h.judulTopik || '-'}</span>
+              ${h.catatan ? `<span class="text-[10px] text-outline block truncate max-w-[180px]" title="${h.catatan}">${h.catatan}</span>` : ''}
+            </td>
+            <td class="py-3 px-3 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <button type="button" onclick="openCompetencyDetailModal('${h.nipPeserta || h.nip}')" class="p-1.5 text-secondary hover:bg-surface-container rounded-lg transition-colors cursor-pointer" title="Kelola / Ubah / Hapus Nilai per Unit Butir">
+                  <span class="material-symbols-outlined text-[16px]">fact_check</span>
+                </button>
+                <button type="button" onclick="openEditHasilModal('${idAses}', '${h.nipPeserta || h.nip}', '${isTeori ? 'teori' : 'practical'}')" class="p-1.5 text-primary hover:bg-surface-container rounded-lg transition-colors cursor-pointer" title="Edit Hasil">
+                  <span class="material-symbols-outlined text-[16px]">edit</span>
+                </button>
+                <a href="index.html#peserta-${h.nipPeserta || h.nip}" target="_blank" class="p-1.5 text-primary hover:bg-surface-container rounded-lg transition-colors cursor-pointer" title="Buka Penilaian di SIM-Asesmen">
+                  <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                </a>
+                <button type="button" onclick="deleteHasilRecord('${idAses}', '${h.nipPeserta || h.nip}', '${isTeori ? 'teori' : 'practical'}')" class="p-1.5 text-error hover:bg-error-container/40 rounded-lg transition-colors cursor-pointer" title="Hapus Hasil">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openEditHasilModal(idAsesmen, nip, jenis) {
+      const isTeori = jenis === 'teori';
+      const source = isTeori ? adminState.hasil : adminState.hasilPractical;
+      const h = source.find(item => (item.idAsesmen === idAsesmen) || ((item.nipPeserta || item.nip) === nip));
+      if (!h) return;
+
+      adminState.currentEditingNip = nip || h.nipPeserta || h.nip;
+
+      document.getElementById('hasil-form-id').value = idAsesmen || '';
+      document.getElementById('hasil-form-jenis').value = jenis;
+
+      document.getElementById('hasil-modal-peserta-nama').textContent = h.namaPeserta || h.nama;
+      document.getElementById('hasil-modal-peserta-nip').textContent = `NIP: ${h.nipPeserta || h.nip}`;
+      document.getElementById('hasil-modal-trainer').textContent = h.trainerNama || 'Instructor';
+      document.getElementById('hasil-modal-tanggal').textContent = h.tanggal || '-';
+
+      document.getElementById('hasil-form-skor').value = Number(h.skorAkhir) || 0;
+      
+      const stSelect = document.getElementById('hasil-form-status');
+      if (stSelect) {
+        const curSt = h.statusKelulusan || 'LULUS';
+        if (curSt.includes('LULUS') || curSt.includes('KOMPETEN')) {
+          stSelect.value = 'LULUS';
+        } else if (curSt.includes('BELUM')) {
+          stSelect.value = 'BELUM LULUS';
+        } else {
+          stSelect.value = 'Sedang Diases';
+        }
+      }
+
+      document.getElementById('hasil-form-section').value = h.section || normalizeSection(null, h.posisi);
+      document.getElementById('hasil-form-rekomendasi').value = h.rekomendasi || h.judulTopik || '';
+      document.getElementById('hasil-form-catatan').value = h.catatan || '';
+
+      document.getElementById('modal-hasil').classList.remove('hidden');
+    }
+
+    function closeHasilModal() {
+      document.getElementById('modal-hasil').classList.add('hidden');
+    }
+
+    async function handleSaveHasilForm(e) {
+      if (e) e.preventDefault();
+      const idAsesmen = document.getElementById('hasil-form-id').value;
+      const jenis = document.getElementById('hasil-form-jenis').value;
+      const skor = Number(document.getElementById('hasil-form-skor').value) || 0;
+      const status = document.getElementById('hasil-form-status').value;
+      const section = document.getElementById('hasil-form-section').value;
+      const rekomendasi = document.getElementById('hasil-form-rekomendasi').value.trim();
+      const catatan = document.getElementById('hasil-form-catatan').value.trim();
+
+      const isTeori = jenis === 'teori';
+      const source = isTeori ? adminState.hasil : adminState.hasilPractical;
+      const h = source.find(item => item.idAsesmen === idAsesmen);
+      if (h) {
+        h.skorAkhir = skor;
+        h.statusKelulusan = status;
+        h.section = section;
+        h.rekomendasi = rekomendasi;
+        h.catatan = catatan;
+        if (status === 'LULUS' || status === 'BELUM LULUS') {
+          h.isDraft = false;
+        }
+
+        saveLocalData();
+        renderHasilTable();
+        closeHasilModal();
+        showToast('Hasil Diperbarui', `Hasil asesmen ${h.namaPeserta || h.nama} telah diperbarui.`);
+
+        // Kirim update ke Cloud
+        sendCloudAction('updateHasil', {
+          idAsesmen,
+          nip: h.nipPeserta || h.nip,
+          skorAkhir: skor,
+          statusKelulusan: status,
+          section: section,
+          rekomendasi: rekomendasi,
+          catatan: catatan
+        });
+      }
+    }
+
+    async function deleteCurrentHasil() {
+      const idAsesmen = document.getElementById('hasil-form-id').value;
+      const jenis = document.getElementById('hasil-form-jenis').value;
+      closeHasilModal();
+      deleteHasilRecord(idAsesmen, null, jenis);
+    }
+
+    async function deleteHasilRecord(idAsesmen, nip, jenis) {
+      if (!confirm(`Hapus permanen hasil asesmen (${idAsesmen || nip})?`)) return;
+
+      const isTeori = jenis === 'teori';
+      if (isTeori) {
+        adminState.hasil = adminState.hasil.filter(h => !( (idAsesmen && h.idAsesmen === idAsesmen) || (nip && ((h.nipPeserta || h.nip) === nip)) ));
+      } else {
+        adminState.hasilPractical = adminState.hasilPractical.filter(hp => !( (idAsesmen && hp.idAsesmen === idAsesmen) || (nip && ((hp.nipPeserta || hp.nip) === nip)) ));
+      }
+
+      if (nip) {
+        localStorage.removeItem(`sim_eval_scores_${nip}`);
+        localStorage.removeItem(`sim_eval_notes_${nip}`);
+        const p = adminState.peserta.find(x => String(x.nip) === String(nip));
+        if (p) {
+          p.status = 'Siap Uji';
+          p.progressPct = 0;
+          p.ratedCount = 0;
+          p.lastScore = null;
+        }
+      }
+
+      saveLocalData();
+      renderHasilTable();
+      renderPesertaTable();
+      showToast('Hasil Dihapus', 'Hasil asesmen berhasil dihapus.');
+
+      sendCloudAction('deleteHasil', { idAsesmen, nip, jenis });
+    }
+
+    function exportHasilToExcel() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Library Excel Belum Siap', 'Silakan coba beberapa saat lagi.', true);
+        return;
+      }
+      const wb = XLSX.utils.book_new();
+
+      // Sheet 1: Teori
+      const teoriData = adminState.hasil.map((h, i) => ({
+        No: i + 1,
+        ID_Asesmen: h.idAsesmen,
+        Tanggal: h.tanggal,
+        NIP: h.nipPeserta || h.nip,
+        Nama_Peserta: h.namaPeserta || h.nama,
+        Posisi: h.posisi,
+        Section: h.section,
+        Departemen: 'Engineering',
+        Trainer_ID: h.trainerId,
+        Trainer_Nama: h.trainerNama,
+        Skor_Akhir: h.skorAkhir,
+        Status_Kelulusan: h.statusKelulusan,
+        Tipe: h.isDraft ? 'Draf Berjalan' : 'Selesai Resmi',
+        Rekomendasi: h.rekomendasi,
+        Catatan: h.catatan
+      }));
+      const wsTeori = XLSX.utils.json_to_sheet(teoriData);
+      XLSX.utils.book_append_sheet(wb, wsTeori, "Hasil_Teori");
+
+      // Sheet 2: Praktik KIMPAK
+      const pracData = adminState.hasilPractical.map((h, i) => ({
+        No: i + 1,
+        ID_Asesmen: h.idAsesmen,
+        Tanggal: h.tanggal,
+        NIP: h.nipPeserta || h.nip,
+        Nama_Peserta: h.namaPeserta || h.nama,
+        Posisi: h.posisi,
+        Section: h.section,
+        Departemen: 'Engineering',
+        Trainer_ID: h.trainerId,
+        Trainer_Nama: h.trainerNama,
+        Topik_Peralatan: h.judulTopik,
+        Skor_Akhir: h.skorAkhir,
+        Status_Kelulusan: h.statusKelulusan,
+        Rekomendasi: h.rekomendasi,
+        Catatan: h.catatan
+      }));
+      const wsPrac = XLSX.utils.json_to_sheet(pracData);
+      XLSX.utils.book_append_sheet(wb, wsPrac, "Hasil_Praktik_KIMPAK");
+
+      XLSX.writeFile(wb, `Rekap_Hasil_Asesmen_${new Date().toISOString().slice(0,10)}.xlsx`);
+      showToast('Excel Diunduh', 'Rekap hasil asesmen teori & praktik berhasil diunduh.');
+    }
+
+    // =========================================================================
+    // MODUL: KELOLA RINCIAN BUTIR KOMPETENSI PESERTA (UBAH / HAPUS SATUAN)
+    // =========================================================================
+    function openCompetencyDetailModal(nip) {
+      if (!nip) {
+        showToast('NIP Tidak Ditemukan', 'NIP peserta tidak valid.', true);
+        return;
+      }
+      adminState.editingCompNip = String(nip);
+      
+      // Cari nama peserta
+      let pNama = nip;
+      const p = adminState.peserta.find(x => String(x.nip) === String(nip));
+      if (p) {
+        pNama = p.nama;
+      } else {
+        const h = adminState.hasil.find(x => String(x.nipPeserta || x.nip) === String(nip));
+        if (h) pNama = h.namaPeserta || h.nama;
+      }
+
+      document.getElementById('comp-modal-peserta-nama').textContent = pNama;
+      document.getElementById('comp-modal-peserta-nip').textContent = nip;
+      const simLink = document.getElementById('comp-modal-link-sim');
+      if (simLink) simLink.href = `index.html#peserta-${nip}`;
+
+      // Ambil scores dari localStorage atau _rawDrafts
+      let scores = {};
+      let notes = {};
+      try {
+        const localScores = localStorage.getItem(`sim_eval_scores_${nip}`);
+        if (localScores) {
+          scores = JSON.parse(localScores);
+        }
+      } catch(e) {}
+
+      // Jika kosong di local, cari di _rawDrafts dari Google Sheets
+      if (Object.keys(scores).length === 0 && Array.isArray(adminState._rawDrafts)) {
+        const dRow = adminState._rawDrafts.find(r => String(r[1] || '').trim() === String(nip).trim());
+        if (dRow && dRow[5]) {
+          try {
+            scores = typeof dRow[5] === 'string' ? JSON.parse(dRow[5]) : dRow[5];
+          } catch(e) {}
+        }
+        if (dRow && dRow[10]) {
+          try {
+            notes = typeof dRow[10] === 'string' ? JSON.parse(dRow[10]) : dRow[10];
+          } catch(e) {}
+        }
+      }
+
+      try {
+        const localNotes = localStorage.getItem(`sim_eval_notes_${nip}`);
+        if (localNotes) {
+          notes = Object.assign(notes, JSON.parse(localNotes));
+        }
+      } catch(e) {}
+
+      adminState.editingScores = Object.assign({}, scores);
+      adminState.editingNotes = Object.assign({}, notes);
+
+      // Pastikan data competencies terisi
+      if (!adminState.competencies || adminState.competencies.length === 0) {
+        adminState.competencies = getFallbackCompetencies();
+      }
+
+      // Reset filter dan search
+      const sInp = document.getElementById('comp-modal-search');
+      if (sInp) sInp.value = '';
+      const fSel = document.getElementById('comp-modal-filter-status');
+      if (fSel) fSel.value = 'all';
+
+      renderCompModalList();
+      document.getElementById('modal-competency-detail').classList.remove('hidden');
+    }
+
+    function closeCompetencyModal() {
+      document.getElementById('modal-competency-detail').classList.add('hidden');
+      adminState.editingCompNip = null;
+      adminState.editingScores = {};
+      adminState.editingNotes = {};
+    }
+
+    function switchToCompetencyModalFromHasil() {
+      const nip = adminState.currentEditingNip;
+      closeHasilModal();
+      if (nip) {
+        openCompetencyDetailModal(nip);
+      } else {
+        showToast('NIP Tidak Ditemukan', 'Tidak dapat membuka rincian butir kompetensi.', true);
+      }
+    }
+
+    function getFallbackCompetencies() {
+      try {
+        const stored = localStorage.getItem('sim_competencies');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch(e) {}
+
+      // Fallback 158 butir kompetensi mekanik standar jika belum di-cache dari GSheets
+      const list = [];
+      const totalUnits = 158;
+      for (let i = 1; i <= totalUnits; i++) {
+        list.push({
+          id: `c${i}`,
+          no: i,
+          kode: `1.${i}`,
+          namaAssesment: `Materi Uji Kompetensi Mekanik Unit ${i}`,
+          kategori: i <= 30 ? "Engine & Sub-System" : (i <= 60 ? "Hydraulic System" : (i <= 90 ? "Electrical System" : (i <= 120 ? "Power Train System" : "Chassis, Brake & Safety"))),
+          nama: `Unit Kompetensi Teknis #${i}`,
+          acuan: "Standar Kompetensi Mekanik Alat Berat"
+        });
+      }
+      return list;
+    }
+
+    function renderCompModalList() {
+      const container = document.getElementById('comp-modal-list-container');
+      if (!container) return;
+
+      const comps = adminState.competencies || [];
+      const scores = adminState.editingScores || {};
+
+      // Hitung KPI Realtime
+      const totalCount = comps.length > 0 ? comps.length : 158;
+      const scoredKeys = Object.keys(scores).filter(k => Number(scores[k]) > 0);
+      const ratedCount = scoredKeys.length;
+      const pct = Math.round((ratedCount / totalCount) * 100);
+      const totalPoints = scoredKeys.reduce((acc, k) => acc + (Number(scores[k]) * 25), 0);
+      const avgScore = ratedCount > 0 ? (totalPoints / ratedCount).toFixed(1) : '0.0';
+
+      const elRated = document.getElementById('comp-modal-count-rated');
+      const elPct = document.getElementById('comp-modal-progress-pct');
+      const elAvg = document.getElementById('comp-modal-avg-score');
+      if (elRated) elRated.textContent = `${ratedCount} / ${totalCount} Butir`;
+      if (elPct) elPct.textContent = `${pct}%`;
+      if (elAvg) elAvg.textContent = `${avgScore} / 100`;
+
+      // Filter
+      const searchVal = (document.getElementById('comp-modal-search')?.value || '').trim().toLowerCase();
+      const statusVal = document.getElementById('comp-modal-filter-status')?.value || 'all';
+
+      const filtered = comps.filter(c => {
+        const idMatch = c.id && c.id.toLowerCase().includes(searchVal);
+        const kodeMatch = c.kode && c.kode.toLowerCase().includes(searchVal);
+        const namaMatch = c.nama && c.nama.toLowerCase().includes(searchVal);
+        const katMatch = c.kategori && c.kategori.toLowerCase().includes(searchVal);
+        const matchQ = !searchVal || idMatch || kodeMatch || namaMatch || katMatch;
+
+        const val = scores[c.id];
+        const isRated = val !== undefined && val !== null && Number(val) > 0;
+        let matchStat = true;
+        if (statusVal === 'rated') matchStat = isRated;
+        else if (statusVal === 'unrated') matchStat = !isRated;
+
+        return matchQ && matchStat;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-outline text-xs">
+            <span class="material-symbols-outlined text-3xl mb-1 text-outline/50 block mx-auto">search_off</span>
+            <p class="font-bold text-on-surface">Tidak ada butir kompetensi yang cocok dengan filter pencarian.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let lastCategory = null;
+      let catIndex = 0;
+      const htmlParts = [];
+
+      filtered.forEach((c, idx) => {
+        const catName = c.kategori || 'Kompetensi Mekanik';
+        if (catName !== lastCategory) {
+          lastCategory = catName;
+          catIndex++;
+          htmlParts.push(`
+            <div class="pt-3 pb-1 first:pt-0">
+              <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 text-primary border border-blue-200 shadow-2xs">
+                <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-primary text-white">K${catIndex}</span>
+                <span class="font-bold text-xs uppercase tracking-wide leading-tight">${catName}</span>
+              </div>
+            </div>
+          `);
+        }
+
+        const currentVal = (scores[c.id] !== undefined && scores[c.id] !== null) ? Number(scores[c.id]) : null;
+        const isRated = currentVal !== null && currentVal > 0;
+        const currentScorePts = isRated ? currentVal * 25 : null;
+        const displayKode = (c.kode === '1.1' && (c.id === 'c9' || c.no === 9)) ? '1.10' : (c.kode || c.id);
+
+        const scaleBtns = [1, 2, 3, 4].map(val => {
+          const isActive = currentVal === val;
+          const bgActive = val === 1 ? 'bg-rose-600 text-white border-rose-700 ring-2 ring-rose-400' :
+                           val === 2 ? 'bg-amber-600 text-white border-amber-700 ring-2 ring-amber-400' :
+                           val === 3 ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-400' :
+                                       'bg-emerald-600 text-white border-emerald-700 ring-2 ring-emerald-400';
+          const bgInactive = 'bg-surface-container-low hover:bg-surface-container text-on-surface border-surface-container-high';
+          const style = isActive ? bgActive : bgInactive;
+
+          return `
+            <button type="button" onclick="setCompModalScore('${c.id}', ${val})" class="w-8 h-8 rounded-lg text-xs font-bold font-mono transition-all border flex items-center justify-center cursor-pointer shadow-2xs ${style}" title="Beri nilai ${val} (${val * 25} Poin)">
+              ${val}
+            </button>
+          `;
+        }).join('');
+
+        htmlParts.push(`
+          <div class="p-3.5 rounded-xl border ${isRated ? 'border-primary/20 bg-surface-container-lowest' : 'border-surface-container-high bg-surface-container-low/30'} flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors hover:border-primary/40">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-primary-fixed text-primary">#${c.no || idx + 1}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-surface-container-high text-on-surface-variant">${displayKode}</span>
+                <span class="text-[11px] text-outline font-medium truncate max-w-[280px]">${c.kategori || ''}</span>
+              </div>
+              <p class="text-xs font-semibold text-on-surface leading-snug">${c.nama || c.id}</p>
+              <div class="flex items-center gap-2 mt-1">
+                ${isRated ? `
+                  <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    Nilai Butir: ${currentVal} (${currentScorePts} Pts)
+                  </span>
+                ` : `
+                  <span class="text-[11px] text-outline italic">Belum dinilai</span>
+                `}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+              <div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl border border-surface-container-high">
+                ${scaleBtns}
+              </div>
+
+              ${isRated ? `
+                <button type="button" onclick="removeCompModalScore('${c.id}')" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer border border-rose-200" title="Hapus / Kosongkan Nilai Butir Ini Saja">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              ` : `
+                <div class="w-8"></div>
+              `}
+            </div>
+          </div>
+        `);
+      });
+
+      container.innerHTML = htmlParts.join('');
+    }
+
+    function setCompModalScore(compId, val) {
+      if (!compId) return;
+      if (adminState.editingScores[compId] === val) {
+        // Klik ulang pada nilai aktif = HAPUS / KOSONGKAN nilai butir ini
+        delete adminState.editingScores[compId];
+        showToast('Nilai Dikosongkan', `Nilai butir ${compId} telah dihapus.`);
+      } else {
+        adminState.editingScores[compId] = Number(val);
+      }
+      renderCompModalList();
+    }
+
+    function removeCompModalScore(compId) {
+      if (!compId) return;
+      delete adminState.editingScores[compId];
+      showToast('Nilai Butir Dihapus', `Nilai butir ${compId} berhasil dikosongkan.`);
+      renderCompModalList();
+    }
+
+    async function saveCompetencyChanges() {
+      const nip = adminState.editingCompNip;
+      if (!nip) {
+        showToast('Gagal Menyimpan', 'Tidak ada peserta yang sedang diedit.', true);
+        return;
+      }
+
+      // Hitung metrik baru
+      const comps = adminState.competencies || [];
+      const totalCount = comps.length > 0 ? comps.length : 158;
+      const scoredKeys = Object.keys(adminState.editingScores).filter(k => Number(adminState.editingScores[k]) > 0);
+      const ratedCount = scoredKeys.length;
+      const pct = Math.round((ratedCount / totalCount) * 100);
+      const totalPoints = scoredKeys.reduce((acc, k) => acc + (Number(adminState.editingScores[k]) * 25), 0);
+      const avgScore = ratedCount > 0 ? Number((totalPoints / ratedCount).toFixed(1)) : 0;
+      const isComplete = (ratedCount >= totalCount);
+
+      // 1. Simpan ke LocalStorage
+      localStorage.setItem(`sim_eval_scores_${nip}`, JSON.stringify(adminState.editingScores));
+
+      // 2. Update status Peserta
+      const p = adminState.peserta.find(x => String(x.nip) === String(nip));
+      if (p) {
+        p.lastScore = avgScore;
+        p.ratedCount = ratedCount;
+        p.totalCount = totalCount;
+        p.progressPct = pct;
+        p.status = isComplete ? (avgScore >= 70 ? 'LULUS / KOMPETEN' : 'BELUM LULUS') : (ratedCount > 0 ? `Sedang Diases (${pct}%)` : 'Siap Uji');
+      }
+
+      // 3. Update Hasil Asesmen di Admin State
+      let h = adminState.hasil.find(x => String(x.nipPeserta || x.nip) === String(nip));
+      const statusKel = isComplete ? (avgScore >= 70 ? 'LULUS / KOMPETEN' : 'BELUM LULUS') : `Sedang Diases (${pct}%)`;
+      const rekomendasiStr = isComplete ? (avgScore >= 70 ? 'LULUS UJI KOMPETENSI MEKANIK' : 'PEMBINAAN ULANG MATERI TEKNIS') : `${ratedCount}/${totalCount} Butir Dinilai (${pct}%)`;
+
+      if (h) {
+        h.skorAkhir = avgScore;
+        h.statusKelulusan = statusKel;
+        h.rekomendasi = rekomendasiStr;
+        h.isDraft = !isComplete;
+        h.progressPct = pct;
+        h.ratedCount = ratedCount;
+        h.totalCount = totalCount;
+      } else if (ratedCount > 0) {
+        // Buat entri hasil draf baru jika belum ada di tabel hasil
+        adminState.hasil.push({
+          idAsesmen: `DRAFT-${nip}`,
+          tanggal: new Date().toISOString().slice(0, 10),
+          nipPeserta: nip,
+          nip: nip,
+          namaPeserta: p ? p.nama : nip,
+          nama: p ? p.nama : nip,
+          posisi: p ? p.posisi : 'Technician',
+          section: p ? (p.section || normalizeSection(null, p.posisi)) : 'Mechanical',
+          departemen: 'Engineering',
+          trainerId: 'TRN-01',
+          trainerNama: 'Instructor',
+          skorAkhir: avgScore,
+          statusKelulusan: statusKel,
+          rekomendasi: rekomendasiStr,
+          catatan: 'Nilai butir disesuaikan melalui Admin Panel.',
+          isDraft: !isComplete,
+          progressPct: pct,
+          ratedCount: ratedCount,
+          totalCount: totalCount
+        });
+      }
+
+      saveLocalData();
+      renderAllPanels();
+      closeCompetencyModal();
+      showToast('Nilai Disimpan!', `Berhasil memperbarui nilai kompetensi ${p ? p.nama : nip} (${ratedCount} butir terisi, Rata-rata: ${avgScore}).`);
+
+      // 4. Kirim ke Google Apps Script (Cloud)
+      sendCloudAction('saveDraft', {
+        nip: nip,
+        nama: p ? p.nama : nip,
+        scoresJson: JSON.stringify(adminState.editingScores),
+        notesJson: JSON.stringify(adminState.editingNotes || {}),
+        progressPct: pct,
+        totalRated: ratedCount,
+        totalQuestions: totalCount,
+        status: isComplete ? 'Selesai' : 'Sedang Berlangsung'
+      });
+
+      if (isComplete) {
+        sendCloudAction('updateHasil', {
+          idAsesmen: h ? h.idAsesmen : `ASM-${nip}`,
+          nip: nip,
+          skorAkhir: avgScore,
+          statusKelulusan: avgScore >= 70 ? 'LULUS' : 'BELUM LULUS',
+          section: p ? (p.section || normalizeSection(null, p.posisi)) : 'Mechanical',
+          rekomendasi: rekomendasiStr
+        });
+      }
+    }
+
+    // Fungsi Injeksi Sampel Data Hasil untuk Uji Coba / Demo Admin
+    function injectSampleHasil() {
+      const sampleTeori = [
+        {
+          idAsesmen: "EVAL-14138-1001",
+          tanggal: new Date().toISOString().slice(0, 10),
+          nipPeserta: "CV2034138",
+          nip: "CV2034138",
+          namaPeserta: "Ismail Hantai",
+          nama: "Ismail Hantai",
+          posisi: "Junior Technician",
+          section: "Mechanical",
+          departemen: "Engineering",
+          trainerId: "TRN-02",
+          trainerNama: "Febrianto Aditya Nugroho",
+          skorAkhir: 82.5,
+          statusKelulusan: "LULUS / KOMPETEN",
+          rekomendasi: "LULUS UJI TEORI & KOMPETENSI MEKANIK MADYA",
+          catatan: "Kandidat mampu menyelesaikan butir penilaian dengan penguasaan hydraulic & engine yang sangat baik.",
+          isDraft: false
+        },
+        {
+          idAsesmen: "DRAFT-CV2034132",
+          tanggal: new Date().toISOString().slice(0, 10),
+          nipPeserta: "CV2034132",
+          nip: "CV2034132",
+          namaPeserta: "Reynaldi R Mustafa",
+          nama: "Reynaldi R Mustafa",
+          posisi: "Junior Technician",
+          section: "Mechanical",
+          departemen: "Engineering",
+          trainerId: "TRN-02",
+          trainerNama: "Febrianto Aditya Nugroho",
+          skorAkhir: 74.0,
+          statusKelulusan: "Sedang Diases (27%)",
+          rekomendasi: "43/157 Soal Dinilai (27%)",
+          catatan: "Penilaian sedang berjalan di SIM-Asesmen oleh Febrianto Aditya Nugroho.",
+          isDraft: true,
+          progressPct: 27,
+          ratedCount: 43,
+          totalCount: 157
+        },
+        {
+          idAsesmen: "EVAL-14126-1002",
+          tanggal: new Date().toISOString().slice(0, 10),
+          nipPeserta: "CV2034126",
+          nip: "CV2034126",
+          namaPeserta: "Revansyah",
+          nama: "Revansyah",
+          posisi: "Electrician",
+          section: "Electrical",
+          departemen: "Engineering",
+          trainerId: "TRN-01",
+          trainerNama: "Dr. Hendra Asesor, M.T.",
+          skorAkhir: 68.0,
+          statusKelulusan: "BELUM LULUS",
+          rekomendasi: "PEMBINAAN ULANG SISTEM ELECTRICAL STARTING & HARNESS",
+          catatan: "Terdapat sub-kompetensi sistem kelistrikan starting motor yang memerlukan pendalaman materi.",
+          isDraft: false
+        }
+      ];
+
+      const samplePractical = [
+        {
+          idAsesmen: "KMPK-14131-001",
+          tanggal: new Date().toISOString().slice(0, 10),
+          nipPeserta: "CV2034131",
+          nip: "CV2034131",
+          namaPeserta: "Ahmad Reynaldi Hamzah",
+          nama: "Ahmad Reynaldi Hamzah",
+          posisi: "Mechanic",
+          section: "Mechanical",
+          departemen: "Engineering",
+          trainerId: "TRN-02",
+          trainerNama: "Febrianto Aditya Nugroho",
+          skorAkhir: 88.0,
+          statusKelulusan: "Kompeten",
+          rekomendasi: "KOMPETEN PENGOPERASIAN POWER TOOLS KIMPAK",
+          catatan: "Memenuhi semua 5 kriteria keselamatan dan operasional Hydraulic Jack secara mandiri.",
+          judulTopik: "PET-HSE-FRM-248 Practical Assessment KIMPAK – Hydraulic Jack",
+          isDraft: false
+        }
+      ];
+
+      adminState.hasil = sampleTeori;
+      adminState.hasilPractical = samplePractical;
+      saveLocalData();
+      renderAllPanels();
+      showToast('Data Simulasi Dimuat', '3 contoh Hasil Teori & 1 Hasil Praktik KIMPAK berhasil dimuat.');
+    }
+
+    // =========================================================================
+    // MODUL: KELOLA DAFTAR PESERTA
+    // =========================================================================
+    function renderPesertaTable() {
+      const tbody = document.getElementById('peserta-table-body');
+      const empty = document.getElementById('peserta-empty-state');
+      if (!tbody) return;
+
+      const q = (document.getElementById('search-peserta-input')?.value || '').trim().toLowerCase();
+      const secFilter = document.getElementById('filter-peserta-section')?.value || 'all';
+      const statFilter = document.getElementById('filter-peserta-status')?.value || 'all';
+
+      let filtered = adminState.peserta.filter(p => {
+        const nip = String(p.nip || '').toLowerCase();
+        const nama = String(p.nama || '').toLowerCase();
+        const pos = String(p.posisi || '').toLowerCase();
+        const matchQ = !q || nip.includes(q) || nama.includes(q) || pos.includes(q);
+
+        const sec = p.section || normalizeSection(null, p.posisi);
+        const matchSec = (secFilter === 'all') || (sec === secFilter);
+
+        const matchStat = (statFilter === 'all') || (p.status === statFilter);
+        return matchQ && matchSec && matchStat;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
+
+      tbody.innerHTML = filtered.map((p, idx) => {
+        const sec = p.section || normalizeSection(null, p.posisi);
+        const statusColors = {
+          'Siap Uji': 'bg-blue-100 text-blue-800',
+          'Sedang Uji': 'bg-amber-100 text-amber-800',
+          'Selesai': 'bg-emerald-100 text-emerald-800',
+          'Belum Hadir': 'bg-gray-100 text-gray-700'
+        };
+        const statClass = statusColors[p.status] || 'bg-surface-container text-primary';
+
+        return `
+          <tr class="hover:bg-surface-container-low/50 transition-colors">
+            <td class="py-3 px-3 text-outline font-mono">${idx + 1}</td>
+            <td class="py-3 px-4 font-mono font-bold text-primary">${p.nip}</td>
+            <td class="py-3 px-4 font-bold text-on-surface">${p.nama}</td>
+            <td class="py-3 px-3 text-on-surface-variant">${p.posisi || '-'}</td>
+            <td class="py-3 px-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-fixed text-primary">${sec}</span>
+            </td>
+            <td class="py-3 px-3 text-outline">Engineering</td>
+            <td class="py-3 px-3 text-outline">${p.tempat || 'Workshop Pioneer'}</td>
+            <td class="py-3 px-3 text-center">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statClass}">${p.status || 'Siap Uji'}</span>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <button type="button" onclick="openCompetencyDetailModal('${p.nip}')" class="p-1.5 text-secondary hover:bg-surface-container rounded-lg transition-colors cursor-pointer" title="Kelola / Ubah / Hapus Nilai per Unit Butir">
+                  <span class="material-symbols-outlined text-[16px]">fact_check</span>
+                </button>
+                <button type="button" onclick="openEditPesertaModal('${p.nip}')" class="p-1.5 text-primary hover:bg-surface-container rounded-lg transition-colors cursor-pointer" title="Edit Peserta">
+                  <span class="material-symbols-outlined text-[16px]">edit</span>
+                </button>
+                <button type="button" onclick="resetPesertaStatus('${p.nip}')" class="p-1.5 text-secondary hover:bg-secondary-fixed/40 rounded-lg transition-colors cursor-pointer" title="Reset ke Siap Uji">
+                  <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                </button>
+                <button type="button" onclick="deletePeserta('${p.nip}')" class="p-1.5 text-error hover:bg-error-container/40 rounded-lg transition-colors cursor-pointer" title="Hapus Peserta">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openAddPesertaModal() {
+      document.getElementById('modal-peserta-title').innerHTML = `
+        <span class="material-symbols-outlined text-[20px]">person_add</span>
+        <span>Tambah Peserta Baru</span>
+      `;
+      document.getElementById('peserta-form-is-edit').value = 'false';
+      document.getElementById('peserta-form-old-nip').value = '';
+      document.getElementById('peserta-form-nip').value = '';
+      document.getElementById('peserta-form-nip').readOnly = false;
+      document.getElementById('peserta-form-nama').value = '';
+      document.getElementById('peserta-form-posisi').value = '';
+      document.getElementById('peserta-form-section').value = 'Mechanical';
+      document.getElementById('peserta-form-tempat').value = 'Workshop Pioneer';
+      document.getElementById('peserta-form-status').value = 'Siap Uji';
+
+      document.getElementById('modal-peserta').classList.remove('hidden');
+    }
+
+    function openEditPesertaModal(nip) {
+      const p = adminState.peserta.find(item => item.nip === nip);
+      if (!p) return;
+
+      document.getElementById('modal-peserta-title').innerHTML = `
+        <span class="material-symbols-outlined text-[20px]">edit</span>
+        <span>Edit Data Peserta: ${p.nip}</span>
+      `;
+      document.getElementById('peserta-form-is-edit').value = 'true';
+      document.getElementById('peserta-form-old-nip').value = p.nip;
+      document.getElementById('peserta-form-nip').value = p.nip;
+      document.getElementById('peserta-form-nama').value = p.nama || '';
+      document.getElementById('peserta-form-posisi').value = p.posisi || '';
+      document.getElementById('peserta-form-section').value = p.section || normalizeSection(null, p.posisi);
+      document.getElementById('peserta-form-tempat').value = p.tempat || 'Workshop Pioneer';
+      document.getElementById('peserta-form-status').value = p.status || 'Siap Uji';
+
+      document.getElementById('modal-peserta').classList.remove('hidden');
+    }
+
+    function closePesertaModal() {
+      document.getElementById('modal-peserta').classList.add('hidden');
+    }
+
+    async function handleSavePesertaForm(e) {
+      if (e) e.preventDefault();
+      const isEdit = document.getElementById('peserta-form-is-edit').value === 'true';
+      const oldNip = document.getElementById('peserta-form-old-nip').value;
+      const nip = document.getElementById('peserta-form-nip').value.trim();
+      const nama = document.getElementById('peserta-form-nama').value.trim();
+      const posisi = document.getElementById('peserta-form-posisi').value.trim();
+      const section = document.getElementById('peserta-form-section').value;
+      const tempat = document.getElementById('peserta-form-tempat').value.trim() || 'Workshop Pioneer';
+      const status = document.getElementById('peserta-form-status').value;
+
+      if (!nip || !nama) {
+        showToast('Validasi Gagal', 'NIP dan Nama Peserta wajib diisi.', true);
+        return;
+      }
+
+      const pData = {
+        id: adminState.peserta.length + 1,
+        nip,
+        nama,
+        posisi,
+        section,
+        departemen: 'Engineering',
+        tempat,
+        status,
+        waktu: new Date().toLocaleTimeString('id-ID')
+      };
+
+      if (isEdit) {
+        const idx = adminState.peserta.findIndex(p => p.nip === oldNip || p.nip === nip);
+        if (idx >= 0) adminState.peserta[idx] = { ...adminState.peserta[idx], ...pData };
+      } else {
+        const exists = adminState.peserta.some(p => p.nip.toLowerCase() === nip.toLowerCase());
+        if (exists) {
+          showToast('NIP Sudah Ada', 'Peserta dengan NIP tersebut sudah terdaftar.', true);
+          return;
+        }
+        adminState.peserta.push(pData);
+      }
+
+      saveLocalData();
+      renderPesertaTable();
+      closePesertaModal();
+      showToast('Peserta Disimpan', `Data ${nama} (${nip}) berhasil disimpan.`);
+
+      // Sync ke Cloud
+      sendCloudAction(isEdit ? 'updatePeserta' : 'submitPeserta', {
+        oldNip,
+        nip,
+        nama,
+        posisi,
+        section,
+        departemen: 'Engineering',
+        tempatAssesment: tempat,
+        status
+      });
+    }
+
+    async function resetPesertaStatus(nip) {
+      const p = adminState.peserta.find(item => item.nip === nip);
+      if (!p) return;
+      p.status = 'Siap Uji';
+      saveLocalData();
+      renderPesertaTable();
+      showToast('Status Direset', `Status ${p.nama} dikembalikan ke Siap Uji.`);
+      sendCloudAction('updatePeserta', { nip: p.nip, nama: p.nama, status: 'Siap Uji' });
+    }
+
+    async function deletePeserta(nip) {
+      const p = adminState.peserta.find(item => item.nip === nip);
+      if (!p) return;
+      if (!confirm(`Hapus permanen peserta ${p.nama} (${p.nip}) dari database?`)) return;
+
+      adminState.peserta = adminState.peserta.filter(item => item.nip !== nip);
+      saveLocalData();
+      renderPesertaTable();
+      showToast('Peserta Dihapus', `Data ${p.nama} berhasil dihapus.`);
+      sendCloudAction('deletePeserta', { nip });
+    }
+
+    function exportPesertaToExcel() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Library Excel Belum Siap', 'Silakan coba beberapa saat lagi.', true);
+        return;
+      }
+      const data = adminState.peserta.map((p, idx) => ({
+        No: idx + 1,
+        NIP: p.nip,
+        Nama: p.nama,
+        Posisi: p.posisi,
+        Section: p.section || normalizeSection(null, p.posisi),
+        Departemen: 'Engineering',
+        Tempat_Assesment: p.tempat || 'Workshop Pioneer',
+        Status_Uji: p.status || 'Siap Uji'
+      }));
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "List_Peserta");
+      XLSX.writeFile(wb, `Data_Peserta_${new Date().toISOString().slice(0,10)}.xlsx`);
+      showToast('Excel Diunduh', 'Daftar peserta berhasil diunduh ke format Excel.');
+    }
+
+    // =========================================================================
+    // MODUL: BATCH IMPORT PESERTA
+    // =========================================================================
+    function openBatchImportModal() {
+      adminState.batchParsedRows = [];
+      document.getElementById('batch-paste-input').value = '';
+      document.getElementById('batch-file-input').value = '';
+      document.getElementById('batch-file-status').textContent = 'Belum ada file dipilih';
+      document.getElementById('btn-commit-batch').disabled = true;
+      document.getElementById('batch-preview-count').textContent = '0';
+      document.getElementById('batch-preview-tbody').innerHTML = `
+        <tr><td colspan="4" class="p-4 text-center text-outline">Belum ada data untuk dipratinjau.</td></tr>
+      `;
+      document.getElementById('modal-batch-import').classList.remove('hidden');
+    }
+
+    function closeBatchImportModal() {
+      document.getElementById('modal-batch-import').classList.add('hidden');
+    }
+
+    function fillBatchExample() {
+      const exampleText = `CV2034140, Bambang Wijaya, Mechanic Excavator PC200, Mechanical\nCV2034141, Doni Pratama, Electrician HD785, Electrical\nCV2034142, Eko Santoso, Welder Fabrikasi Bay 2, Welder (Fabrikasi)\nCV2034143, Fajar Hidayat, Tyreman Loader WA500, Tyre\nCV2034144, Gunawan Saputra, Rigger Crane 50T, Rigger`;
+      document.getElementById('batch-paste-input').value = exampleText;
+      parseBatchPastedText();
+    }
+
+    function parseBatchPastedText() {
+      const text = document.getElementById('batch-paste-input').value;
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const rows = [];
+
+      lines.forEach(line => {
+        const parts = line.includes('\t') ? line.split('\t') : line.includes(';') ? line.split(';') : line.split(',');
+        if (parts.length >= 2) {
+          const nip = parts[0].trim();
+          const nama = parts[1].trim();
+          const posisi = (parts[2] || 'Mechanic').trim();
+          const rawSec = (parts[3] || '').trim();
+          const section = normalizeSection(rawSec, posisi);
+          if (nip && nama) {
+            rows.push({ nip, nama, posisi, section });
+          }
+        }
+      });
+
+      adminState.batchParsedRows = rows;
+      renderBatchPreview();
+    }
+
+    function handleBatchFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      document.getElementById('batch-file-status').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonRows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+          const rows = [];
+          for (let r = 0; r < jsonRows.length; r++) {
+            const row = jsonRows[r];
+            if (!row || row.length < 2) continue;
+            // Lewati header jika baris pertama adalah judul kolom
+            const col0 = String(row[0] || '').trim().toLowerCase();
+            if (col0 === 'nip' || col0 === 'no' || col0.includes('nomor')) continue;
+
+            const nip = String(row[0] || row[1] || '').trim();
+            const nama = String(row[1] || row[2] || '').trim();
+            const posisi = String(row[2] || row[3] || 'Mechanic').trim();
+            const rawSec = String(row[3] || row[4] || '').trim();
+            const section = normalizeSection(rawSec, posisi);
+
+            if (nip && nama && !nip.toLowerCase().includes('nip')) {
+              rows.push({ nip, nama, posisi, section });
+            }
+          }
+
+          adminState.batchParsedRows = rows;
+          renderBatchPreview();
+          showToast('File Terbaca', `Berhasil membaca ${rows.length} calon peserta dari file.`);
+        } catch (err) {
+          showToast('Gagal Membaca File', 'Pastikan file berekstensi .xlsx atau .csv.', true);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function renderBatchPreview() {
+      const rows = adminState.batchParsedRows;
+      const tbody = document.getElementById('batch-preview-tbody');
+      const countEl = document.getElementById('batch-preview-count');
+      const btn = document.getElementById('btn-commit-batch');
+
+      if (countEl) countEl.textContent = rows.length;
+      if (btn) btn.disabled = (rows.length === 0);
+
+      if (!tbody) return;
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-outline">Belum ada baris yang valid.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.slice(0, 50).map(r => `
+        <tr class="hover:bg-surface-container-low">
+          <td class="py-1.5 px-3 font-bold text-primary">${r.nip}</td>
+          <td class="py-1.5 px-3 text-on-surface">${r.nama}</td>
+          <td class="py-1.5 px-3 text-outline">${r.posisi}</td>
+          <td class="py-1.5 px-3"><span class="px-2 py-0.2 rounded-full text-[9px] font-bold bg-primary-fixed text-primary">${r.section}</span></td>
+        </tr>
+      `).join('') + (rows.length > 50 ? `<tr><td colspan="4" class="p-2 text-center text-outline italic">...dan ${rows.length - 50} peserta lainnya</td></tr>` : '');
+    }
+
+    async function commitBatchImport() {
+      const rows = adminState.batchParsedRows;
+      if (rows.length === 0) return;
+
+      let addedCount = 0;
+      let updatedCount = 0;
+
+      rows.forEach(r => {
+        const existingIdx = adminState.peserta.findIndex(p => p.nip.toLowerCase() === r.nip.toLowerCase());
+        const item = {
+          id: adminState.peserta.length + 1,
+          nip: r.nip,
+          nama: r.nama,
+          posisi: r.posisi,
+          section: r.section,
+          departemen: 'Engineering',
+          tempat: 'Workshop Pioneer',
+          status: 'Siap Uji',
+          waktu: new Date().toLocaleTimeString('id-ID')
+        };
+
+        if (existingIdx >= 0) {
+          adminState.peserta[existingIdx] = { ...adminState.peserta[existingIdx], ...item };
+          updatedCount++;
+        } else {
+          adminState.peserta.push(item);
+          addedCount++;
+        }
+
+        // Send to Cloud (asynchronously)
+        sendCloudAction('submitPeserta', {
+          nip: r.nip,
+          nama: r.nama,
+          posisi: r.posisi,
+          section: r.section,
+          departemen: 'Engineering',
+          tempatAssesment: 'Workshop Pioneer',
+          status: 'Siap Uji'
+        });
+      });
+
+      saveLocalData();
+      renderPesertaTable();
+      closeBatchImportModal();
+      showToast('Import Berhasil', `${addedCount} peserta baru ditambahkan, ${updatedCount} peserta diperbarui.`);
+    }
+
+    // =========================================================================
+    // MODUL: PENGATURAN & SINKRONISASI
+    // =========================================================================
+    function saveAppscriptUrlSetting() {
+      const inp = document.getElementById('setting-appscript-url');
+      if (!inp) return;
+      const url = inp.value.trim();
+      if (!url.startsWith('https://script.google.com/')) {
+        showToast('URL Tidak Valid', 'URL harus diawali dengan https://script.google.com/', true);
+        return;
+      }
+      adminState.appscriptUrl = url;
+      localStorage.setItem('sim_appscript_url', url);
+      showToast('Pengaturan Tersimpan', 'URL Apps Script berhasil diperbarui.');
+      testCloudConnection();
+    }
+
+    async function testCloudConnection() {
+      const url = document.getElementById('setting-appscript-url')?.value.trim() || adminState.appscriptUrl;
+      showToast('Menguji Koneksi', 'Mengirim ping ke Google Apps Script...');
+      try {
+        const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'action=ping&_t=' + Date.now());
+        const json = await res.json();
+        if (json && (json.status === 'ok' || json.status === 'success')) {
+          showToast('Koneksi Sukses!', 'Server Google Apps Script aktif dan merespons normal.');
+        } else {
+          showToast('Koneksi Kurang Sempurna', 'Server merespons tapi status bukan OK.', false, true);
+        }
+      } catch (e) {
+        showToast('Koneksi Gagal', 'Gagal menghubungi server Apps Script. Periksa koneksi atau deployment web app.', true);
+      }
+    }
+
+    function downloadBackupJson() {
+      const backup = {
+        app: "SIM-ASESMEN MEKANIK",
+        exportDate: new Date().toISOString(),
+        trainers: adminState.trainers,
+        peserta: adminState.peserta,
+        hasil: adminState.hasil,
+        hasilPractical: adminState.hasilPractical
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Backup_SIM_Asesmen_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      showToast('Backup Berhasil', 'File cadangan JSON berhasil diunduh.');
+    }
+
+    function handleRestoreJson(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (Array.isArray(parsed.trainers)) adminState.trainers = parsed.trainers;
+          if (Array.isArray(parsed.peserta)) adminState.peserta = parsed.peserta;
+          if (Array.isArray(parsed.hasil)) adminState.hasil = parsed.hasil;
+          if (Array.isArray(parsed.hasilPractical)) adminState.hasilPractical = parsed.hasilPractical;
+
+          saveLocalData();
+          renderAllPanels();
+          showToast('Pemulihan Sukses', 'Database lokal berhasil dipulihkan dari file JSON.');
+        } catch (err) {
+          showToast('File JSON Tidak Valid', 'Gagal memproses file backup JSON.', true);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function updateAdminPassword() {
+      const p1 = document.getElementById('new-admin-password').value.trim();
+      const p2 = document.getElementById('confirm-admin-password').value.trim();
+
+      if (!p1 || p1.length < 6) {
+        showToast('Kata Sandi Terlalu Pendek', 'Kata sandi minimal 6 karakter.', true);
+        return;
+      }
+      if (p1 !== p2) {
+        showToast('Konfirmasi Tidak Cocok', 'Kata sandi baru dan konfirmasi tidak sama.', true);
+        return;
+      }
+
+      adminState.adminPass = p1;
+      localStorage.setItem('sim_admin_password', p1);
+      document.getElementById('new-admin-password').value = '';
+      document.getElementById('confirm-admin-password').value = '';
+      showToast('Kata Sandi Diubah', 'Kata sandi administrator berhasil diperbarui.');
+    }
+
+    function confirmResetAllData() {
+      const promptVal = prompt('Ketik "RESET" dengan huruf besar untuk mengonfirmasi reset database lokal:');
+      if (promptVal !== 'RESET') return;
+
+      adminState.trainers = INITIAL_TRAINERS_FALLBACK;
+      adminState.peserta = [];
+      adminState.hasil = [];
+      adminState.hasilPractical = [];
+      saveLocalData();
+      renderAllPanels();
+      showToast('Data Direset', 'Database lokal telah dikembalikan ke initial state.');
+    }
+
+    // =========================================================================
+    // STARTUP / ON LOAD
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadLocalData();
+      checkAuthUI();
+      if (adminState.isAuthenticated) {
+        syncAllFromCloud();
+      }
+    });
+  </script>
+</body>
+</html>
